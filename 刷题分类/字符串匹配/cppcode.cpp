@@ -87,6 +87,32 @@ private:
 class Solution {
 public:
     int strStr(string haystack, string needle) {
-
+        if(needle==""){
+            return 0;
+        }
+        int m=haystack.size(),n=needle.size(),i,j,k,tmp;
+        for(i=0;i<n;i++){
+            shift[needle[i]]=i;
+        }
+        i=0;
+        while(i<=m-n){
+            j=0,k=i+n,tmp=i;
+            while(j<n&&haystack[i]==needle[j]){
+                i++;
+                j++;
+            }
+            if(j==n){
+                return tmp;
+            }
+            char c=haystack[k];
+            if(shift.count(c)){
+                i=tmp+n-shift[c];
+            }else{
+                i=tmp+n+1;
+            }
+        }
+        return -1;
     }
+private:
+    map<char,int> shift;
 };
