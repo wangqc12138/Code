@@ -95,3 +95,54 @@ public:
         return dp[n];
     }
 };
+
+/*
+给你一个 m x n 的矩阵 matrix 和一个整数 k ，找出并返回矩阵内部矩形区域的不超过 k 的最大数值和。
+
+题目数据保证总会存在一个数值和不超过 k 的矩形区域。
+363
+*/
+class Solution {
+public:
+    int maxSumSubmatrix(vector<vector<int>>& matrix, int k) {
+        int m=matrix.size(),n=matrix[0].size(),res=INT_MIN;
+        int sumMatrix[m][n];
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(i>0&&j>0){
+                    sumMatrix[i][j]=sumMatrix[i-1][j]+sumMatrix[i][j-1]-sumMatrix[i-1][j-1]+matrix[i][j];
+                }else if(i>0){
+                    sumMatrix[i][j]=sumMatrix[i-1][j]+matrix[i][j];
+                }else if(j>0){
+                    sumMatrix[i][j]=sumMatrix[i][j-1]+matrix[i][j];
+                }else{
+                    sumMatrix[i][j]=matrix[i][j];
+                }
+            }
+        }
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                for(int a=i;a<m;a++){
+                    for(int b=j;b<n;b++){
+                        int sum=0;
+                        if(i==0&&j==0){
+                            sum=sumMatrix[a][b];
+                        }else if(i==0){
+                            sum=sumMatrix[a][b]-sumMatrix[a][j-1];
+                        }else if(j==0){
+                            sum=sumMatrix[a][b]-sumMatrix[i-1][b];
+                        }else{
+                            sum=sumMatrix[a][b]-sumMatrix[a][j-1]-sumMatrix[i-1][b]+sumMatrix[i-1][j-1];
+                        }
+                        if(sum<k){
+                            res=max(res,sum);
+                        }else if(sum==k){
+                            return k;
+                        }
+                    }
+                }
+            }
+        }
+        return res
+    }
+};
