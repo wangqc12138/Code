@@ -146,3 +146,42 @@ public:
         return res
     }
 };
+/*
+给你一个由 无重复 正整数组成的集合 nums ，请你找出并返回其中最大的整除子集 answer ，子集中每一元素对 (answer[i], answer[j]) 都应当满足：
+
+    answer[i] % answer[j] == 0 ，或
+    answer[j] % answer[i] == 0
+
+如果存在多个有效解子集，返回其中任何一个均可。
+368
+*/
+class Solution {
+public:
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        int n=nums.size(),maxVal,maxSize=1;
+        vector<int> dp(n,1),res;
+        sort(nums.begin(),nums.end());
+        for(int i=1;i<n;i++){
+            for(int j=0;j<i;j++){
+                if(nums[i]%nums[j]==0){
+                    dp[i]=max(dp[i],dp[j]+1);
+                }
+            }
+            if(dp[i]>maxSize){
+                maxSize=dp[i];
+                maxVal=nums[i];
+            }
+        }
+        if(maxSize==1){
+            return vector<int>{nums[0]};
+        }
+        for(int i=n-1;i>=0&&maxSize>0;i--){
+            if(dp[i]==maxSize&&maxVal%nums[i]==0){
+                res.push_back(nums[i]);
+                maxSize--;
+                maxVal=nums[i];
+            }
+        }
+        return res;
+    }
+};
