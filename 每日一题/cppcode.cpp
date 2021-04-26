@@ -185,3 +185,84 @@ public:
         return res;
     }
 };
+//20210424
+/*
+给你一个由不同整数组成的数组 nums ，和一个目标整数 target 。请你从 nums 中找出并返回总和为 target 的元素组合的个数。
+
+题目数据保证答案符合 32 位整数范围。
+377
+*/
+class Solution {
+public:
+    int combinationSum4(vector<int>& nums, int target) {
+        
+    }
+};
+//20210425
+/*
+给你一棵二叉搜索树，请你 按中序遍历 将其重新排列为一棵递增顺序搜索树，使树中最左边的节点成为树的根节点，并且每个节点没有左子节点，只有一个右子节点。
+897
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* dum=new TreeNode(0);
+    TreeNode* increasingBST(TreeNode* root) {
+        TreeNode* res=dum; 
+        inorder(root);
+        return res->right;
+    }
+    void inorder(TreeNode *root){
+        if(root==nullptr){
+            return;
+        }
+        inorder(root->left);
+        dum->right=root;
+        root->left=nullptr;
+        dum=root;
+        inorder(root->right);
+    }
+};
+//20210426
+/*
+传送带上的包裹必须在 D 天内从一个港口运送到另一个港口。
+传送带上的第 i 个包裹的重量为 weights[i]。每一天，我们都会按给出重量的顺序往传送带上装载包裹。我们装载的重量不会超过船的最大运载重量。
+返回能在 D 天内将传送带上的所有包裹送达的船的最低运载能力。
+1011
+*/
+//二分
+class Solution {
+public:
+    int shipWithinDays(vector<int>& weights, int D) {
+        int n=weights.size();
+        int left=*max_element(weights.begin(),weights.end());
+        int right=accumulate(weights.begin(),weights.end(),0);
+        while(left<right){
+            int mid=left+(right-left)/2;
+            int temp=0,day=1;
+            for(int w:weights){
+                temp+=w;
+                if(temp>mid){
+                    day++;
+                    temp=w;
+                }
+            }
+            if(day>D){
+                left=mid+1;
+            }else{
+                right=mid;
+            }
+        }
+        return left;
+    }
+};
