@@ -366,3 +366,124 @@ public:
         }
     }
 };
+/*
+传送带上的包裹必须在 D 天内从一个港口运送到另一个港口。
+传送带上的第 i 个包裹的重量为 weights[i]。每一天，我们都会按给出重量的顺序往传送带上装载包裹。我们装载的重量不会超过船的最大运载重量。
+返回能在 D 天内将传送带上的所有包裹送达的船的最低运载能力。
+1011
+*/
+//二分
+class Solution {
+public:
+    int shipWithinDays(vector<int>& weights, int D) {
+        int n=weights.size();
+        int left=*max_element(weights.begin(),weights.end());
+        int right=accumulate(weights.begin(),weights.end(),0);
+        while(left<right){
+            int mid=left+(right-left)/2;
+            int temp=0,day=1;
+            for(int w:weights){
+                temp+=w;
+                if(temp>mid){
+                    day++;
+                    temp=w;
+                }
+            }
+            if(day>D){
+                left=mid+1;
+            }else{
+                right=mid;
+            }
+        }
+        return left;
+    }
+};
+/*
+珂珂喜欢吃香蕉。这里有 N 堆香蕉，第 i 堆中有 piles[i] 根香蕉。警卫已经离开了，将在 H 小时后回来。
+珂珂可以决定她吃香蕉的速度 K （单位：根/小时）。每个小时，她将会选择一堆香蕉，从中吃掉 K 根。如果这堆香蕉少于 K 根，她将吃掉这堆的所有香蕉，然后这一小时内不会再吃更多的香蕉。  
+珂珂喜欢慢慢吃，但仍然想在警卫回来前吃掉所有的香蕉。
+返回她可以在 H 小时内吃掉所有香蕉的最小速度 K（K 为整数）。
+875
+*/
+class Solution {
+public:
+    int minEatingSpeed(vector<int>& piles, int H) {
+        int left=1,right=*max_element(piles.begin(),piles.end());
+        while(left<right){
+            int mid=left+(right-left)/2;
+            int h=0;
+            for(int p:piles){
+                h+=(p-1)/mid+1;
+            }
+            if(h>H){
+                left=mid+1;
+            }else{
+                right=mid;
+            }
+        }
+        return left;
+    }
+};
+/*
+你有一大块巧克力，它由一些甜度不完全相同的小块组成。我们用数组 sweetness 来表示每一小块的甜度。
+你打算和 K 名朋友一起分享这块巧克力，所以你需要将切割 K 次才能得到 K+1 块，每一块都由一些 连续 的小块组成。
+为了表现出你的慷慨，你将会吃掉 总甜度最小 的一块，并将其余几块分给你的朋友们。
+请找出一个最佳的切割策略，使得你所分得的巧克力 总甜度最大，并返回这个 最大总甜度。
+1231
+*/
+class Solution {
+public:
+    int maximizeSweetness(vector<int>& sweetness, int K) {
+        int left=*min_element(sweetness.begin(),sweetness.end());
+        int right=accumulate(sweetness.begin(),sweetness.end(),0);
+        while(left<right){
+            int mid=left+(right-left)/2;
+            int k=0,temp=0;
+            for(auto c:sweetness){
+                temp+=c;
+                if(temp>mid){
+                    //我是最小值，其他可以允许比我大
+                    k++;
+                    //当分配的大于mid时，这个一小块也分给前个人，而不是可以切割
+                    temp=0;
+                }
+            }
+            if(k>K){
+                left=mid+1;
+            }else{
+                right=mid;
+            }
+        }
+        return left;
+    }
+};
+/*
+给定一个非负整数数组 nums 和一个整数 m ，你需要将这个数组分成 m 个非空的连续子数组。
+设计一个算法使得这 m 个子数组各自和的最大值最小。
+410
+*/
+class Solution {
+public:
+    int splitArray(vector<int>& nums, int m) {
+        int left=*max_element(nums.begin(),nums.end());//注意取值
+        int right=accumulate(nums.begin(),nums.end(),0);
+        while(left<right){
+            int mid=left+(right-left)/2;
+            int temp=0,k=1;
+            for(auto num:nums){
+                temp+=num;
+                if(temp>mid){
+                    //mid时最大值，其他不允许比mid大，所以num得算到下一个人身上
+                    k++;
+                    temp=num;
+                }
+            }
+            if(k>m){
+                left=mid+1;
+            }else{
+                right=mid;
+            }
+        }
+        return left;
+    }
+};

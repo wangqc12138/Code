@@ -68,3 +68,40 @@ public:
 在完成所有重复项删除操作后返回最终的字符串。答案保证唯一。
 1047
 */
+/*
+给定一组字符，使用原地算法将其压缩。
+
+压缩后的长度必须始终小于或等于原数组长度。
+
+数组的每个元素应该是长度为1 的字符（不是 int 整数类型）。
+
+在完成原地修改输入数组后，返回数组的新长度。
+
+ 
+
+进阶：
+你能否仅使用O(1) 空间解决问题？
+443
+*/
+class Solution {
+public:
+    int compress(vector<char>& chars) {
+        int n=chars.size(),begin=0,w=0;
+        for(int i=0;i<n;i++){
+            if(i==n-1||chars[i]!=chars[i+1]){
+                char b=chars[begin];
+                if(i>begin){
+                    int len=i-begin+1;
+                    string lenstr=to_string(len);
+                    for(auto c:lenstr){
+                        chars[w++]=c;
+                    }
+                }
+                chars[w++]=b;
+                begin=i+1;
+            }
+        }
+        chars.resize(w);
+        return w;
+    }
+};
