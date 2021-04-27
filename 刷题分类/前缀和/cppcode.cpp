@@ -5,6 +5,31 @@
     int sumRange(int i, int j) 返回数组 nums 从索引 i 到 j（i ≤ j）范围内元素的总和，包含 i、j 两点（也就是 sum(nums[i], nums[i + 1], ... , nums[j])）
 303
 */
+class NumArray {
+public:
+    vector<int> vec;
+    NumArray(vector<int>& nums) {
+        vec.resize(nums.size());
+        
+        for(int i=0;i<nums.size();i++){
+            if(i==0){
+                vec[0]=nums[0];  
+            }else{
+                vec[i]=vec[i-1]+nums[i];
+            }
+        }
+    }
+    
+    int sumRange(int i, int j) {
+        return i==0?vec[j]:vec[j]-vec[i-1];
+    }
+};
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray* obj = new NumArray(nums);
+ * int param_1 = obj->sumRange(i,j);
+ */
 /*
 给定一个二维矩阵，计算其子矩形范围内元素的总和，该子矩阵的左上角为 (row1, col1) ，右下角为 (row2, col2) 。
 304
@@ -167,4 +192,100 @@ public:
     	}
     	return res;
    	}
+};
+/*
+给定一个数组 nums 和一个目标值 k，找到和等于 k 的最长子数组长度。如果不存在任意一个符合要求的子数组，则返回 0。
+注意:
+ nums 数组的总和是一定在 32 位有符号整数范围之内的。
+ map插入数据
+ 使用insert：包含key不更新value
+ 使用【】：直接更新
+ 325
+*/
+class Solution {
+public:
+    int maxSubArrayLen(vector<int>& nums, int k) {
+        map<int,int> m;
+        m[0]=-1;
+        int sum=0,res=0;
+        for(int i=0;i<nums.size();i++){
+            sum+=nums[i];
+            if(m.count(sum-k)){
+                res=max(res,i-m[sum-k]);
+            }
+            if(!m.count(sum)){
+                m[sum]=i;
+            }
+        }
+        return res;
+    }
+};
+/*
+给定一个二进制数组, 找到含有相同数量的 0 和 1 的最长连续子数组（的长度）。
+525
+*/
+class Solution {
+public:
+    int findMaxLength(vector<int>& nums) {
+        map<int,int> m;
+        m[0]=-1;
+        int sum=0,res=0;
+        for(int i=0;i<nums.size();i++){
+            sum+=nums[i]==0?-1:1;
+            if(m.count(sum)){
+                res=max(res,i-m[sum]);
+            }
+            if(!m.count(sum)){
+                m[sum]=i;
+            }
+        }
+        return res;
+    }
+};
+/*
+给你一个字符串 s ，请你返回满足以下条件的最长子字符串的长度：每个元音字母，即 'a'，'e'，'i'，'o'，'u' ，在子字符串中都恰好出现了偶数次。
+1371
+
+    1 <= s.length <= 5 x 10^5
+    s 只包含小写英文字母。
+
+*/
+class Solution {
+public:
+    int findTheLongestSubstring(string s) {
+
+    }
+};
+/*
+给你一个整数数组 nums 和一个整数 k。
+如果某个 连续 子数组中恰好有 k 个奇数数字，我们就认为这个子数组是「优美子数组」。
+请返回这个数组中「优美子数组」的数目。
+1248
+*/
+class Solution {
+public:
+    int numberOfSubarrays(vector<int>& nums, int k) {
+        unordered_map<int,int> um;
+        int res=0,sum=0;
+        um[0]=1;
+        for(int i=0;i<nums.size();i++){
+            sum+=nums[i]%2;
+            if(um.count(sum-k)){
+                //+前面sum-k个奇数的子数组
+                res+=um[sum-k];
+            }
+            //sum个奇数的数组+1
+            um[sum]++;
+            //求最长的子数组
+            /*
+            if(um.count(sum-k)){
+                res=max(res,i-um[sum-k]);
+            }
+            if(!um.count(sum)){
+                um[sum]=i;
+            }
+            */
+        }
+        return res;
+    }
 };
