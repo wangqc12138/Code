@@ -1,3 +1,4 @@
+#include "../head.h"
 /*
 给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素，并返回移除后数组的新长度。
 不要使用额外的数组空间，你必须仅使用 O(1) 额外空间并 原地 修改输入数组。
@@ -143,7 +144,7 @@ public:
                 }
             }
         }
-        return res
+        return res;
     }
 };
 /*
@@ -297,5 +298,30 @@ public:
             res+=root->val;
         }
         inorder(root,low,high);
+    }
+};
+/* 
+给定一个非负整数 c ，你要判断是否存在两个整数 a 和 b，使得 a2 + b2 = c 。
+633
+0 <= c <= 231 - 1
+不能用int 会超出int范围
+相当于在一个矩阵中找值
+矩阵行递增，列递增
+*/
+class Solution {
+public:
+    bool judgeSquareSum(int c) {
+        long long left=0,right=(int)sqrt(c);
+        while(left<=right){
+            long long tmp=left*left+right*right;
+            if(tmp==c){
+                return true;
+            }else if(tmp>c){
+                right--;
+            }else{
+                left++;
+            }
+        }
+        return false;
     }
 };
