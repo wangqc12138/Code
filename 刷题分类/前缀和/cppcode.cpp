@@ -1,3 +1,4 @@
+#include "../../head.h"
 /*
 给定一个整数数组  nums，求出数组从索引 i 到 j（i ≤ j）范围内元素的总和，包含 i、j 两点。
 实现 NumArray 类：
@@ -285,6 +286,137 @@ public:
                 um[sum]=i;
             }
             */
+        }
+        return res;
+    }
+};
+/* 
+给你一个整数数组 nums，请编写一个能够返回数组 “中心下标” 的方法。
+
+数组 中心下标 是数组的一个下标，其左侧所有元素相加的和等于右侧所有元素相加的和。
+
+如果数组不存在中心下标，返回 -1 。如果数组有多个中心下标，应该返回最靠近左边的那一个。
+
+注意：中心下标可能出现在数组的两端。
+ */
+class Solution {
+public:
+    int pivotIndex(vector<int>& nums) {
+        int sum=accumulate(nums.begin(),nums.end(),0);
+        int tmp=0;
+        map<int,int> m;
+        for(int i=0;i<nums.size();i++){
+            if(tmp==sum-tmp-nums[i]){
+                return m[sum-tmp];
+            }
+            tmp+=nums[i];
+        }
+        return -1;
+    }
+};
+/* 
+给定一个整数数组和一个整数 k，你需要找到该数组中和为 k 的连续的子数组的个数。
+560
+ */
+class Solution {
+public:
+    int subarraySum(vector<int>& nums, int k) {
+        map<int,int> m;
+        int sum=0,res=0;
+        m[0]=1;
+        for(int i=0;i<nums.size();i++){
+            sum+=nums[i];
+            if(m.count(k-sum)){
+                res+=m[k-sum];
+            }
+            m[sum]++;
+        }
+        return res;
+    }
+};
+/* 
+给定一个整数数组 A，返回其中元素之和可被 K 整除的（连续、非空）子数组的数目。
+974
+ */
+class Solution {
+public:
+    int subarraysDivByK(vector<int>& A, int K) {
+        int sum=0,res=0;
+        map<int,int> m;
+        m[0]=1;
+        for(int i=0;i<A.size();i++){
+            sum+=A[i];
+            int tmp=(sum%K+K)%K;
+            if(m.count(tmp)){
+                res+=m[tmp];
+            }
+            m[tmp]++;
+        }
+        return res;
+    }
+};
+/* 
+给定一个包含 非负数 的数组和一个目标 整数 k .
+编写一个函数来判断该数组是否含有连续的子数组，其大小至少为 2，且总和为 k 的倍数，即总和为 n * k ，其中 n 也是一个整数。
+大小是指数组大小！！！
+523
+ */
+class Solution {
+public:
+    bool checkSubarraySum(vector<int>& nums, int k) {
+        long sum=0;
+        map<long,int> m;
+        m[0]=-1;
+        for(int i=0;i<nums.size();i++){
+            sum+=nums[i];
+            long tmp=(sum%k+k)%k;
+            if(m.count(tmp)){
+                if(i-m[tmp]>=2){
+                    return true;
+                }
+            }
+            if(!m.count(tmp)){
+                m[tmp]=i;
+            }
+            
+        }
+        return false;
+        /*
+        数组总和不小于2 
+        int sum=0,res=0;
+        map<int,vector<int>> m;
+        m[0].push_back(0);
+        for(int i=0;i<nums.size();i++){
+            sum+=nums[i];
+            int tmp=(sum%k+k)%k;
+            if(m.count(tmp)){
+                for(int s:m[tmp]){
+                    if(sum-s>=2){
+                        return true;
+                    }
+                }
+            }
+            m[tmp].push_back(sum);
+        }
+        return false; */
+    }
+};
+/* 
+在由若干 0 和 1  组成的数组 A 中，有多少个和为 S 的非空子数组。
+930
+ */
+class Solution {
+public:
+    int numSubarraysWithSum(vector<int>& A, int S) {
+        map<int,int>m;
+        int sum=0,res=0;
+        m[0]=1;
+        for(int i=0;i<A.size();i++){
+            sum+=A[i];
+            if(m.count(sum-S)){
+                res+=m[sum-S];
+            }
+            m[sum]++;
         }
         return res;
     }
