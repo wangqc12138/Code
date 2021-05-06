@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <queue>
 using namespace std;
+typedef unsigned long long ull;
 struct TreeNode {
     int val;
     TreeNode *left;
