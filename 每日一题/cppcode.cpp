@@ -325,3 +325,103 @@ public:
         return false;
     }
 };
+/* 
+你的面前有一堵矩形的、由 n 行砖块组成的砖墙。这些砖块高度相同（也就是一个单位高）但是宽度不同。每一行砖块的宽度之和相等。
+
+你现在要画一条 自顶向下 的、穿过 最少 砖块的垂线。如果你画的线只是从砖块的边缘经过，就不算穿过这块砖。
+你不能沿着墙的两个垂直边缘之一画线，这样显然是没有穿过一块砖的。
+
+给你一个二维数组 wall ，该数组包含这堵墙的相关信息。其中，wall[i] 是一个代表从左至右每块砖的宽度的数组。
+你需要找出怎样画才能使这条线 穿过的砖块数量最少 ，并且返回 穿过的砖块数量 。
+554
+ */
+class Solution {
+public:
+    int leastBricks(vector<vector<int>>& wall) {
+        map<int,int> m;
+        int n=wall.size();
+        for(auto vec:wall){
+            int k=0;
+            for(auto i:vec){
+                k+=i;
+                m[k]++;
+            }
+            m.erase(k);
+        }
+        int res=n;
+        /* for(auto [i,j]:m){
+            //min函数不能包含size()?
+            res=min(res,n-j);
+        } */
+        for(auto itr:m){
+            res=min(res,n-itr.second);
+        }
+        return res;
+    }
+};
+/* 
+给你一个 32 位的有符号整数 x ，返回将 x 中的数字部分反转后的结果。
+
+如果反转后整数超过 32 位的有符号整数的范围 [−231,  231 − 1] ，就返回 0。
+假设环境不允许存储 64 位整数（有符号或无符号）。
+7
+ */
+class Solution {
+public:
+    int reverse(int x) {
+        long long res=0;
+        while(x){
+            res=res*10+x%10;
+            x/=10;
+        }
+        return res==(int)res?res:0;
+    }
+};
+/* 
+给你一个整数数组 nums ，你可以对它进行一些操作。
+每次操作中，选择任意一个 nums[i] ，删除它并获得 nums[i] 的点数。之后，你必须删除 所有 等于 nums[i] - 1 和 nums[i] + 1 的元素。
+开始你拥有 0 个点数。返回你能通过这些操作获得的最大点数。
+740
+    1 <= nums.length <= 2 * 104
+    1 <= nums[i] <= 104
+ */
+// 打家劫舍的变种，即选择抢一家就不能抢邻居
+class Solution {
+public:
+    int deleteAndEarn(vector<int>& nums) {
+        int k=*max_element(nums.begin(),nums.end());
+        vector<int> vec(k+1,0);
+        for(int i:nums){
+            vec[i]=i;
+        }
+        vector<int> dp(k+1);
+        for(int i=2;i<k+1;i++){
+            if(i==0){
+                dp[i]=nums[i];
+            }else if(i==1){
+                dp[i]=max(dp[0],dp[1]);
+            }else{
+                dp[i]=max(dp[i-1],dp[i-2]+nums[i]);
+            }
+        }
+        return dp[k];
+    }
+};
+/* 
+给你两个整数，n 和 start 。
+
+数组 nums 定义为：nums[i] = start + 2*i（下标从 0 开始）且 n == nums.length 。
+
+请返回 nums 中所有元素按位异或（XOR）后得到的结果。
+1486
+ */
+class Solution {
+public:
+    int xorOperation(int n, int start) {
+        int res=start;
+        for(int i=1;i<n;i++){
+            res^=(start+2*i);
+        }
+        return res;
+    }
+};
