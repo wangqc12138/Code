@@ -1,3 +1,4 @@
+#include "head.h"
 /*
 给你一个字符串 s，请你将 s 分割成一些子串，使每个子串都是 回文串 。返回 s 所有可能的分割方案。
 回文串 是正着读和反着读都一样的字符串。
@@ -19,6 +20,35 @@ candidates 中的每个数字在每个组合中只能使用一次。
     解集不能包含重复的组合。 
 40
 */
+class Solution {
+public:
+	vector<vector<int>> res;
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+		sort(candidates.begin(),candidates.end());
+		vector<int> temp;
+		dfs(candidates,target,0,temp,0);
+		return res;
+    }
+	void dfs(vector<int>& candidates,int target,int sum,vector<int> temp,int index){
+		if(sum>target){
+			return;
+		}
+		if(sum==target){
+			res.push_back(temp);
+            return;
+		}
+		for(int i=index;i<candidates.size();i++){
+            if(i>index&&candidates[i]==candidates[i-1]){
+                continue;
+            }
+			sum+=candidates[i];
+			temp.push_back(candidates[i]);
+			dfs(candidates,target,sum,temp,i+1);
+			temp.pop_back();
+			sum-=candidates[i];
+		}
+	}
+};
 /*
 给定一个 没有重复 数字的序列，返回其所有可能的全排列。
 46
@@ -87,3 +117,42 @@ n 皇后问题 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，�
 空白格用 '.' 表示。
 37
 */
+/* 
+给定一个整数数组  nums 和一个正整数 k，找出是否有可能把这个数组分成 k 个非空子集，其总和都相等。
+698
+ */
+class Solution {
+public:
+	vector<int> visit;
+	bool res=false;
+    bool canPartitionKSubsets(vector<int>& nums, int k) {
+        sort(nums.begin(),nums.end());
+        int sum=accumulate(nums.begin(),nums.end(),0);
+		if(sum%k){
+			return false;
+		}
+		visit.resize(nums.size());
+		dfs(nums,k,sum/k,0,0);
+		return res;
+    }
+	void dfs(vector<int>& nums,int k,int target,int sum,int index){
+		if(k==1){
+			res=true;
+			return;
+		}
+		if(target==sum){
+			dfs(nums,k-1,target,0,0);
+		}
+		for(int i=index;i<nums.size();i++){
+            //剪枝，去除与前一个相同但是前一个没取过的。去重
+            if(i>0&&nums[i]==nums[i-1]&&visit[i-1]==0){
+                continue;
+            }
+			if(visit[i]==0&&sum+nums[i]<=target){
+				visit[i]=1;
+				dfs(nums,k,target,sum+nums[i],i+1);
+				visit[i]=0;
+			}
+		}
+	}
+};
