@@ -1,4 +1,4 @@
-#include "../head.h"
+#include "head.h"
 /*
 给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素，并返回移除后数组的新长度。
 不要使用额外的数组空间，你必须仅使用 O(1) 额外空间并 原地 修改输入数组。
@@ -424,4 +424,123 @@ public:
         }
         return res;
     }
+};
+/* 
+给你一个整数数组 jobs ，其中 jobs[i] 是完成第 i 项工作要花费的时间。
+请你将这些工作分配给 k 位工人。所有工作都应该分配给工人，且每项工作只能分配给一位工人。
+工人的 工作时间 是完成分配给他们的所有工作花费时间的总和。请你设计一套最佳的工作分配方案，使工人的最大工作时间得以最小化 。
+返回分配方案中尽可能最小的最大工作时间 。
+1723
+ */
+class Solution {
+public:
+    int minimumTimeRequired(vector<int>& jobs, int k) {
+        sort(jobs.begin(),jobs.end());
+        int left=jobs.back();
+		int right=accumulate(jobs.begin(),jobs.end(),0);
+		while(left<right){
+			int mid=left+(right-left)/2;
+			if(!check(jobs,mid,k)){
+				left=mid+1;
+			}else{
+				right=mid;
+			}
+		}
+		return left;
+    }
+	bool check(vector<int>& jobs,int target,int k){
+		vector<int> works(k,0);
+		return dfs(jobs,works,target,0);
+	}
+	bool dfs(vector<int>& jobs,vector<int> &works,int target,int index){
+		if(index>=jobs.size()){
+			return true;
+		}
+		int cur=jobs[index];
+		for(auto &work:works){
+			if(work+cur<=target){
+				work+=cur;
+				if(dfs(jobs,works,target,index+1)){
+                    return true;
+                }
+				work-=cur;
+			}
+			if(work==0){
+				break;
+			}
+		}
+		return false;
+	}
+};
+//以下为两个子问题
+/*
+传送带上的包裹必须在 D 天内从一个港口运送到另一个港口。
+传送带上的第 i 个包裹的重量为 weights[i]。每一天，我们都会按给出重量的顺序往传送带上装载包裹。我们装载的重量不会超过船的最大运载重量。
+返回能在 D 天内将传送带上的所有包裹送达的船的最低运载能力。
+1011
+*/
+//二分
+class Solution {
+public:
+    int shipWithinDays(vector<int>& weights, int D) {
+        int n=weights.size();
+        int left=*max_element(weights.begin(),weights.end());
+        int right=accumulate(weights.begin(),weights.end(),0);
+        while(left<right){
+            int mid=left+(right-left)/2;
+            int temp=0,day=1;
+            for(int w:weights){
+                temp+=w;
+                if(temp>mid){
+                    day++;
+                    temp=w;
+                }
+            }
+            if(day>D){
+                left=mid+1;
+            }else{
+                right=mid;
+            }
+        }
+        return left;
+    }
+};
+/* 
+给定一个整数数组  nums 和一个正整数 k，找出是否有可能把这个数组分成 k 个非空子集，其总和都相等。
+698
+ */
+class Solution {
+public:
+	vector<int> visit;
+	bool res=false;
+    bool canPartitionKSubsets(vector<int>& nums, int k) {
+        sort(nums.begin(),nums.end());
+        int sum=accumulate(nums.begin(),nums.end(),0);
+		if(sum%k){
+			return false;
+		}
+		visit.resize(nums.size());
+		dfs(nums,k,sum/k,0,0);
+		return res;
+    }
+	void dfs(vector<int>& nums,int k,int target,int sum,int index){
+		if(k==1){
+			res=true;
+			return;
+		}
+		if(target==sum){
+			dfs(nums,k-1,target,0,0);
+		}
+		for(int i=index;i<nums.size();i++){
+            //剪枝，去除与前一个相同但是前一个没取过的。去重
+            if(i>0&&nums[i]==nums[i-1]&&visit[i-1]==0){
+                continue;
+            }
+			if(visit[i]==0&&sum+nums[i]<=target){
+				visit[i]=1;
+				dfs(nums,k,target,sum+nums[i],i+1);
+				visit[i]=0;
+			}
+		}
+	}
 };
