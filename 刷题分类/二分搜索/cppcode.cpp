@@ -1,3 +1,4 @@
+#include "head.h"
 /*
 给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target  ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。
 704
@@ -167,8 +168,8 @@ public:
 
 class Solution {
 public:
-    int search(const ArrayReader& reader, int target) {
-        int left=0,right=MAX_INT,mid;
+    int search(/* const  */ArrayReader& reader, int target) {
+        int left=0,right=INT_MAX,mid;
         while(left<=right){
             mid=left+(right-left)/2;
             if(reader.get(mid)==target){
@@ -333,7 +334,7 @@ public:
                 }
             }
             if(mid<cnt){
-                right=mid
+                right=mid;
             }else{
                 left=mid+1;
             }
@@ -356,10 +357,10 @@ public:
         }
     }
     int process(vector<int>& nums1, vector<int>& nums2, int index) {
-        int i1=0;i2=0;
+        int i1=0,i2=0;
         while(index){
-            i1=min(index/2,nums1.size()-1);
-            i2=min(index/2,nums2.size()-1);
+            // i1=min(index/2,nums1.size()-1);
+            // i2=min(index/2,nums2.size()-1);
             if(nums1[i1]>=nums2[i2]){
 
             }
