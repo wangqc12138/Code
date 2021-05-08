@@ -5,7 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
 				"${workspaceFolder}/include",
-				"${workspaceFolder}/Server_Client"
+				"${workspaceFolder}/Server_Client",
+				"${workspaceFolder}/Server_Client/Sock",
+				"${workspaceFolder}/Server_Client/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
