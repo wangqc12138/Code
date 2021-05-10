@@ -16,9 +16,9 @@ private:
 public:
     int Connet(const string strIp,const int iPort);
     int Listen(const string strIp,const int iPort);
-    int Accept(int iSockfd);
-    int Write(const string strMsg);
-    int Read(string &strMsg);
+    int Accept();
+    int Write(const string strMsg,int len);
+    int Read(char* strMsg);
 };
 
 #endif

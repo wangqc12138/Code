@@ -65,12 +65,12 @@ int Socket::Listen(const string strIp,const int iPort){
     }
     return m_iHandle;
 }
-int Socket::Accept(int iSockfd){
+int Socket::Accept(){
     int ret;
     // int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
     struct sockaddr_in c_sa;
     int salen=sizeof(c_sa);
-    ret=accept(iSockfd,(struct sockaddr*) &c_sa,(socklen_t *)&salen);
+    ret=accept(m_iHandle,(struct sockaddr*) &c_sa,(socklen_t *)&salen);
     if(-1==ret){
         perror("accept error!");
         return -1;
@@ -82,9 +82,10 @@ int Socket::Accept(int iSockfd){
     printf("client ip is %s,port is %d\n",cip,cport);
     return ret;
 }
-int Socket::Write(const string strMsg){
+int Socket::Write(const string strMsg,int len){
+	write(m_iHandle,strMsg.c_str(),len);
     return 0;
 }
-int Socket::Read(string &strMsg){
-    return 0;
+int Socket::Read(char* strMsg){
+	return read(m_iHandle,strMsg,sizeof(strMsg));
 }
