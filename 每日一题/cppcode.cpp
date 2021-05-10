@@ -598,3 +598,30 @@ public:
         return left;
     }
 };
+
+/* 
+请考虑一棵二叉树上所有的叶子，这些叶子的值按从左到右的顺序排列形成一个 叶值序列 。
+如果有两棵二叉树的叶值序列是相同，那么我们就认为它们是 叶相似 的。
+如果给定的两个根结点分别为 root1 和 root2 的树是叶相似的，则返回 true；否则返回 false 。
+ */
+class Solution {
+public:
+    bool leafSimilar(TreeNode* root1, TreeNode* root2) {
+        vector<int> l1;
+		getleaf(root1,l1);
+		for(int i:l1){
+			cout<<i<<" ";
+		}
+		return 0;
+    }
+	void getleaf(TreeNode* root,vector<int> &vec){
+		if(root->left==nullptr&&root->right==nullptr){
+			vec.push_back(root->val);
+		}
+		if(root==nullptr){
+			return;
+		}
+		getleaf(root->left,vec);
+		getleaf(root->right,vec);
+	}
+};
