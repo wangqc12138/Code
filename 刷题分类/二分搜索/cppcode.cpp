@@ -488,3 +488,57 @@ public:
         return left;
     }
 };
+
+/* 
+给你一个整数数组 bloomDay，以及两个整数 m 和 k 。
+
+现需要制作 m 束花。制作花束时，需要使用花园中 相邻的 k 朵花 。
+
+花园中有 n 朵花，第 i 朵花会在 bloomDay[i] 时盛开，恰好 可以用于 一束 花中。
+
+请你返回从花园中摘 m 束花需要等待的最少的天数。如果不能摘到 m 束花则返回 -1 。
+1482
+bloomDay.length == n
+1 <= n <= 10^5
+1 <= bloomDay[i] <= 10^9
+1 <= m <= 10^6
+1 <= k <= n
+ */
+class Solution {
+public:
+    int minDays(vector<int>& bloomDay, int m, int k) {
+        if(m*k>bloomDay.size()){
+            return -1;
+        }
+        int left=1,right=*max_element(bloomDay.begin(),bloomDay.end());
+        auto check=[&](int n){
+            vector<int> now(bloomDay.size());
+            for(int i=0;i<bloomDay.size();++i){
+                now[i]=bloomDay[i]<=n?1:0;
+            }
+            int l=0,ans=0;
+            for(int i:now){
+                if(i==1){
+                    l++;
+                }else{
+                    l=0;
+                }
+                if(l==k){
+                    ans++;
+                    l=0;
+                }
+            }
+            //当可以拿到的花大于m也行
+            return ans>=m;
+        };
+        while(left<right){
+            int mid=left+(right-left)/2;
+            if(check(mid)){
+                right=mid;
+            }else{
+                left=mid+1;
+            }
+        }
+        return left;
+    }
+};
