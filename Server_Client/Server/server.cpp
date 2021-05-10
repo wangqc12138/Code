@@ -7,11 +7,11 @@ void C_SERVER::init(string strIp,int iPort){
 void C_SERVER::run(){
 	char rbuf[BUFSIZ];
 	m_sock.Listen(m_strIp,m_iPort);
-	while(1){
+	//while(1){
 		int c_fd=m_sock.Accept();
-		read(c_fd,rbuf,sizeof(rbuf));
-		write(c_fd,rbuf,sizeof(rbuf));
-	}
+		int n=read(c_fd,rbuf,sizeof(rbuf));
+		write(c_fd,rbuf,n);
+	//}
 }
 
 void C_SERVER::stop(){
