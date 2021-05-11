@@ -650,3 +650,30 @@ public:
 		return res;
     }
 };
+/* 
+有一个正整数数组 arr，现给你一个对应的查询数组 queries，其中 queries[i] = [Li, Ri]。
+
+对于每个查询 i，请你计算从 Li 到 Ri 的 XOR 值（即 arr[Li] xor arr[Li+1] xor ... xor arr[Ri]）作为本次查询的结果。
+
+并返回一个包含给定查询 queries 所有结果的数组。
+1310
+ */
+class Solution {
+public:
+    vector<int> xorQueries(vector<int>& arr, vector<vector<int>>& queries) {
+        vector<int> prefix;
+        vector<int> res;
+        int t=0;
+        for(int i:arr){
+            prefix.push_back(t^=i);
+        }
+        for(auto vec:queries){
+            if(vec[0]==0){
+                res.push_back(prefix[vec[1]]);
+            }else{
+                res.push_back(prefix[vec[1]]^prefix[vec[0]-1]);
+            }
+        }
+        return res;
+    }
+};
