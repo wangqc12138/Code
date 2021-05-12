@@ -8,7 +8,8 @@
 				"${workspaceFolder}/Server_Client/Server",
 				"${workspaceFolder}/Server_Client/Client",
 				"${workspaceFolder}/Server_Client/Sock",
-				"${workspaceFolder}/Server_Client/include"
+				"${workspaceFolder}/Server_Client/include",
+				"${workspaceFolder}/Server_Client/Cmd"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
