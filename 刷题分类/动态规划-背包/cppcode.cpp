@@ -156,4 +156,84 @@ public:
 		return dp[s.size()];
     }
 };
+//组合问题
+/* 
+给你一个由 不同 整数组成的数组 nums ，和一个目标整数 target 。请你从 nums 中找出并返回总和为 target 的元素组合的个数。
 
+题目数据保证答案符合 32 位整数范围。
+377
+考虑顺序
+ */
+class Solution {
+public:
+    int combinationSum4(vector<int>& nums, int target) {
+		vector<int> dp(target+1);
+		dp[0]=1;
+		for(int i=0;i<=target;i++){
+			for(int num:nums){
+				if(i>=num){
+					dp[i]+=dp[i-num];
+				}
+			}
+		}
+		return dp[target];
+    }
+};
+/* 
+给定一个非负整数数组，a1, a2, ..., an, 和一个目标数，S。现在你有两个符号 + 和 -。对于数组中的任意一个整数，
+你都可以从 + 或 -中选择一个符号添加在前面。
+返回可以使最终数组和为目标数 S 的所有添加符号的方法数。
+ps 给的target是隐含的
+494
+ */
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int target) {
+		int sum=accumulate(nums.begin(),nums.end(),0);
+		if(target>sum||(target+sum)%2==1){
+			return 0;
+		}
+		int t=(target+sum)/2;
+		vector<int> dp(t+1);
+		dp[0]=1;
+		for(int num:nums){
+			for(int i=t;i>=num;i--){
+				dp[i]+=dp[i-num];
+			}
+		}
+		return dp[t];
+    }
+};
+/* 
+给定不同面额的硬币和一个总金额。写出函数来计算可以凑成总金额的硬币组合数。假设每一种面额的硬币有无限个。 
+518
+ */
+class Solution {
+public:
+    int change(int amount, vector<int>& coins) {
+		vector<unsigned int> dp(amount+1,0);
+		dp[0]=1;
+		for(int coin:coins){
+			for(int i=coin;i<=amount;i++){
+				dp[i]+=dp[i-coin];
+			}
+		}
+		return dp[amount];
+    }
+};
+/* 
+集团里有 n 名员工，他们可以完成各种各样的工作创造利润。
+
+第 i 种工作会产生 profit[i] 的利润，它要求 group[i] 名成员共同参与。如果成员参与了其中一项工作，就不能参与另一项工作。
+
+工作的任何至少产生 minProfit 利润的子集称为盈利计划。并且工作的成员总数最多为 n 。
+
+有多少种计划可以选择？因为答案很大，所以 返回结果模 10^9 + 7 的值。
+879
+ */
+class Solution {
+public:
+    int profitableSchemes(int n, int minProfit, vector<int>& group, vector<int>& profit) {
+		
+    }
+};
