@@ -72,7 +72,6 @@ int Socket::Accept(){
     // int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
     struct sockaddr_in c_sa;
     int salen=sizeof(c_sa);
-    printf("listenfd is %d,salen is %d\n",m_iHandle,salen);
     ret=accept(m_iHandle,(struct sockaddr*) &c_sa,(socklen_t *)&salen);
     if(-1==ret){
         perror("accept error!");

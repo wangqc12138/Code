@@ -4,7 +4,7 @@ using namespace std;
 int main()
 {
 	C_CLIENT cli;
-	cli.init("192.168.239.132",23333);
+	cli.init("192.168.154.128",23333);
 	cli.run();
 	return 0;
 }

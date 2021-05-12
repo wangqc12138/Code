@@ -1,6 +1,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 #include "socket.h"
+#include "cmd.h"
 class C_SERVER{
 public:
     void init(string strIp,int iPort);

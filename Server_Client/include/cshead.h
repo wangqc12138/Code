@@ -1,11 +1,10 @@
 #ifndef HEAD_H
 #define HEAD_H
 #include <iostream>
-#include <string>
+#include <string.h>
 #include <unistd.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
 #include <stdio.h>
+//ls的实现
+#include <dirent.h>
 using namespace std;
 #endif

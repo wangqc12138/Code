@@ -1,16 +1,14 @@
 #ifndef SOCKET_H
 #define SOCKET_H
-#include <iostream>
-#include <string>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include "cshead.h"
 using namespace std;
 class Socket
 {
 private:
-    int m_iHandle=-1;
     int m_iFamily=AF_INET;
     int Close(int fd);
 public:
@@ -19,6 +17,7 @@ public:
     int Accept();
     int Write(const string strMsg,int len);
     int Read(char* strMsg);
+	int m_iHandle=-1;
 };
 
 #endif
