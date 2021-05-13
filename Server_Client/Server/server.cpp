@@ -9,25 +9,25 @@ void C_SERVER::run(){
 	m_sock.Listen(m_strIp,m_iPort);
 	int c_fd=m_sock.Accept();
 	while(1){
-		int n=read(c_fd,buf,sizeof(buf));
-		if (!strncmp(buf,"ls",2)){
-			n=ls(buf);
+		Read(c_fd,buf,sizeof(buf));
+		if (!strncmp(buf,"ls",strlen(buf)-1)){
+			ls(buf);
 		}
-		if (!strncmp(buf,"pwd",3)){
-			n=pwd(buf);
+		if (!strncmp(buf,"pwd",strlen(buf)-1)){
+			pwd(buf);
 		}
-		if (!strncmp(buf,"cd",2)){
+		if (!strncmp(buf,"cd ",3)){
 			char target[256];
             bzero(target,sizeof(target));
 			memcpy(target,buf+3,strlen(buf)-4);
 			cd(target);
 		}
-		write(STDOUT_FILENO,buf,n);
-		write(c_fd,buf,n);
-		bzero(buf,sizeof(buf));
+		write(STDOUT_FILENO,buf,strlen(buf));
+		write(c_fd,buf,strlen(buf));
+		memset(buf,0,strlen(buf));
 	}
 }
 
 void C_SERVER::stop(){
-
+	Close(m_sock.m_iHandle);
 }

@@ -1,5 +1,5 @@
 #include "socket.h"
-int Socket::Close(int fd){
+int Close(int fd){
     int ret=close(fd);
     if(-1==ret){
         perror("close fd error!");
@@ -84,10 +84,21 @@ int Socket::Accept(){
     printf("client ip is %s,port is %d\n",cip,cport);
     return ret;
 }
-int Socket::Write(const string strMsg,int len){
-	write(m_iHandle,strMsg.c_str(),len);
-    return 0;
+int Read(int fd,char* buf,int len){
+	int ret=read(fd,buf,len);
+	if(ret<0){
+		char buf[BUFSIZ];
+		snprintf(buf,BUFSIZ,"read %d error!",fd);
+		perror(buf);
+	}
+	return ret;
 }
-int Socket::Read(char* strMsg){
-	return read(m_iHandle,strMsg,sizeof(strMsg));
+int Write(int fd,char* buf,int len){
+	int ret=write(fd,buf,len);
+	if(ret<0){
+		char buf[BUFSIZ];
+		snprintf(buf,BUFSIZ,"write %d error!",fd);
+		perror(buf);
+	}
+	return ret;
 }

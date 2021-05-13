@@ -1,8 +1,8 @@
-#ifndef CLIENT_H
-#define CLIENT_H
+#ifndef SERVER_H
+#define SERVER_H
 #include "socket.h"
-#include "common.h"
-class C_CLIENT{
+#include "cmd.h"
+class C_SERVER{
 public:
     void init(string strIp,int iPort);
     void run();

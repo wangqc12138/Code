@@ -9,17 +9,18 @@ void C_CLIENT::run(){
 	m_sock.Connet(m_strIp,m_iPort);
 	while (1){
 		printf("input some words:\n");
-        int n=read(STDIN_FILENO, buf, sizeof(buf));
-        if (!strncmp(buf,"quit",4)){
+        Read(STDIN_FILENO, buf, sizeof(buf));
+        if (!strncmp(buf,"quit",strlen(buf))){
             break;
         }
-		write(m_sock.m_iHandle,buf,n);
-        n=read(m_sock.m_iHandle,buf,sizeof(buf));
+		Write(m_sock.m_iHandle,buf,strlen(buf));
+        Read(m_sock.m_iHandle,buf,sizeof(buf));
 		printf("return data:\n");
-        write(STDOUT_FILENO,buf,n);
+        Write(STDOUT_FILENO,buf,strlen(buf));
+		bzero(buf,sizeof(buf));
     }
 }
 
 void C_CLIENT::stop(){
-
+	Close(m_sock.m_iHandle);
 }
