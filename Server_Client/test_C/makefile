@@ -1,5 +1,5 @@
 #子目录的Makefile直接读取其子目录就行
-CFLAGS=-I ../Sock/ -I ../include -I ../Client
+CFLAGS=-I ../Sock/ -I ../include -I ../Client_select
 # SUBDIRS=$(shell ls -l | grep ^d | awk '{print $$9}')
 OBJS_DIR=$(shell pwd)/build
 #以下同根目录下的makefile的相同代码的解释

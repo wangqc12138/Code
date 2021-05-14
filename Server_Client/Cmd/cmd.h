@@ -4,5 +4,5 @@
 int cd(const char* dir);
 int ls(char* buf);
 int pwd(char* workdir);
-int cmd(char* buf);
+int cmd(const char* buf_in,char* buf_out);
 #endif

@@ -30,17 +30,17 @@ int pwd(char* buf){
 	strcpy(buf+n,"\n");
 	return n+1;
 }
-int cmd(char* buf){
-	if (!strncmp(buf,"ls",strlen(buf)-1)){
-		ls(buf);
+int cmd(const char* buf_in,char* buf_out){
+	if (!strncmp(buf_in,"ls",strlen(buf_in))){
+		ls(buf_out);
 	}
-	if (!strncmp(buf,"pwd",strlen(buf)-1)){
-		pwd(buf);
+	if (!strncmp(buf_in,"pwd",strlen(buf_in))){
+		pwd(buf_out);
 	}
-	if (!strncmp(buf,"cd ",3)){
+	if (!strncmp(buf_in,"cd ",3)){
 		char target[256];
         bzero(target,sizeof(target));
-		memcpy(target,buf+3,strlen(buf)-4);
+		memcpy(target,buf_in+3,strlen(buf_in)-3);
 		cd(target);
 	}
 	return 0;

@@ -5,7 +5,7 @@ void C_SERVER::init(string strIp,int iPort){
 }
 
 void C_SERVER::run(){
-	char buf[BUFSIZ];
+	char recv_buf[BUFSIZ],send_buf[BUFSIZ];
 	int max_fd,max_i=-1;
 	fd_set lisset,allset;
 	m_sock.Listen(m_strIp,m_iPort);
@@ -16,7 +16,13 @@ void C_SERVER::run(){
 	max_fd=m_sock.m_iHandle;
 	while(1){
 		lisset=allset;
-		int ret=select(max_fd+1,&lisset,0,0,0);
+		bzero(recv_buf,strlen(recv_buf));
+		bzero(send_buf,strlen(send_buf));
+		/* 
+		memset(recv_buf,0,sizeof(recv_buf));
+		memset(send_buf,0,sizeof(send_buf));
+		 */
+		int ret=select(max_fd+1,&lisset,0,0,NULL);
 		if(ret<0){
 			perror("select fd error!");
 			break;
@@ -46,15 +52,25 @@ void C_SERVER::run(){
 			}
 			int c_fd=clifd[i];
 			if(FD_ISSET(c_fd,&lisset)){
-				if(Read(c_fd,buf,sizeof(buf))==0){
+				int n=Read(c_fd,recv_buf,sizeof(recv_buf));
+				if(n==0){
+					//printf("client close\n");
 					Close(c_fd);
-					c_fd=-1;
 					FD_CLR(c_fd,&allset);
+					clifd[i]=-1;
 				}else{
-					cmd(buf);
+					if(recv_buf[n-1]=='\n'){
+						recv_buf[n-1]=0;
+					}
+					memcpy(send_buf,recv_buf,strlen(recv_buf));
+					cmd(recv_buf,send_buf);
+					write(c_fd,send_buf,strlen(send_buf));
 				}
-				write(c_fd,buf,strlen(buf));
-				memset(buf,0,strlen(buf));
+				/* for(;;){
+					bzero(send_buf,strlen(send_buf));
+					memcpy(send_buf,"just test\n",strlen("just test\n"));
+					write(c_fd,send_buf,strlen(send_buf));
+				} */
 				if(--ret==0){
 					break;
 				}
