@@ -779,3 +779,90 @@ public:
         return res;
     }
 };
+/* 
+给你一个整数数组 nums ，返回 nums[i] XOR nums[j] 的最大运算结果，其中 0 ≤ i ≤ j < n 。
+进阶：你可以在 O(n) 的时间解决这个问题吗？
+421
+*/
+class Solution {
+public:
+    int findMaximumXOR(vector<int>& nums) {
+		
+    }
+};
+/*
+在二叉树中，根节点位于深度 0 处，每个深度为 k 的节点的子节点位于深度 k+1 处。
+如果二叉树的两个节点深度相同，但 父节点不同 ，则它们是一对堂兄弟节点。
+我们给出了具有唯一值的二叉树的根节点 root ，以及树中两个不同节点的值 x 和 y 。
+只有与值 x 和 y 对应的节点是堂兄弟节点时，才返回 true 。否则，返回 false。
+993
+*/
+class Solution {
+public:
+    bool isCousins(TreeNode* root, int x, int y) {
+		int xf,yf,xd,yd,d=0;
+        dfs(root,x,y,xf,xd,yf,yd,d);
+		return xf!=yf&&xd==yd;
+    }
+	void dfs(TreeNode* root,int x,int y,int& xf,int& xd,int& yf,int& yd,int d){
+		if(root==nullptr){
+			return;
+		}
+		d++;
+		if(root->left){
+			if(root->left->val==x){
+				xf=root->val;
+				xd=d;
+			}
+			if(root->left->val==y){
+				yf=root->val;
+				yd=d;
+			}
+			dfs(root->left,x,y,xf,xd,yf,yd,d);
+		}
+		if(root->right){
+			if(root->right->val==x){
+				xf=root->val;
+				xd=d;
+			}
+			if(root->right->val==y){
+				yf=root->val;
+				yd=d;
+			}
+			dfs(root->right,x,y,xf,xd,yf,yd,d);
+		}
+
+	}
+};
+//BFS
+class Solution {
+public:
+    bool isCousins(TreeNode* root, int x, int y) {
+        queue<TreeNode*> q;
+		q.push(root);
+		while(!q.empty()){
+			int n=q.size(),index=-1;
+			bool flag=false;
+			for(int i=0;i<n;i++){
+				TreeNode* node=q.front();
+				q.pop();
+				if(node==nullptr){
+					continue;
+				}
+				if(node->val==x||node->val==y){
+					if(index==-1){
+						index=i;
+					}else if(i-index>1||(i==index+1&&i%2==0)){
+						return true;
+					}
+				}
+				q.push(node->left);
+				q.push(node->right);
+			}
+			if(index==1){
+				return false;
+			}	
+		}
+		return false;
+    }
+};
