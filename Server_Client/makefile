@@ -3,7 +3,7 @@ CC=g++
 CFLAGS=-I ../Sock/ -I ../include -I ../Client -I ../Server
 #debug文件夹里的makefile文件需要最后执行，所以这里需要执行的子目录要排除debug文件夹，这里使用awk排除了debug文件夹，读取剩下的文件夹
 #SUBDIRS=$(shell ls -l | grep ^d | awk '{if($$9 != "test_S" && $$9 != "include" && $$9 != "test_C") print $$9}')
-SUBDIRS= Sock Cmd Client_select Server_poll test_C test_S 
+SUBDIRS= Sock Cmd Client_select Server_process test_C test_S 
 #无需下一行的注释代码，因为我们已经知道debug里的makefile是最后执行的，所以最后直接去debug目录下执行指定的makefile文件就行，具体下面有注释
 #DEBUG=$(shell ls -l | grep ^d | awk '{if($$9 == "debug") print $$9}')
 #记住当前工程的根目录路径
@@ -22,10 +22,12 @@ BIN_DIR=$(ROOT_DIR)/bin
 #将以下变量导出到子shell中，本次相当于导出到子目录下的makefile中
 export CC SER_DEST CLI_DEST BUILD_DIR BIN_DIR ROOT_DIR CFLAGS
 #注意这里的顺序，需要先执行SUBDIRS最后才能是DEBUG
-all:$(SUBDIRS)  server client ECHO #$(CUR_OBJS)
+all:$(SUBDIRS)  server client ECHO MKDIR#$(CUR_OBJS)
 #递归执行子目录下的makefile文件，这是递归执行的关键
-$(SUBDIRS):ECHO
+$(SUBDIRS):ECHO MKDIR
 	make -C $@
+MKDIR:
+	@mkdir -p build bin 
 OBJS=$(shell find ./build -name "*.o"|grep -v "test_C.o"|grep -v "client.o")
 server:
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/$@ $(OBJS)

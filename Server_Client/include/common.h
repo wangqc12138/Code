@@ -4,6 +4,9 @@
 #include <vector>
 #include <string.h>
 #include <stdio.h>
+//信号
+#include <signal.h>
+#include <sys/wait.h>
 //ls,pwd,cd的实现
 #include <dirent.h>
 #include <unistd.h>

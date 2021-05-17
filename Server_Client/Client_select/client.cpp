@@ -6,7 +6,9 @@ void C_CLIENT::init(string strIp,int iPort){
 
 void C_CLIENT::run(){
 	char recv_buf[BUFSIZ],send_buf[BUFSIZ];
-	m_sock.Connet(m_strIp,m_iPort);
+	if(-1==m_sock.Connet(m_strIp,m_iPort)){
+		return;
+	}
 	int maxfd=m_sock.m_iHandle,n;
 	fd_set allset,lisset;
 	FD_ZERO(&allset);
@@ -40,11 +42,7 @@ void C_CLIENT::run(){
 		}
 		if(FD_ISSET(STDIN_FILENO,&lisset)){
 			n=Read(STDIN_FILENO, send_buf, sizeof(send_buf));
-			if(send_buf[n-1]=='\n'){
-				send_buf[n-1]=0;
-			}
-        	if (!strncmp(send_buf,"quit",strlen(send_buf))){
-				
+        	if (!strncmp(send_buf,"quit",strlen(send_buf)-1)){
             	break;
         	}
 			Write(m_sock.m_iHandle,send_buf,strlen(send_buf));
