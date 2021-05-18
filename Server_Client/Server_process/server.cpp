@@ -8,14 +8,14 @@ void sigchld_handler(int sig){
     while(waitpid(-1,0,WNOHANG)>0);
     return;
 }
-int C_SERVER::work(int child_fd){
+int C_SERVER::work(int c_fd){
 	char send_buf[BUFSIZ],recv_buf[BUFSIZ];
 	while(1){
 		bzero(send_buf,strlen(send_buf));
 		bzero(recv_buf,strlen(recv_buf));
-		int n=Read(child_fd,recv_buf,sizeof(recv_buf));
+		int n=Read(c_fd,recv_buf,sizeof(recv_buf));
 		if(n==0){
-			Close(child_fd);
+			Close(c_fd);
 			return -1;
 		}else{
 			memcpy(send_buf,recv_buf,strlen(recv_buf));
@@ -23,7 +23,7 @@ int C_SERVER::work(int child_fd){
 				recv_buf[n-1]=0;
 			}
 			cmd(recv_buf,send_buf);
-			write(child_fd,send_buf,strlen(send_buf));
+			write(c_fd,send_buf,strlen(send_buf));
 		}
 	}
 	return 0;

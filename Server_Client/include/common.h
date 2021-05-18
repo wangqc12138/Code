@@ -7,6 +7,8 @@
 //信号
 #include <signal.h>
 #include <sys/wait.h>
+//线程
+#include <pthread.h>
 //ls,pwd,cd的实现
 #include <dirent.h>
 #include <unistd.h>
