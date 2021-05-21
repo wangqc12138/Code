@@ -23,6 +23,11 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+typedef struct{
+	string ip;
+	int port;
+	string logpath;
+}cfgmsg;
 using namespace std;
 
 #define MAXSIZE 1024

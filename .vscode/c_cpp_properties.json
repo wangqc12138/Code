@@ -10,12 +10,13 @@
 				"${workspaceFolder}/Server_Client/Sock",
 				"${workspaceFolder}/Server_Client/include",
 				"${workspaceFolder}/Server_Client/Cmd",
-				"${workspaceFolder}/Server_Client/Thread_queue"
+				"${workspaceFolder}/Server_Client/Threadpool",
+				"${workspaceFolder}/Server_Client/Readcfg"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "gnu17",
-            "cppStandard": "gnu++14",
+            "cppStandard": "gnu++17",
             "intelliSenseMode": "linux-gcc-x64"
         }
     ],

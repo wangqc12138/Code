@@ -60,7 +60,7 @@ void* thread_run(void *arg) {
     thread_queue *tq=(thread_queue *) arg;
     while (1) {
         int c_fd=tq->pop();
-        printf("get fd in thread, fd==%d, tid == %d",c_fd,(int)tid);
+        printf("get fd in thread, fd==%d, tid==%d",c_fd,(int)tid);
         work(c_fd);
     }
 }
