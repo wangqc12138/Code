@@ -421,3 +421,86 @@ public:
         return res;
     }
 };
+/* 
+给你一个整数数组 arr 。
+现需要从数组中取三个下标 i、j 和 k ，其中 (0 <= i < j <= k < arr.length) 。
+a 和 b 定义如下：
+    a = arr[i] ^ arr[i + 1] ^ ... ^ arr[j - 1]
+    b = arr[j] ^ arr[j + 1] ^ ... ^ arr[k]
+注意：^ 表示 按位异或 操作。
+请返回能够令 a == b 成立的三元组 (i, j , k) 的数目。
+ */
+//前缀异或
+class Solution {
+public:
+    int countTriplets(vector<int>& arr) {
+		int res=0;
+		vector<int> preXor(arr.size()+1,0);
+		for(int i=0;i<arr.size();i++){
+			preXor[i+1]=preXor[i]^arr[i];
+		}
+		for(int i=0;i<arr.size();i++){
+			for(int j=i+1;j<arr.size();j++){
+				for(int k=j;k<arr.size();k++){
+					if(preXor[i]==preXor[k+1]){
+						res++;
+					}
+				}
+			}
+		}
+		return res;
+    }
+};
+class Solution {
+public:
+    int countTriplets(vector<int>& arr) {
+		int res=0;
+		vector<int> preXor(arr.size()+1,0);
+		for(int i=0;i<arr.size();i++){
+			preXor[i+1]=preXor[i]^arr[i];
+		}
+		for(int i=0;i<arr.size();i++){
+			for(int k=i+1;k<arr.size();k++){
+				if(preXor[i]==preXor[k+1]){
+					res+=k-i;
+				}
+			}
+		}
+		return res;
+    }
+};
+//还有一重循环的，！
+/* 
+给你一个二维矩阵 matrix 和一个整数 k ，矩阵大小为 m x n 由非负整数组成。
+
+矩阵中坐标 (a, b) 的 值 可由对所有满足 0 <= i <= a < m 且 0 <= j <= b < n 的元素 matrix[i][j]（下标从 0 开始计数）执行异或运算得到。
+
+请你找出 matrix 的所有坐标中第 k 大的值（k 的值从 1 开始计数）。
+1738
+ */
+class Solution {
+public:
+    int kthLargestValue(vector<vector<int>>& matrix, int k) {
+		int m=matrix.size(),n=matrix[0].size();
+		vector<vector<int>> preXor(m,vector<int>(n,0));
+		priority_queue<int,vector<int>,greater<int>> pq;
+		for(int i=0;i<m;i++){
+			for(int j=0;j<n;j++){
+				if(i==0&&j==0){
+					preXor[i][j]=matrix[i][j];
+				}else if(i==0){
+					preXor[i][j]=matrix[i][j]^preXor[i][j-1];
+				}else if(j==0){
+					preXor[i][j]=matrix[i][j]^preXor[i-1][j];
+				}else{
+					preXor[i][j]=matrix[i][j]^preXor[i-1][j]^preXor[i][j-1]^preXor[i-1][j-1];
+				}
+				pq.push(preXor[i][j]);
+			}
+		}
+		for(int i=1;i<k;i++){
+			pq.pop();
+		}
+		return pq.top();
+    }
+};

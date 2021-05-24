@@ -783,12 +783,66 @@ public:
 给你一个整数数组 nums ，返回 nums[i] XOR nums[j] 的最大运算结果，其中 0 ≤ i ≤ j < n 。
 进阶：你可以在 O(n) 的时间解决这个问题吗？
 421
+字典树--0、1
 */
 class Solution {
 public:
     int findMaximumXOR(vector<int>& nums) {
-		
+		int res=0;
+		Trie* root=new Trie();
+		for(int i:nums){
+			root->add(i);
+			int m=root->getMaxXor(i);
+			res=max(res,m);
+		}
+		return res;
     }
+};
+class Trie{
+public:
+	Trie(){
+		next.clear();
+		next.resize(2);
+		isEnd=false;
+	}
+	void add(int n){
+		Trie *root=this;
+		for(int i=31;i>=0;i--){
+			int k=(n>>i)&1;//获取最低位
+			if(root->next[k]==nullptr){
+				Trie* node=new Trie;
+				root->next[k]=node;
+			}
+			root=root->next[k];
+		}
+		root->isEnd=true;
+	}
+	int getMaxXor(int n){
+		Trie *root=this;
+		int res=0;
+		for(int i=31;i>=0;i--){
+			int k=(n>>i)&1;
+			if(k==0){
+				if(root->next[1]!=nullptr){
+					root=root->next[1];
+					res+=(1<<i);
+				}else{
+					root=root->next[0];
+				}
+			}else{
+				if(root->next[0]!=nullptr){
+					root=root->next[0];
+					res+=(1<<i);
+				}else{
+					root=root->next[1];
+				}
+			}
+		}
+		return res;
+	}
+private:
+	vector<Trie*> next;
+	bool isEnd;
 };
 /*
 在二叉树中，根节点位于深度 0 处，每个深度为 k 的节点的子节点位于深度 k+1 处。
@@ -864,5 +918,231 @@ public:
 			}	
 		}
 		return false;
+    }
+};
+/* 
+给你一个整数数组 arr 。
+现需要从数组中取三个下标 i、j 和 k ，其中 (0 <= i < j <= k < arr.length) 。
+a 和 b 定义如下：
+    a = arr[i] ^ arr[i + 1] ^ ... ^ arr[j - 1]
+    b = arr[j] ^ arr[j + 1] ^ ... ^ arr[k]
+注意：^ 表示 按位异或 操作。
+请返回能够令 a == b 成立的三元组 (i, j , k) 的数目。
+ */
+//前缀异或
+class Solution {
+public:
+    int countTriplets(vector<int>& arr) {
+		int res=0;
+		vector<int> preXor(arr.size()+1,0);
+		for(int i=0;i<arr.size();i++){
+			preXor[i+1]=preXor[i]^arr[i];
+		}
+		for(int i=0;i<arr.size();i++){
+			for(int j=i+1;j<arr.size();j++){
+				for(int k=j;k<arr.size();k++){
+					if(preXor[i]==preXor[k+1]){
+						res++;
+					}
+				}
+			}
+		}
+		return res;
+    }
+};
+class Solution {
+public:
+    int countTriplets(vector<int>& arr) {
+		int res=0;
+		vector<int> preXor(arr.size()+1,0);
+		for(int i=0;i<arr.size();i++){
+			preXor[i+1]=preXor[i]^arr[i];
+		}
+		for(int i=0;i<arr.size();i++){
+			for(int k=i+1;k<arr.size();k++){
+				if(preXor[i]==preXor[k+1]){
+					res+=k-i;
+				}
+			}
+		}
+		return res;
+    }
+};
+//还有一重循环的，！
+/* 
+给你一个二维矩阵 matrix 和一个整数 k ，矩阵大小为 m x n 由非负整数组成。
+
+矩阵中坐标 (a, b) 的 值 可由对所有满足 0 <= i <= a < m 且 0 <= j <= b < n 的元素 matrix[i][j]（下标从 0 开始计数）执行异或运算得到。
+
+请你找出 matrix 的所有坐标中第 k 大的值（k 的值从 1 开始计数）。
+1738
+ */
+class Solution {
+public:
+    int kthLargestValue(vector<vector<int>>& matrix, int k) {
+		int m=matrix.size(),n=matrix[0].size();
+		vector<vector<int>> preXor(m,vector<int>(n,0));
+		priority_queue<int,vector<int>,greater<int>> pq;
+		for(int i=0;i<m;i++){
+			for(int j=0;j<n;j++){
+				if(i==0&&j==0){
+					preXor[i][j]=matrix[i][j];
+				}else if(i==0){
+					preXor[i][j]=matrix[i][j]^preXor[i][j-1];
+				}else if(j==0){
+					preXor[i][j]=matrix[i][j]^preXor[i-1][j];
+				}else{
+					preXor[i][j]=matrix[i][j]^preXor[i-1][j]^preXor[i][j-1]^preXor[i-1][j-1];
+				}
+				pq.push(preXor[i][j]);
+			}
+		}
+		for(int i=1;i<k;i++){
+			pq.pop();
+		}
+		return pq.top();
+    }
+};
+/* 
+给一非空的单词列表，返回前 k 个出现次数最多的单词。
+
+返回的答案应该按单词出现频率由高到低排序。如果不同的单词有相同出现频率，按字母顺序排序。
+692
+ */
+class Solution {
+public:
+	class node{
+	public:
+		string word;
+		int cnt;
+		node(string w,int i):word(w),cnt(i){}
+		bool operator<(const node &i)const{
+			if(cnt<i.cnt){
+				return true;
+			}
+			if(cnt==i.cnt){
+				return word>i.word;
+			}
+            return false;
+		}
+	};
+    vector<string> topKFrequent(vector<string>& words, int k) {
+		priority_queue<node> mpq;
+		map<string,int> m;
+		for(auto word:words){
+			m[word]++;
+		}
+		for(auto [x,y]:m){
+			mpq.push(node(x,y));
+		}
+		vector<string> res;
+		for(int i=0;i<k;i++){
+			res.push_back(mpq.top().word);
+            mpq.pop();
+		}
+		return res;
+    }
+};
+/* 
+在两条独立的水平线上按给定的顺序写下 nums1 和 nums2 中的整数。
+
+现在，可以绘制一些连接两个数字 nums1[i] 和 nums2[j] 的直线，这些直线需要同时满足满足：
+
+     nums1[i] == nums2[j]
+    且绘制的直线不与任何其他连线（非水平线）相交。
+
+请注意，连线即使在端点也不能相交：每个数字只能属于一条连线。
+
+以这种方法绘制线条，并返回可以绘制的最大连线数。
+1035
+ */
+//披着皮的最长公共子序列
+class Solution {
+public:
+    int maxUncrossedLines(vector<int>& nums1, vector<int>& nums2) {
+		int m=nums1.size(),n=nums2.size();
+		vector<vector<int>> dp(m+1,vector<int>(n+1,0));
+		for(int i=1;i<=m;i++){
+			for(int j=1;j<=n;j++){
+				dp[i][j]=nums1[i-1]==nums2[j-1]?dp[i-1][j-1]+1:max(dp[i-1][j],dp[i][j-1]);
+			}
+		}
+		return dp[m][n];
+    }
+};
+/* 
+给你一个由非负整数组成的数组 nums 。另有一个查询数组 queries ，其中 queries[i] = [xi, mi] 。
+
+第 i 个查询的答案是 xi 和任何 nums 数组中不超过 mi 的元素按位异或（XOR）得到的最大值。
+换句话说，答案是 max(nums[j] XOR xi) ，其中所有 j 均满足 nums[j] <= mi 。如果 nums 中的所有元素都大于 mi，最终答案就是 -1 。
+
+返回一个整数数组 answer 作为查询的答案，其中 answer.length == queries.length 且 answer[i] 是第 i 个查询的答案。
+1707
+ */
+class Trie{
+public:
+	Trie(){
+		next.clear();
+		next.resize(2);
+	}
+	void add(int n){
+		Trie* root=this;
+		for(int i=31;i>=0;i--){
+			int k=(n>>i)&1;
+			if(root->next[k]==nullptr){
+				root->next[k]=new Trie();
+			}
+			root=root->next[k];
+		}
+	}
+	int getMaxXor(int n){
+		Trie* root=this;
+		if(!root->next[0]&&!root->next[1]){
+			return -1;
+		}
+		int res=0;
+		for(int i=31;i>=0;i--){
+			int k=(n>>i)&1;
+			if(k==0){
+				if(root->next[1]!=nullptr){
+					root=root->next[1];
+					res+=(1<<i);
+				}else{
+					root=root->next[0];
+				}
+			}else{
+				if(root->next[0]!=nullptr){
+					root=root->next[0];
+					res+=(1<<i);
+				}else{
+					root=root->next[1];
+				}
+			}
+		}
+		return res;
+	}
+private:
+	vector<Trie*> next;
+};
+class Solution {
+public:
+    vector<int> maximizeXor(vector<int>& nums, vector<vector<int>>& queries) {
+		int i=0;
+		for(auto &q:queries){
+			q.push_back(i++);
+		}
+		sort(nums.begin(),nums.end());
+		sort(queries.begin(),queries.end(),[](auto &x,auto &y){return x[1]<y[1];});
+		vector<int> res(queries.size());
+		Trie* root=new Trie();
+		i=0;
+		for(auto vec:queries){
+			int xi=vec[0],mi=vec[1],j=vec[2];
+			for(;i<nums.size()&&nums[i]<=mi;i++){
+				root->add(nums[i]);
+			}
+			res[j]=root->getMaxXor(xi);
+		}
+		return res;
     }
 };
