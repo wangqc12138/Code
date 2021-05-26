@@ -1071,6 +1071,27 @@ public:
     }
 };
 /* 
+黑板上写着一个非负整数数组 nums[i] 。Alice 和 Bob 轮流从黑板上擦掉一个数字，Alice 先手。
+如果擦除一个数字后，剩余的所有数字按位异或运算得出的结果等于 0 的话，当前玩家游戏失败。
+(另外，如果只剩一个数字，按位异或运算得到它本身；如果无数字剩余，按位异或运算结果为 0。）
+并且，轮到某个玩家时，如果当前黑板上所有数字按位异或运算结果等于 0，这个玩家获胜。
+假设两个玩家每步都使用最优解，当且仅当 Alice 获胜时返回 true。
+810
+ */
+class Solution {
+public:
+    bool xorGame(vector<int>& nums) {
+		if(nums.size()%2==0){
+			return true;
+		}
+		int res=0;
+		for(int n:nums){
+			res^=n;
+		}
+		return res==0;
+    }
+};
+/* 
 给你一个由非负整数组成的数组 nums 。另有一个查询数组 queries ，其中 queries[i] = [xi, mi] 。
 
 第 i 个查询的答案是 xi 和任何 nums 数组中不超过 mi 的元素按位异或（XOR）得到的最大值。
@@ -1143,6 +1164,73 @@ public:
 			}
 			res[j]=root->getMaxXor(xi);
 		}
+		return res;
+    }
+};
+/* 
+有台奇怪的打印机有以下两个特殊要求：
+
+    打印机每次只能打印由 同一个字符 组成的序列。
+    每次可以在任意起始和结束位置打印新字符，并且会覆盖掉原来已有的字符。
+
+给你一个字符串 s ，你的任务是计算这个打印机打印它需要的最少打印次数。
+664
+ */
+class Solution {
+public:
+    int strangePrinter(string s) {
+		int n=s.size();
+		vector<vector<int>> dp(n,vector<int>(n,1));
+		for(int i=n-1;i>=0;i--){
+			for(int j=i+1;j<n;j++){
+				if(s[i]==s[j]){
+					dp[i][j]=dp[i][j-1];
+				}else{
+                    dp[i][j]=INT_MAX;
+					for(int k=i;k<j;k++){
+						dp[i][j]=min(dp[i][j],dp[i][k]+dp[k+1][j]);
+					}
+				}
+			}
+		}
+		return dp[0][n-1];
+    }
+};
+//20210526未完成
+/* 
+给出一个字符串 s（仅含有小写英文字母和括号）。
+请你按照从括号内到外的顺序，逐层反转每对匹配括号中的字符串，并返回最终的结果。
+注意，您的结果中 不应 包含任何括号
+1190
+ */
+class Solution {
+public:
+    string reverseParentheses(string s) {
+		stack<char> sk;
+		queue<char> qe;
+		for(char c:s){
+			if(c!=')'){
+				sk.push(c);
+			}else{
+				while(!sk.empty()&&sk.top()!='('){
+					qe.push(sk.top());
+					sk.pop();
+				}
+				if(!sk.empty()&&sk.top()=='('){
+					sk.pop();
+				}
+				while(!qe.empty()){
+					sk.push(qe.front());
+					qe.pop();
+				}
+			}
+		}
+		string res;
+		while(!sk.empty()){
+			res+=sk.top();
+			sk.pop();
+		}
+		reverse(res.begin(),res.end());
 		return res;
     }
 };
