@@ -1234,3 +1234,20 @@ public:
 		return res;
     }
 };
+/* 
+两个整数之间的汉明距离指的是这两个数字对应二进制位不同的位置的数目。
+给出两个整数 x 和 y，计算它们之间的汉明距离。
+461
+ */
+class Solution {
+public:
+    int hammingDistance(int x, int y) {
+		int res=0;
+        for(int i=0;i<32;i++){
+			int x1=(x>>i)&1;
+			int y1=(y>>i)&1;
+			res+=x1==y1?0:1;
+		}
+		return res;
+    }
+};
