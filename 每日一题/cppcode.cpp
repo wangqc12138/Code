@@ -1251,3 +1251,22 @@ public:
 		return res;
     }
 };
+/* 
+两个整数的 汉明距离 指的是这两个数字的二进制数对应位不同的数量。
+计算一个数组中，任意两个数之间汉明距离的总和。
+477
+ */
+class Solution {
+public:
+    int totalHammingDistance(vector<int>& nums) {
+        int res=0,n=nums.size();
+        for(int i=0;i<32;i++){
+            int c=0;
+            for(int j:nums){
+                c+=(j>>i)&1;
+            }
+            res+=c*(n-c);
+        }
+        return res;
+    }
+};
