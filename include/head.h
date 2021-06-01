@@ -10,6 +10,7 @@
 #include <numeric>
 #include <cmath>
 #include <unordered_map>
+#include <unordered_set>
 #include <queue>
 #include <stack>
 using namespace std;
@@ -38,6 +39,13 @@ public:
         val = _val;
         children = _children;
     }
+};
+// Definition for Employee.
+class Employee {
+public:
+    int id;
+    int importance;
+    vector<int> subordinates;
 };
 class ArrayReader {
 public:

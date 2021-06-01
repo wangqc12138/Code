@@ -1134,3 +1134,204 @@ public:
 		}
 	}
 };
+//抽象成图论问题
+/* 
+给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, ...）使得它们的和等于 n。你需要让组成和的完全平方数的个数最少。
+
+给你一个整数 n ，返回和为 n 的完全平方数的 最少数量 。
+
+完全平方数 是一个整数，其值等于另一个整数的平方；换句话说，其值等于一个整数自乘的积。
+例如，1、4、9 和 16 都是完全平方数，而 3 和 11 不是。
+279
+可以用dp做，在这使用bfs做
+ */
+class Solution {
+public:
+    int numSquares(int n) {
+		vector<int> nums;
+		for(int i=1;i<=n;i++){
+			nums.push_back(i*i);
+		}
+		queue<int> mq;
+		mq.push(n);
+		int res=1;
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				int k=mq.front();
+				mq.pop();
+				for(int num:nums){
+					if(num==k){
+						return res;
+					}else if(num>k){
+						break;
+					}else{
+						mq.push(k-num);
+					}
+				}
+			}
+            res++;			
+		}
+		return res;
+    }
+};
+/* 
+数字 n 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 有效的 括号组合。
+22
+可以使用回溯去做，此处使用bfs
+ */
+class Solution {
+public:
+    vector<string> generateParenthesis(int n) {
+		queue<pair<string,pair<int,int>>> mq;
+		vector<string> res;
+		mq.push({"",{n,n}});
+		while(!mq.empty()){
+			string str=mq.front().first;
+			int left=mq.front().second.first;
+			int right=mq.front().second.second;
+			mq.pop();
+			if(left==0&&right==0){
+				res.push_back(str);
+			}
+			if(right>left){
+				mq.push({str+')',{left,right-1}});
+			}
+			if(left>0){
+				mq.push({str+'(',{left-1,right}});
+			}
+		}
+		return res;
+    }
+};
+/* 
+给定一个保存员工信息的数据结构，它包含了员工 唯一的 id ，重要度 和 直系下属的 id 。
+
+比如，员工 1 是员工 2 的领导，员工 2 是员工 3 的领导。他们相应的重要度为 15 , 10 , 5 。那么员工 1 的数据结构是 [1, 15, [2]] ，员工 2的 数据结构是 [2, 10, [3]] ，员工 3 的数据结构是 [3, 5, []] 。注意虽然员工 3 也是员工 1 的一个下属，但是由于 并不是直系 下属，因此没有体现在员工 1 的数据结构中。
+
+现在输入一个公司的所有员工信息，以及单个员工 id ，返回这个员工和他所有下属的重要度之和。
+690
+ */
+class Solution {
+public:
+    int getImportance(vector<Employee*> employees, int id) {
+        queue<int> mq;
+        int res=0;
+        mq.push(id);
+        while(!mq.empty()){
+            int n=mq.front();
+            mq.pop();
+            for(auto i:employees){
+                if(i->id==n){
+                    res+=i->importance;
+                    for(auto j:i->subordinates){
+                        mq.push(j);
+                    }
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+};
+/* 
+给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数。
+如果没有任何一种硬币组合能组成总金额，返回 -1。
+
+你可以认为每种硬币的数量是无限的。
+322
+本题是经典的背包问题，使用dp解决
+此处用bfs
+ */
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+		if(amount==0){
+			return 0;
+		}
+		sort(coins.begin(),coins.end());
+		queue<int> mq;
+        vector<int> visit(amount+1,0);
+		mq.push(amount);
+		int res=1;
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				int n=mq.front();
+				mq.pop();
+				for(int k:coins){
+					if(k==n){
+						return res;
+					}else if(k>n){
+						break;
+					}else if(visit[n-k]==0){
+                        visit[n-k]=1;
+						mq.push(n-k);
+					}
+				}
+			}
+            res++;
+		}
+		return -1;
+    }
+};
+/* 
+有两个容量分别为 x升 和 y升 的水壶以及无限多的水。请判断能否通过使用这两个水壶，从而可以得到恰好 z升 的水？
+如果可以，最后请用以上水壶中的一或两个来盛放取得的 z升 水。
+你允许：
+    装满任意一个水壶
+    清空任意一个水壶
+    从一个水壶向另外一个水壶倒水，直到装满或者倒空
+365
+ */
+class Solution {
+public:
+    bool canMeasureWater(int jug1Capacity, int jug2Capacity, int targetCapacity) {
+		vector<int> vec;
+		vec.emplace(vec.begin(),2,2,2,3);
+		for(int i:vec){
+			cout<<i<<" ";
+		}
+		return true;
+    }
+};
+//1\使用using代替typedef
+//2\使用emplace代替push和insert
+
+using PII = pair<int, int>;
+class Solution {
+public:
+    bool canMeasureWater(int x, int y, int z) {
+        stack<PII> stk;
+        stk.emplace(0, 0);
+
+        auto hash_function = [](const PII& o) {return hash<int>()(o.first) ^ hash<int>()(o.second);};
+        unordered_set<PII, decltype(hash_function)> seen(0, hash_function);
+        while (!stk.empty()) {
+            if (seen.count(stk.top())) {
+                stk.pop();
+                continue;
+            }
+            seen.emplace(stk.top());
+            
+            auto [remain_x, remain_y] = stk.top();
+            stk.pop();
+            if (remain_x == z || remain_y == z || remain_x + remain_y == z) {
+                return true;
+            }
+            // 把 X 壶灌满。
+            stk.emplace(x, remain_y);
+            // 把 Y 壶灌满。
+            stk.emplace(remain_x, y);
+            // 把 X 壶倒空。
+            stk.emplace(0, remain_y);
+            // 把 Y 壶倒空。
+            stk.emplace(remain_x, 0);
+            // 把 X 壶的水灌进 Y 壶，直至灌满或倒空。
+            stk.emplace(remain_x - min(remain_x, y - remain_y), remain_y + min(remain_x, y - remain_y));
+            // 把 Y 壶的水灌进 X 壶，直至灌满或倒空。
+            stk.emplace(remain_x + min(remain_y, x - remain_x), remain_y - min(remain_y, x - remain_x));
+        }
+        return false;
+    }
+};
