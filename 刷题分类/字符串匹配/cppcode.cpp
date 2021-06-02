@@ -1,7 +1,4 @@
-#include <string>
-#include <map>
-#include <vector>
-using namespace std;
+#include "head.h"
 /*
 实现 strStr() 函数。
 给你两个字符串 haystack 和 needle ，请你在 haystack 字符串中找出 needle 字符串出现的第一个位置（下标从 0 开始）。如果不存在，则返回  -1 。
@@ -10,9 +7,39 @@ using namespace std;
 class Solution {
 public:
     int strStr(string haystack, string needle) {
-
+        int m=needle.size(),n=haystack.size(),j=0,i=1;
+        vector<int> next(m,0);
+        //填入next数组
+        for(;i<m;i++){
+            while(needle[i]!=needle[j]){
+                if(j==0){
+                    next[i]=0;
+                    break;
+                }else{
+                    j=next[j-1];
+                }
+            }
+            if(needle[i]==needle[j]){
+                next[i]=++j;
+            }
+        }
+        //利用next数组比较
+        i=0,j=0;
+        while(i<n&&j<m){
+            if(needle[j]==haystack[i]){
+                i++;
+                j++;
+            }else if(j==0){
+                i++;
+            }
+            else{
+                j=next[j-1];
+            } 
+        }
+        return j!=m?-1:i-m;
     }
 };
+
 // BM算法
 class Solution {
 public:

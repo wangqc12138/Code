@@ -1287,51 +1287,140 @@ public:
 class Solution {
 public:
     bool canMeasureWater(int jug1Capacity, int jug2Capacity, int targetCapacity) {
-		vector<int> vec;
-		vec.emplace(vec.begin(),2,2,2,3);
-		for(int i:vec){
-			cout<<i<<" ";
+		queue<pair<int,int>> mq;
+		auto hash=[](auto x){return x.first^x.second;};
+		unordered_set<pair<int,int>,decltype(hash)> mus(0,hash);
+		auto del=[&](int x,int y){
+			if(!mus.count({x,y})){
+				mq.emplace(x,y);
+				mus.emplace(x,y);
+			}
+		};
+		mq.emplace(0,0);
+		mus.emplace(0,0);
+		while(!mq.empty()){
+			auto [x,y]=mq.front();
+			if(x==targetCapacity||y==targetCapacity||x+y==targetCapacity){
+				return true;
+			}
+			mq.pop();
+			del(0,y);
+			del(jug1Capacity,y);
+			del(x,0);
+			del(x,jug2Capacity);
+			int i=jug1Capacity-x;
+			int j=jug2Capacity-y;
+			del(x-min(x,j),y+min(x,j));
+			del(x+min(i,y),y-min(i,y));
 		}
-		return true;
+        return false;
     }
 };
+
 //1\使用using代替typedef
 //2\使用emplace代替push和insert
-
-using PII = pair<int, int>;
+/* 
+这里有一个非负整数数组 arr，你最开始位于该数组的起始下标 start 处。
+当你位于下标 i 处时，你可以跳到 i + arr[i] 或者 i - arr[i]。
+请你判断自己是否能够跳到对应元素值为 0 的 任一 下标处。
+注意，不管是什么情况下，你都无法跳到数组之外。
+1306
+ */
 class Solution {
 public:
-    bool canMeasureWater(int x, int y, int z) {
-        stack<PII> stk;
-        stk.emplace(0, 0);
+    bool canReach(vector<int>& arr, int start) {
+		int n=arr.size();
+		queue<int> mq;
+		vector<int> visit(n,0);
+		mq.emplace(start);
+		while(!mq.empty()){
+			int k=mq.front();
+			if(arr[k]==0){
+				return true;
+			}
+			mq.pop();
+			int i=k-arr[k];
+			int j=k+arr[k];
+			if(i>=0&&visit[i]==0){
+				visit[i]=1;
+				mq.push(i);
+			}
+			if(j<n-1&&visit[j]==0){
+				visit[j]=1;
+				mq.push(j);
+			}
+		}
+		return false;
+	}
+};
+/* 
+已知有 N 门课程，它们以 1 到 N 进行编号。
 
-        auto hash_function = [](const PII& o) {return hash<int>()(o.first) ^ hash<int>()(o.second);};
-        unordered_set<PII, decltype(hash_function)> seen(0, hash_function);
-        while (!stk.empty()) {
-            if (seen.count(stk.top())) {
-                stk.pop();
-                continue;
-            }
-            seen.emplace(stk.top());
-            
-            auto [remain_x, remain_y] = stk.top();
-            stk.pop();
-            if (remain_x == z || remain_y == z || remain_x + remain_y == z) {
-                return true;
-            }
-            // 把 X 壶灌满。
-            stk.emplace(x, remain_y);
-            // 把 Y 壶灌满。
-            stk.emplace(remain_x, y);
-            // 把 X 壶倒空。
-            stk.emplace(0, remain_y);
-            // 把 Y 壶倒空。
-            stk.emplace(remain_x, 0);
-            // 把 X 壶的水灌进 Y 壶，直至灌满或倒空。
-            stk.emplace(remain_x - min(remain_x, y - remain_y), remain_y + min(remain_x, y - remain_y));
-            // 把 Y 壶的水灌进 X 壶，直至灌满或倒空。
-            stk.emplace(remain_x + min(remain_y, x - remain_x), remain_y - min(remain_y, x - remain_x));
-        }
-        return false;
+给你一份课程关系表 relations[i] = [X, Y]，用以表示课程 X 和课程 Y 之间的先修关系：课程 X 必须在课程 Y 之前修完。
+
+假设在一个学期里，你可以学习任何数量的课程，但前提是你已经学习了将要学习的这些课程的所有先修课程。
+
+请你返回学完全部课程所需的最少学期数。
+
+如果没有办法做到学完全部这些课程的话，就返回 -1。
+1136
+ */
+class Solution {
+public:
+    int minimumSemesters(int n, vector<vector<int>>& relations) {
+		vector<int> in_(n+1);
+		vector<set<int>> next(n+1);
+		queue<int> mq;
+		for(auto vec:relations){
+			int i=vec[0],j=vec[1];
+			in_[j]++;
+			next[i].emplace(j);
+		}
+		for(int i=1;i<=n;i++){
+			if(in_[i]==0){
+				mq.emplace(i);
+			}
+		}
+		int res=-1;
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				int k=mq.front();
+				mq.pop();
+				for(int j:next[k]){
+					in_[j]--;
+					if(in_[j]==0){
+						mq.emplace(j);
+					}
+				}
+			}
+			res++;
+		}
+		for(int i:in_){
+			if(i!=0){
+				return -1;
+			}
+		}
+		return res;
+    }
+};
+/* 
+现有一种使用英语字母的火星语言，这门语言的字母顺序与英语顺序不同。
+
+给你一个字符串列表 words ，作为这门语言的词典，words 中的字符串已经 按这门新语言的字母顺序进行了排序 。
+
+请你根据该词典还原出此语言中已知的字母顺序，并 按字母递增顺序 排列。
+若不存在合法字母顺序，返回 "" 。若存在多种可能的合法字母顺序，返回其中 任意一种 顺序即可。
+
+字符串 s 字典顺序小于 字符串 t 有两种情况：
+
+    在第一个不同字母处，如果 s 中的字母在这门外星语言的字母顺序中位于 t 中字母之前，那么 s 的字典顺序小于 t 。
+    如果前面 min(s.length, t.length) 字母都相同，那么 s.length < t.length 时，s 的字典顺序也小于 t
+269
+ */
+class Solution {
+public:
+    string alienOrder(vector<string>& words) {
+		
     }
 };
