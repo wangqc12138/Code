@@ -1353,6 +1353,7 @@ public:
 		return false;
 	}
 };
+//拓扑排序
 /* 
 已知有 N 门课程，它们以 1 到 N 进行编号。
 
@@ -1420,7 +1421,313 @@ public:
  */
 class Solution {
 public:
-    string alienOrder(vector<string>& words) {
+	string alienOrder(vector<string>& words) {
+		vector<unordered_set<int>> next(26);
+		unordered_map<int,int> in_;
+		int n=words.size();
+		for(string str:words){
+			for(char c:str){
+				in_[c-'a']=0;
+			}
+		}
+		for(int i=0;i<n;i++){
+			string stri=words[i];
+			for(int j=i+1;j<n;j++){
+				string strj=words[j];
+				int k=0;
+				for(;k<stri.size();k++){
+					if(k>=strj.size()){
+						return "";
+					}
+					if(stri[k]!=strj[k]){
+                        if(!next[stri[k]-'a'].count(strj[k]-'a')){
+                            next[stri[k]-'a'].emplace(strj[k]-'a');
+						    in_[strj[k]-'a']++;
+                        } 
+                        break;
+					}
+				}
+			}
+		}
+		queue<int> mq;
+		for(auto [x,y]:in_){
+			if(y==0){
+				mq.emplace(x);
+			}
+		}
+		string res="";
+		while(!mq.empty()){
+			int k=mq.front();
+			mq.pop();
+			res+=k+'a';
+			for(int i:next[k]){
+				if(--in_[i]==0){
+					mq.emplace(i);
+				}
+			}
+		}
+		for(int i=0;i<26;i++){
+			if(in_[i]!=0){
+				return "";
+			}
+		}
+		return res;
+    }
+};
+/* 
+你这个学期必须选修 numCourses 门课程，记为 0 到 numCourses - 1 。
+
+在选修某些课程之前需要一些先修课程。 先修课程按数组 prerequisites 给出，其中 prerequisites[i] = [ai, bi] ，表示如果要学习课程 ai 则 必须 先学习课程  bi 。
+
+    例如，先修课程对 [0, 1] 表示：想要学习课程 0 ，你需要先完成课程 1 。
+
+请你判断是否可能完成所有课程的学习？如果可以，返回 true ；否则，返回 false 。
+207
+*/
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+		queue<int> mq;
+		vector<unordered_set<int>> next(numCourses);
+		vector<int> in_(numCourses);
+		for(auto vec:prerequisites){
+			int i=vec[0],j=vec[1];
+			next[i].emplace(j);
+			in_[j]++;
+		}
+		for(int i=0;i<numCourses;i++){
+			if(in_[i]==0){
+				mq.push(i);
+			}
+		}
+		int res=0;
+		while(!mq.empty()){
+			int k=mq.front();
+			mq.pop();
+			for(int i:next[k]){
+				if(--in_[i]==0){
+					mq.emplace(i);
+				}
+			}
+			res++;
+		}
+		return res==numCourses;
+    }
+};
+/* 
+现在你总共有 n 门课需要选，记为 0 到 n-1。
+
+在选修某些课程之前需要一些先修课程。 例如，想要学习课程 0 ，你需要先完成课程 1 ，我们用一个匹配来表示他们: [0,1]
+
+给定课程总量以及它们的先决条件，返回你为了学完所有课程所安排的学习顺序。
+
+可能会有多个正确的顺序，你只要返回一种就可以了。如果不可能完成所有课程，返回一个空数组。
+210
+ */
+class Solution {
+public:
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+		queue<int> mq;
+		vector<unordered_set<int>> next(numCourses);
+		vector<int> in_(numCourses);
+		for(auto vec:prerequisites){
+			next[vec[1]].emplace(vec[0]);
+			in_[vec[0]]++;
+		}
+		for(int i=0;i<numCourses;i++){
+			if(in_[i]==0){
+				mq.emplace(i);
+			}
+		}
+		vector<int> res;
+		while(!mq.empty()){
+			int k=mq.front();
+			res.emplace_back(k);
+			mq.pop();
+			for(int i:next[k]){
+				if(--in_[i]==0){
+					mq.emplace(i);
+				}
+			}
+		}
+		if(res.size()!=numCourses){
+			return {};
+		}
+		return res;
+    }
+};
+/* 
+树是一个无向图，其中任何两个顶点只通过一条路径连接。 换句话说，一个任何没有简单环路的连通图都是一棵树。
+
+给你一棵包含 n 个节点的树，标记为 0 到 n - 1 。
+给定数字 n 和一个有 n - 1 条无向边的 edges 列表（每一个边都是一对标签），
+其中 edges[i] = [ai, bi] 表示树中节点 ai 和 bi 之间存在一条无向边。
+
+可选择树中任何一个节点作为根。当选择节点 x 作为根节点时，设结果树的高度为 h 。
+在所有可能的树中，具有最小高度的树（即，min(h)）被称为 最小高度树 。
+
+请你找到所有的 最小高度树 并按 任意顺序 返回它们的根节点标签列表。
+树的 高度 是指根节点和叶子节点之间最长向下路径上边的数量。 
+310
+ */
+class Solution {
+public:
+    vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges) {
+		if(edges.empty()){
+            return {0};
+        }
+        vector<vector<int>> next(n);
+		vector<int> out_(n);
+		for(auto vec:edges){
+			next[vec[0]].emplace_back(vec[1]);
+			next[vec[1]].emplace_back(vec[0]);
+			out_[vec[0]]++;
+			out_[vec[1]]++;
+		}
+		queue<int> mq;
+		for(int i=0;i<n;i++){
+			if(out_[i]==1){
+				mq.emplace(i);
+			}
+		}
+		vector<int> res;
+		while(!mq.empty()){
+			int len=mq.size();
+			vector<int> temp;
+			for(int i=0;i<len;i++){
+				int k=mq.front();
+                mq.pop();
+				temp.emplace_back(k);
+				for(int j:next[k]){
+					if(--out_[j]==1){
+						mq.emplace(j);
+					}
+				}
+			}
+			res=temp;
+		}
+		return res;
+    }
+};
+/* 
+给你这棵「无向树」，请你测算并返回它的「直径」：这棵树上最长简单路径的 边数。
+
+我们用一个由所有「边」组成的数组 edges 来表示一棵无向树，其中 edges[i] = [u, v] 表示节点 u 和 v 之间的双向边。
+
+树上的节点都已经用 {0, 1, ..., edges.length} 中的数做了标记，每个节点上的标记都是独一无二的。
+此处使用拓扑排序的做法，还有使用两次BFS的做法，DFS的做法
+1245
+ */
+class Solution {
+public:
+    int treeDiameter(vector<vector<int>>& edges) {
+		int n=edges.size()+1;
+		if(edges.empty()){
+            return {0};
+        }
+        vector<vector<int>> next(n);
+		vector<int> out_(n);
+		for(auto vec:edges){
+			next[vec[0]].emplace_back(vec[1]);
+			next[vec[1]].emplace_back(vec[0]);
+			out_[vec[0]]++;
+			out_[vec[1]]++;
+		}
+		queue<int> mq;
+		for(int i=0;i<n;i++){
+			if(out_[i]==1){
+				mq.emplace(i);
+			}
+		}
+		int res=0;
+		vector<int> temp;
+		while(!mq.empty()){
+			int len=mq.size();
+			temp.clear();
+			for(int i=0;i<len;i++){
+				int k=mq.front();
+                mq.pop();
+				temp.emplace_back(k);
+				for(int j:next[k]){
+					if(--out_[j]==1){
+						mq.emplace(j);
+					}
+				}
+			}
+            if(mq.empty()){
+                break;
+            }
+			res++;
+		}
+		if(temp.size()==2){
+			return 2*res+1;
+		}
+		return 2*res;
+    }
+};
+/* 
+在有向图中，从某个节点和每个转向处开始出发，沿着图的有向边走。如果到达的节点是终点（即它没有连出的有向边），则停止。
+
+如果从起始节点出发，最后必然能走到终点，就认为起始节点是 最终安全 的。
+更具体地说，对于最终安全的起始节点而言，存在一个自然数 k ，无论选择沿哪条有向边行走 ，走了不到 k 步后必能停止在一个终点上。
+
+返回一个由图中所有最终安全的起始节点组成的数组作为答案。答案数组中的元素应当按 升序 排列。
+
+该有向图有 n 个节点，按 0 到 n - 1 编号，其中 n 是 graph 的节点数。
+图以下述形式给出：graph[i] 是编号 j 节点的一个列表，满足 (i, j) 是图的一条有向边。
+802
+找出没有环的路？
+ */
+class Solution {
+public:
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+		int n=graph.size();
+		vector<set<int>> pre(n);
+		vector<int> out_(n,0);
+		queue<int> mq;
+		vector<int> res;
+		for(int i=0;i<n;i++){
+			out_[i]=graph[i].size();
+			for(int j=0;j<graph[i].size();j++){
+				pre[graph[i][j]].emplace(i);
+			}
+		}
+		for(int i=0;i<n;i++){
+			if(out_[i]==0){
+				mq.emplace(i);
+			}
+		}
+		while(!mq.empty()){		
+			int  k=mq.front();
+			res.emplace_back(k);
+			mq.pop();
+			for(int j:pre[k]){
+				if(--out_[j]==0){
+					mq.emplace(j);
+				}
+			}
+		}
+		sort(res.begin(),res.end());
+		return res;
+    }
+};
+/* 
+你总共需要上 n 门课，课程编号依次为 0 到 n-1 。
+
+有的课会有直接的先修课程，比如如果想上课程 0 ，你必须先上课程 1 ，那么会以 [1,0] 数对的形式给出先修课程数对。
+
+给你课程总数 n 和一个直接先修课程数对列表 prerequisite 和一个查询对列表 queries 。
+
+对于每个查询对 queries[i] ，请判断 queries[i][0] 是否是 queries[i][1] 的先修课程。
+
+请返回一个布尔值列表，列表中每个元素依次分别对应 queries 每个查询对的判断结果。
+
+注意：如果课程 a 是课程 b 的先修课程且课程 b 是课程 c 的先修课程，那么课程 a 也是课程 c 的先修课程。
+1246
+ */
+class Solution {
+public:
+    vector<bool> checkIfPrerequisite(int numCourses, vector<vector<int>>& prerequisites, vector<vector<int>>& queries) {
 		
     }
 };
