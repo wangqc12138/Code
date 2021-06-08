@@ -1728,6 +1728,164 @@ public:
 class Solution {
 public:
     vector<bool> checkIfPrerequisite(int numCourses, vector<vector<int>>& prerequisites, vector<vector<int>>& queries) {
-		
+		vector<unordered_set<int>> next(numCourses);
+		vector<int> in_(numCourses,0);
+		queue<int> mq;
+		vector<unordered_set<int>> pre(numCourses);
+		for(auto vec:prerequisites){
+			next[vec[0]].emplace(vec[1]);
+			in_[vec[1]]++;
+		}
+		for(int i=0;i<numCourses;i++){
+			if(0==in_[i]){
+				mq.emplace(i);
+			}
+		}
+		while(!mq.empty()){
+			int k=mq.front();
+			mq.pop();
+			for(int i:next[k]){
+				pre[i].emplace(k);
+				for(int j:pre[k]){//前置的前置也是现在的前置
+					pre[i].emplace(j);
+				}
+				if(--in_[i]==0){
+					mq.emplace(i);
+				}
+			}
+		}
+		vector<bool> res;
+		for(auto vec:queries){
+			if(pre[vec[1]].count(vec[0])){
+				res.emplace_back(true);
+			}else{
+				res.emplace_back(false);
+			}
+		}
+		return res;
     }
 };
+/* 
+有 n 个项目，每个项目或者不属于任何小组，或者属于 m 个小组之一。group[i] 表示第 i 个项目所属的小组，
+如果第 i 个项目不属于任何小组，则 group[i] 等于 -1。
+项目和小组都是从零开始编号的。可能存在小组不负责任何项目，即没有任何项目属于这个小组。
+
+请你帮忙按要求安排这些项目的进度，并返回排序后的项目列表：
+
+    同一小组的项目，排序后在列表中彼此相邻。
+    项目之间存在一定的依赖关系，我们用一个列表 beforeItems 来表示，
+	其中 beforeItems[i] 表示在进行第 i 个项目前（位于第 i 个项目左侧）应该完成的所有项目。
+
+如果存在多个解决方案，只需要返回其中任意一个即可。如果没有合适的解决方案，就请返回一个 空列表 。
+两次拓扑，先给无组项目编号
+1203
+ */
+/* 
+给定一个 m x n 整数矩阵 matrix ，找出其中 最长递增路径 的长度。
+
+对于每个单元格，你可以往上，下，左，右四个方向移动。 你 不能 在 对角线 方向上移动或移动到 边界外（即不允许环绕）。
+329
+本题使用拓扑排序，将给的矩阵建成图，入度为0入队列 
+ */
+class Solution {
+public:
+	vector<pair<int,int>> dir={{0,-1},{0,1},{-1,0},{1,0}};
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+		int m=matrix.size(),n=matrix[0].size(),res=0;
+		vector<vector<int>> next(m*n);
+		vector<int> in_(m*n);
+		queue<int> mq;
+
+		for(int i=0;i<m;++i){
+			for(int j=0;j<n;++j){
+				for(auto [a,b]:dir){
+					if(a+i<0||a+i>=m||b+j<0||b+j>=n){
+						continue;
+					}
+					if(matrix[a+i][b+j]>matrix[i][j]){
+						next[i*n+j].emplace_back((i+a)*n+j+b);
+						in_[(i+a)*n+j+b]++;
+					}
+				}
+			}
+		}
+
+		for(int i=0;i<m*n;i++){
+			if(in_[i]==0){
+				mq.emplace(i);
+			}
+		}
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				int k=mq.front();
+				mq.pop();
+				for(int j:next[k]){
+					if(--in_[j]==0){
+						mq.emplace(j);
+					}
+				}
+			}
+			res++;
+		}
+		return res;
+    }
+};
+/* 
+验证原始的序列 org 是否可以从序列集 seqs 中唯一地重建。
+序列 org 是 1 到 n 整数的排列，其中 1 ≤ n ≤ 104。
+重建是指在序列集 seqs 中构建最短的公共超序列。（即使得所有  seqs 中的序列都是该最短序列的子序列）。
+确定是否只可以从 seqs 重建唯一的序列，且该序列就是 org 。
+444
+使用拓扑排序是否能排出唯一一条路径为org
+ */
+class Solution {
+public:
+    bool sequenceReconstruction(vector<int>& org, vector<vector<int>>& seqs) {
+		if(seqs.empty()){
+            return false;
+        }
+        int n=org.size();
+		vector<vector<int>> next(n+1);
+		vector<int> in_(n+1),res;
+		queue<int> mq;
+		for(auto vec:seqs){
+            if(vec[0]<=0||vec[0]>n){
+                return false;
+            }
+			for(int i=1;i<vec.size();i++){
+				if(vec[i]<=0||vec[i]>n){
+                    cout<<n<<endl;
+					return false;
+				}
+				next[vec[i-1]].emplace_back(vec[i]);
+				in_[vec[i]]++;
+			}
+		}
+		for(int i=1;i<=n;i++){
+			if(in_[i]==0){
+				mq.emplace(i);
+				res.emplace_back(i);
+			}
+		}
+		if(res.size()>1){
+			return false;
+		}
+		while(!mq.empty()){
+			int k=mq.front();
+			int len=res.size();
+			mq.pop();
+			for(int i:next[k]){
+				if(--in_[i]==0){
+					mq.emplace(i);
+					res.emplace_back(i);
+				}
+			}
+			if(res.size()-len>1){
+				return false;
+			}
+		}
+		return res==org;
+    }
+};
+//双向BFS,多源BFS
