@@ -1889,3 +1889,441 @@ public:
     }
 };
 //双向BFS,多源BFS
+/* 
+字典 wordList 中从单词 beginWord 和 endWord 的 转换序列 是一个按下述规格形成的序列：
+
+    序列中第一个单词是 beginWord 。
+    序列中最后一个单词是 endWord 。
+    每次转换只能改变一个字母。
+    转换过程中的中间单词必须是字典 wordList 中的单词。
+
+给你两个单词 beginWord 和 endWord 和一个字典 wordList ，找到从 beginWord 到 endWord 的 最短转换序列 中的 单词数目 。
+如果不存在这样的转换序列，返回 0。
+单向BFS超时；改为双向BFS，分别从头和尾同时开始，如果遍历到的一个是都遍历过的，即为相符合的
+ */
+class Solution {
+public:
+	unordered_map<string,unordered_set<string>> next;
+	unordered_set<string> words;
+	void addnode(string word){
+		string wd=word;
+		for(char &c:word){
+			char tmp=c;
+			c='.';
+			for(auto str:next[word]){
+                if(wd==str){
+                    continue;
+                }
+				next[wd].emplace(str);
+				next[str].emplace(wd);
+			}
+			next[word].emplace(wd);
+			c=tmp;
+		}
+	}
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+		unordered_set<string> wds(wordList.begin(),wordList.end()),visit1,visit2;
+		int res=2;
+		queue<string> mq1,mq2;
+		if(!wds.count(endWord)){
+			return 0;
+		}
+		wds.emplace(beginWord);
+		for(string w:wds){
+			addnode(w);
+		}
+		mq1.emplace(beginWord);
+		mq2.emplace(endWord);
+		visit1.emplace(beginWord);
+		visit2.emplace(endWord);
+		while(!mq1.empty()||!mq2.empty()){
+			int len=mq1.size();
+			for(int i=0;i<len;i++){
+				string str=mq1.front();
+				mq1.pop();
+				for(string nstr:next[str]){
+					if(visit2.count(nstr)){
+						return res;
+					}
+					if(visit1.count(nstr)){
+						continue;
+					}
+					visit1.emplace(nstr);
+					mq1.emplace(nstr);
+				}
+			}
+			res++;
+			len=mq2.size();
+			for(int i=0;i<len;i++){
+				string str=mq2.front();
+				mq2.pop();
+				for(string nstr:next[str]){
+					if(visit1.count(nstr)){
+						return res;
+					}
+					if(visit2.count(nstr)){
+						continue;
+					}
+					visit2.emplace(nstr);
+					mq2.emplace(nstr);
+				}
+			}
+			res++;
+		}
+		return 0;
+    }
+};
+// class Solution {
+// public:
+//     int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+// 		unordered_set<string> words1(wordList.begin(),wordList.end());
+// 		unordered_set<string> words2(wordList.begin(),wordList.end());
+        
+// 		queue<string> mq1,mq2;
+// 		int res=2;
+// 		if(!words1.count(endWord)){
+// 			return 0;
+// 		}
+// 		mq1.emplace(beginWord);
+// 		mq2.emplace(endWord);
+//         words1.erase(beginWord);
+//         words2.erase(endWord);
+// 		while(!mq1.empty()||!mq2.empty()){
+// 			int len1=mq1.size();
+// 			int len2=mq2.size();
+// 			for(int i=0;i<len1;i++){
+//                 string str=mq1.front();
+// 				mq1.pop();
+// 				for(string nextstr:wordList){
+// 					if(strCom(nextstr,str)&&words1.count(nextstr)){
+//                         if(!words2.count(nextstr)){
+//                             return res;
+//                         }
+// 						mq1.emplace(nextstr);
+// 						words1.erase(nextstr);
+// 					}
+// 				}
+
+// 			}
+// 			res++;
+// 			for(int i=0;i<len2;i++){
+// 				string str=mq2.front();
+// 				mq2.pop();
+// 				for(string nextstr:wordList){
+// 					if(strCom(nextstr,str)&&words2.count(nextstr)){
+//                         if(!words1.count(nextstr)){
+//                             return res;
+//                         }
+// 						mq2.emplace(nextstr);
+// 						words2.erase(nextstr);
+// 					}
+// 				}
+// 			}
+// 			res++;
+// 		}
+// 		return 0;
+//     }
+// 	bool strCom(string str1,string str2){
+// 		if(str1.size()!=str2.size()){
+// 			return false;
+// 		}
+// 		int k=0;
+// 		for(int i=0;i<str1.size();i++){
+// 			if(str1[i]!=str2[i]){
+// 				if(k==1){
+// 					return false;
+// 				}
+// 				k++;
+// 			}
+// 		}
+// 		return k==1;
+// 	}
+// };
+/* 
+在给定的网格中，每个单元格可以有以下三个值之一：
+
+    值 0 代表空单元格；
+    值 1 代表新鲜橘子；
+    值 2 代表腐烂的橘子。
+
+每分钟，任何与腐烂的橘子（在 4 个正方向上）相邻的新鲜橘子都会腐烂。
+返回直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 -1。
+很明显的BFS，或者DFS应该也可以跟岛屿感染差不多
+要注意的一点是当没有新鲜橘子时，直接返回0；
+994
+ */
+using PII=pair<int,int>;
+class Solution {
+public:
+	vector<PII> dir={{0,-1},{-1,0},{0,1},{1,0}};
+    int orangesRotting(vector<vector<int>>& grid) {
+		int m=grid.size(),n=grid[0].size();
+		int sum=0,res=0;
+		queue<PII> mq;
+		for(int i=0;i<m;i++){
+			for(int j=0;j<n;j++){
+				if(grid[i][j]==2){
+					mq.emplace(i,j);
+				}
+				if(grid[i][j]==1){
+					sum++;
+				}
+			}
+		}
+        if(sum==0){
+            return 0;
+        }
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int k=0;k<len;++k){
+				int i=mq.front().first;
+				int j=mq.front().second;
+				mq.pop();
+				for(auto [c,d]:dir){
+					int x=c+i,y=d+j;
+					if(x<0||x>=m||y<0||y>=n||grid[x][y]!=1){
+						continue;
+					}
+                    sum--;
+					grid[x][y]=2;
+					mq.emplace(x,y);
+				}
+			}
+			res++;
+		}
+		return sum==0?res-1:-1;
+    }
+};
+/* 
+给定一个由 0 和 1 组成的矩阵，找出每个元素到最近的 0 的距离。
+
+两个相邻元素间的距离为 1 。
+542
+将所有0作为起源，继而层次寻找1
+ */
+using PII=pair<int,int>;
+class Solution {
+public:
+	vector<PII> dir={{0,-1},{-1,0},{0,1},{1,0}};
+    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
+		vector<vector<int>> res=mat;
+		int m=mat.size(),n=mat[0].size();
+		queue<PII> mq;
+		for(int i=0;i<m;i++){
+			for(int j=0;j<n;j++){
+				if(mat[i][j]==0){
+					mq.emplace(i,j);
+				}
+				if(res[i][j]==1){
+					res[i][j]=-1;
+				}
+			}
+		}
+		int l=1;
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int k=0;k<len;k++){
+				int i=mq.front().first;
+				int j=mq.front().second;
+				mq.pop();
+				for(auto [c,d]:dir){
+					int x=c+i,y=d+j;
+					if(x<0||x>=m||y<0||y>=n||res[x][y]!=-1){
+							continue;
+					}
+					mq.emplace(x,y);
+					res[x][y]=l;
+				}
+			}
+			l++;
+		}
+		return res;
+    }
+};
+/* 
+你现在手里有一份大小为 N x N 的 网格 grid，上面的每个 单元格 都用 0 和 1 标记好了。
+其中 0 代表海洋，1 代表陆地，请你找出一个海洋单元格，这个海洋单元格到离它最近的陆地单元格的距离是最大的。
+
+我们这里说的距离是「曼哈顿距离」（ Manhattan Distance）：(x0, y0) 和 (x1, y1) 这两个单元格之间的距离是 |x0 - x1| + |y0 - y1| 。
+
+如果网格上只有陆地或者海洋，请返回 -1。
+1162
+与上题类似，从所有陆地开始找最短路径
+ */
+using PII=pair<int,int>;
+class Solution {
+public:
+	vector<PII> dir={{0,-1},{-1,0},{0,1},{1,0}};
+    int maxDistance(vector<vector<int>>& grid) {
+		int m=grid.size(),n=grid[0].size(),res=1;
+		bool sea=false;
+		queue<PII> mq;
+		vector<vector<int>> visit=grid;
+		for(int i=0;i<m;i++){
+			for(int j=0;j<n;j++){
+				if(grid[i][j]==1){
+					mq.emplace(i,j);
+				}
+				if(visit[i][j]==0){
+					sea=true;
+					visit[i][j]=-1;
+				}
+			}
+		}
+		if(!sea||mq.empty()){
+			return -1;
+		}
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int k=0;k<len;++k){
+				int i=mq.front().first;
+				int j=mq.front().second;
+				mq.pop();
+				for(auto [c,d]:dir){
+					int x=c+i,y=d+j;
+					if(x<0||x>=m||y<0||y>=n||visit[x][y]!=-1){
+						continue;
+					}
+					visit[x][y]=res;
+					mq.emplace(x,y);
+				}
+			}
+			res++;
+		}
+		return res-2;
+    }
+};
+/* 
+一条基因序列由一个带有8个字符的字符串表示，其中每个字符都属于 "A", "C", "G", "T"中的任意一个。
+
+假设我们要调查一个基因序列的变化。一次基因变化意味着这个基因序列中的一个字符发生了变化。
+
+例如，基因序列由"AACCGGTT" 变化至 "AACCGGTA" 即发生了一次基因变化。
+
+与此同时，每一次基因变化的结果，都需要是一个合法的基因串，即该结果属于一个基因库。
+
+现在给定3个参数 — start, end, bank，分别代表起始基因序列，目标基因序列及基因库，
+请找出能够使起始基因序列变化为目标基因序列所需的最少变化次数。如果无法实现目标变化，请返回 -1。
+
+注意：
+
+    起始基因序列默认是合法的，但是它并不一定会出现在基因库中。
+    如果一个起始基因序列需要多次变化，那么它每一次变化之后的基因序列都必须是合法的。
+    假定起始基因序列与目标基因序列是不一样的。
+433
+成语接龙之基因接龙？
+ */
+class Solution {
+public:
+	unordered_map<string,unordered_set<string>> next;
+	unordered_set<string> words;
+	void addnode(string word){
+		string wd=word;
+		for(char &c:word){
+			char tmp=c;
+			c='.';
+			for(auto str:next[word]){
+                if(wd==str){
+                    continue;
+                }
+				next[wd].emplace(str);
+				next[str].emplace(wd);
+			}
+			next[word].emplace(wd);
+			c=tmp;
+		}
+	}
+	int minMutation(string beginWord, string endWord, vector<string>& wordList) {
+		unordered_set<string> wds(wordList.begin(),wordList.end()),visit1,visit2;
+		int res=1;
+		queue<string> mq1,mq2;
+		if(!wds.count(endWord)){
+			return -1;
+		}
+		wds.emplace(beginWord);
+		for(string w:wds){
+			addnode(w);
+		}
+		mq1.emplace(beginWord);
+		mq2.emplace(endWord);
+		visit1.emplace(beginWord);
+		visit2.emplace(endWord);
+		while(!mq1.empty()||!mq2.empty()){
+			int len=mq1.size();
+			for(int i=0;i<len;i++){
+				string str=mq1.front();
+				mq1.pop();
+				for(string nstr:next[str]){
+					if(visit2.count(nstr)){
+						return res;
+					}
+					if(visit1.count(nstr)){
+						continue;
+					}
+					visit1.emplace(nstr);
+					mq1.emplace(nstr);
+				}
+			}
+			res++;
+			len=mq2.size();
+			for(int i=0;i<len;i++){
+				string str=mq2.front();
+				mq2.pop();
+				for(string nstr:next[str]){
+					if(visit1.count(nstr)){
+						return res;
+					}
+					if(visit2.count(nstr)){
+						continue;
+					}
+					visit2.emplace(nstr);
+					mq2.emplace(nstr);
+				}
+			}
+			res++;
+		}
+		return -1;
+    }
+};
+/* 
+你有一个带有四个圆形拨轮的转盘锁。每个拨轮都有10个数字： '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' 。
+每个拨轮可以自由旋转：例如把 '9' 变为  '0'，'0' 变为 '9' 。每次旋转都只能旋转一个拨轮的一位数字。
+
+锁的初始数字为 '0000' ，一个代表四个拨轮的数字的字符串。
+
+列表 deadends 包含了一组死亡数字，一旦拨轮的数字和列表里的任何一个元素相同，这个锁将会被永久锁定，无法再被旋转。
+
+字符串 target 代表可以解锁的数字，你需要给出最小的旋转次数，如果无论如何不能解锁，返回 -1。
+752
+ */
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+		unordered_set<string> dead(deadends.begin(),deadends.end()),visit;
+		queue<string> mq;
+		mq.emplace("0000");
+		int res=0;
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				string str=mq.front();
+				if(str==target){
+					return res;
+				}
+				mq.pop();
+				for(int j=0;j<4;j++){
+					for(int k=1;k<=9;k++){
+						string temp=str;
+						temp[j]=(temp[j]-'0'+k+10)%10+'0';
+						if(!dead.count(temp)||!visit.count(temp)){
+							mq.emplace(temp);
+							visit.emplace(temp);
+						}
+					}
+				}
+			}
+			res++;
+		}
+		return -1;
+    }
+};
