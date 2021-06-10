@@ -2295,11 +2295,15 @@ public:
 
 字符串 target 代表可以解锁的数字，你需要给出最小的旋转次数，如果无论如何不能解锁，返回 -1。
 752
+单源BFS也没问题啊？！
  */
 class Solution {
 public:
     int openLock(vector<string>& deadends, string target) {
 		unordered_set<string> dead(deadends.begin(),deadends.end()),visit;
+        if(dead.count("0000")){
+            return -1;
+        }
 		queue<string> mq;
 		mq.emplace("0000");
 		int res=0;
@@ -2312,10 +2316,10 @@ public:
 				}
 				mq.pop();
 				for(int j=0;j<4;j++){
-					for(int k=1;k<=9;k++){
+					for(int k=-1;k<=1;k+=2){
 						string temp=str;
 						temp[j]=(temp[j]-'0'+k+10)%10+'0';
-						if(!dead.count(temp)||!visit.count(temp)){
+						if(!dead.count(temp)&&!visit.count(temp)){
 							mq.emplace(temp);
 							visit.emplace(temp);
 						}
@@ -2326,4 +2330,71 @@ public:
 		}
 		return -1;
     }
+};
+/* 
+在一个 2 x 3 的板上（board）有 5 块砖瓦，用数字 1~5 来表示, 以及一块空缺用 0 来表示.
+
+一次移动定义为选择 0 与一个相邻的数字（上下左右）进行交换.
+
+最终当板 board 的结果是 [[1,2,3],[4,5,0]] 谜板被解开。
+
+给出一个谜板的初始状态，返回最少可以通过多少次移动解开谜板，如果不能解开谜板，则返回 -1 。
+
+773
+单向也可以，不超时，但有点慢，对于这种知道起点和终点的，可以使用双向
+ */
+class Solution {
+public:
+	vector<pair<int,int>> dir={{0,-1},{-1,0},{0,1},{1,0}};
+    int slidingPuzzle(vector<vector<int>>& board) {
+		int res=0;
+		vector<vector<int>> target={{1,2,3},{4,5,0}};
+		set<vector<vector<int>>> visit;
+		queue<pair<vector<vector<int>>,pair<int,int>>> mq;
+		for(int i=0;i<2;i++){
+			for(int j=0;j<3;j++){
+				if(board[i][j]==0){
+					mq.push({board,{i,j}});
+				}	
+			}
+		}
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int k=0;k<len;k++){
+				auto vec=mq.front().first;
+				int x=mq.front().second.first;
+				int y=mq.front().second.second;
+				if(vec==target){
+					return res;
+				}
+				mq.pop();
+				for(auto [a,b]:dir){
+					int c=x+a,d=y+b;
+					if(c<0||c>=2||d<0||d>=3){
+						continue;
+					}
+					auto temp=vec;
+					temp[x][y]=temp[c][d];
+					temp[c][d]=0;
+					if(visit.count(temp)){
+						continue;
+					}
+					visit.emplace(temp);
+					mq.push({temp,{c,d}});
+				}				
+			}
+			res++;
+		}
+		return -1;
+    }
+};
+class Solution {
+public:
+	queue<pair<vector<vector<int>>,pair<int,int>>> mq1;
+	queue<pair<vector<vector<int>>,pair<int,int>>> mq2;
+	vector<pair<int,int>> dir={{0,-1},{-1,0},{0,1},{1,0}};
+    int slidingPuzzle(vector<vector<int>>& board) {
+		return -1;	
+    }
+	void bfs()
 };
