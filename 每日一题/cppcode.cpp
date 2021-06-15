@@ -1288,6 +1288,7 @@ answer[i] 为 true 的条件是：在每天吃 不超过 dailyCapi 颗糖果的�
 请你返回得到的数组 answer 。
 输入：candiesCount = [5,2,6,4,1], queries = [[3,1,2],[4,10,3],[3,10,100],[4,100,30],[1,3,1]]
 输出：[false,true,true,false,false]
+1744
  */
 class Solution {
 public:
@@ -1320,6 +1321,7 @@ public:
 如果存在，返回 true ；否则，返回 false 。
 
 如果存在一个整数 n ，令整数 x 符合 x = n * k ，则称 x 是 k 的一个倍数。
+523
   */
 class Solution {
 public:
@@ -1359,5 +1361,32 @@ public:
             m[tmp].push_back(sum);
         }
         return false; */
+    }
+};
+/* 
+符合下列属性的数组 arr 称为 山脉数组 ：
+
+    arr.length >= 3
+    存在 i（0 < i < arr.length - 1）使得：
+        arr[0] < arr[1] < ... arr[i-1] < arr[i]
+        arr[i] > arr[i+1] > ... > arr[arr.length - 1]
+
+给你由整数组成的山脉数组 arr ，
+返回任何满足 arr[0] < arr[1] < ... arr[i - 1] < arr[i] > arr[i + 1] > ... > arr[arr.length - 1] 的下标 i 。
+852
+ */
+class Solution {
+public:
+    int peakIndexInMountainArray(vector<int>& arr) {
+		int left=0,right=arr.size()-1;
+		while(left<right){
+			int mid=left+(right-left)/2;
+			if(arr[mid]>arr[mid+1]){//mid不可能是0
+				right=mid;
+			}else{
+				left=mid+1;
+			}
+		}
+		return left;
     }
 };

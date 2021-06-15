@@ -600,3 +600,253 @@ public:
 private:
 	vector<int> dep;
 };
+//栈--------------后序遍历的迭代！
+/* 
+给你二叉树的根节点 root ，返回它节点值的 前序 遍历。
+144
+递归很简单，使用栈非递归
+VLR
+ */
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+		vector<int> res;
+		stack<TreeNode*> ms;
+		ms.emplace(root);
+		while(!ms.empty()){
+			TreeNode* node=ms.top();
+			ms.pop();
+			if(node==nullptr){
+				continue;
+			}
+			res.emplace_back(node->val);
+			ms.emplace(node->right);
+			ms.emplace(node->left);
+		}	 
+		return res;
+    }
+};
+/* 
+给定一个二叉树的根节点 root ，返回它的 中序 遍历。
+94
+非递归
+LVR
+ */
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+		vector<int> res;
+		stack<TreeNode*> ms;
+		TreeNode* node=root;
+		while(!ms.empty()||node!=nullptr){
+			while(node){//先将左边所有节点压入栈
+				ms.emplace(node);
+				node=node->left;
+			}
+			node=ms.top();
+			res.emplace_back(node->val);
+			ms.pop();
+			node=node->right;//递归右节点
+		}
+		return res;
+    }
+};
+/* 
+给定一个二叉树，返回它的 后序 遍历。
+145
+LRV
+与VRL刚好逆序，可以先获取VRL，再翻转
+ */
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+		vector<int> res;
+		stack<TreeNode*> ms;
+		ms.emplace(root);
+		while(!ms.empty()){
+			TreeNode* node=ms.top();
+			ms.pop();
+			if(node==nullptr){
+				continue;
+			}
+			res.emplace_back(node->val);
+			ms.emplace(node->left);
+			ms.emplace(node->right);
+		}	 
+		reverse(res.begin(),res.end());
+		return res;
+    }
+};
+/* 
+给定一个 N 叉树，返回其节点值的 前序遍历 。
+
+N 叉树 在输入中按层序遍历进行序列化表示，每组子节点由空值 null 分隔（请参见示例）。
+589
+递归很简单，使用迭代？
+ */
+class Node {
+public:
+    int val;
+    Node *left;//前面题用的
+    Node *right;//同上
+    Node *parent;//同上
+    vector<Node*> children;
+
+    Node() {}
+
+    Node(int _val) {
+        val = _val;
+    }
+
+    Node(int _val, vector<Node*> _children) {
+        val = _val;
+        children = _children;
+    }
+};
+class Solution {
+public:
+    vector<int> preorder(Node* root) {
+        vector<int> res;
+		stack<Node*> ms;
+		ms.emplace(root);
+		while(!ms.empty()){
+			auto node=ms.top();
+			ms.pop();
+			if(node==nullptr){
+				continue;
+			}
+			res.emplace_back(node->val);
+			reverse(node->children.begin(),node->children.end());
+			for(auto child:node->children){
+				ms.emplace(child);
+			}
+		}
+		return res;
+    }
+};
+/*
+给定一个 N 叉树，返回其节点值的 后序遍历 。
+
+N 叉树 在输入中按层序遍历进行序列化表示，每组子节点由空值 null 分隔（请参见示例）。
+590 
+ */
+class Solution {
+public:
+    vector<int> postorder(Node* root) {    
+	    vector<int> res;
+		stack<Node*> ms;
+		ms.emplace(root);
+		while(!ms.empty()){
+			auto node=ms.top();
+			ms.pop();
+			if(node==nullptr){
+				continue;
+			}
+			res.emplace_back(node->val);
+			for(auto child:node->children){
+				ms.emplace(child);
+			}
+		}
+		reverse(res.begin(),res.end());
+		return res;
+    }
+};	
+//深度优先遍历的应用
+//1-获得图（树）的一些属性,如129
+//2-计算无向图的连通分量
+/* 
+无向图中连通分量的数目
+给定编号从 0 到 n-1 的 n 个节点和一个无向边列表（每条边都是一对节点），请编写一个函数来计算无向图中连通分量的数目。
+323
+三种方法，这里使用DFS，感觉挺像岛屿的，感染？
+ */
+class Solution {
+public:
+    int countComponents(int n, vector<vector<int>>& edges) {
+		int res=0;
+		vector<bool> visit(n,false);
+		vector<vector<int>> next(n);
+		for(auto edge:edges){
+			next[edge[0]].emplace_back(edge[1]);
+			next[edge[1]].emplace_back(edge[0]);
+		}
+		for(int i=0;i<n;i++){
+			if(visit[i]){
+				continue;
+			}
+			visit[i]=true;
+			res++;
+			dfs(next,visit,i);
+		}
+		return res;
+    }
+	void dfs(vector<vector<int>>& next,vector<bool>& visit,int n){//使用引用比传值快的多！
+		for(int i:next[n]){
+			if(visit[i]){
+				continue;
+			}
+			visit[i]=true;
+			dfs(next,visit,i);
+		}
+	}
+};
+//检测图中是否存在环
+/* 
+在本问题中, 树指的是一个连通且无环的无向图。
+
+输入一个图，该图由一个有着N个节点 (节点值不重复1, 2, ..., N) 的树及一条附加的边构成。
+附加的边的两个顶点包含在1到N中间，这条附加的边不属于树中已存在的边。
+
+结果图是一个以边组成的二维数组。每一个边的元素是一对[u, v] ，满足 u < v，表示连接顶点u 和v的无向图的边。
+
+返回一条可以删去的边，使得结果图是一个有着N个节点的树。如果有多个答案，则返回二维数组中最后出现的边。
+答案边 [u, v] 应满足相同的格式 u < v。
+684
+遇上一题类似，可以用并查集，此处使用DFS
+ */
+class Solution {
+public:
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+
+    }
+};
+/* 
+在有向图中，从某个节点和每个转向处开始出发，沿着图的有向边走。如果到达的节点是终点（即它没有连出的有向边），则停止。
+
+如果从起始节点出发，最后必然能走到终点，就认为起始节点是 最终安全 的。
+更具体地说，对于最终安全的起始节点而言，存在一个自然数 k ，无论选择沿哪条有向边行走 ，走了不到 k 步后必能停止在一个终点上。
+
+返回一个由图中所有最终安全的起始节点组成的数组作为答案。答案数组中的元素应当按 升序 排列。
+
+该有向图有 n 个节点，按 0 到 n - 1 编号，其中 n 是 graph 的节点数。
+图以下述形式给出：graph[i] 是编号 j 节点的一个列表，满足 (i, j) 是图的一条有向边。
+802
+ */
+class Solution {
+public:
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+
+    }
+};
+/* 
+存在一个 无向图 ，图中有 n 个节点。其中每个节点都有一个介于 0 到 n - 1 之间的唯一编号。
+给你一个二维数组 graph ，其中 graph[u] 是一个节点数组，由节点 u 的邻接节点组成。
+形式上，对于 graph[u] 中的每个 v ，都存在一条位于节点 u 和节点 v 之间的无向边。该无向图同时具有以下属性：
+
+    不存在自环（graph[u] 不包含 u）。
+    不存在平行边（graph[u] 不包含重复值）。
+    如果 v 在 graph[u] 内，那么 u 也应该在 graph[v] 内（该图是无向图）
+    这个图可能不是连通图，也就是说两个节点 u 和 v 之间可能不存在一条连通彼此的路径。
+
+二分图 定义：如果能将一个图的节点集合分割成两个独立的子集 A 和 B ，
+并使图中的每一条边的两个节点一个来自 A 集合，一个来自 B 集合，就将这个图称为 二分图 。
+
+如果图是二分图，返回 true ；否则，返回 false 。
+785
+ */
+class Solution {
+public:
+    bool isBipartite(vector<vector<int>>& graph) {
+
+    }
+};
