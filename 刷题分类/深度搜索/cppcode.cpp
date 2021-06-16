@@ -9,14 +9,14 @@
 */
 class Solution {
 public:
-    int maxDepth(TreeNode* root) {
+	int maxDepth(TreeNode* root) {
 		if(root==nullptr){
 			return 0;
 		}
 		int ld=maxDepth(root->left);
 		int rd=maxDepth(root->right);
 		return 1+max(ld,rd);
-    }
+	}
 };
 /*
 给定一个二叉树，找出其最小深度。
@@ -28,10 +28,10 @@ public:
 */
 class Solution {
 public:
-    int minDepth(TreeNode* root) {
+	int minDepth(TreeNode* root) {
 		if(root==nullptr){
-            return 0;
-        }
+			return 0;
+		}
 		int len=INT_MAX;
 		if(root->left){
 			len=min(minDepth(root->left),len);
@@ -43,12 +43,12 @@ public:
 			return 1;
 		}
 		return 1+len;
-    }
+	}
 };
 //BFS
 class Solution {
 public:
-    int minDepth(TreeNode* root) {
+	int minDepth(TreeNode* root) {
 		int res=0;
 		queue<TreeNode*> mq;
 		if(root==nullptr){
@@ -72,7 +72,7 @@ public:
 			}
 			res++;
 		}
-    }
+	}
 };
 /*
 给你二叉树的根节点 root 和一个表示目标和的整数 targetSum ，判断该树中是否存在 根节点到叶子节点 的路径，
@@ -83,7 +83,7 @@ public:
 */
 // class Solution {
 // public:
-//     bool hasPathSum(TreeNode* root, int targetSum) {
+//	 bool hasPathSum(TreeNode* root, int targetSum) {
 // 		if(root==nullptr){
 // 			if(targetSum==0){
 // 				return true;
@@ -92,11 +92,11 @@ public:
 // 			}
 // 		}
 // 		return hasPathSum(root->left,targetSum-root->val)||hasPathSum(root->right,targetSum-root->val);
-//     }
+//	 }
 // };
 class Solution {
 public:
-    bool hasPathSum(TreeNode* root, int targetSum) {
+	bool hasPathSum(TreeNode* root, int targetSum) {
 		if(root==nullptr){
 			return false;
 		}
@@ -104,7 +104,7 @@ public:
 			return targetSum==root->val;
 		}
 		return hasPathSum(root->left,targetSum-root->val)||hasPathSum(root->right,targetSum-root->val);
-    }
+	}
 };
 /*
 翻转一棵二叉树。
@@ -113,7 +113,7 @@ public:
 */
 class Solution {
 public:
-    TreeNode* invertTree(TreeNode* root) {
+	TreeNode* invertTree(TreeNode* root) {
 		if(!root){
 			return nullptr;
 		}
@@ -121,7 +121,7 @@ public:
 		root->right=invertTree(root->left);
 		root->left=invertTree(temp);
 		return root;
-    }
+	}
 };
 /*
 给你两棵二叉树的根节点 p 和 q ，编写一个函数来检验这两棵树是否相同。
@@ -130,15 +130,15 @@ public:
 */
 class Solution {
 public:
-    bool isSameTree(TreeNode* p, TreeNode* q) {
+	bool isSameTree(TreeNode* p, TreeNode* q) {
 		if(!p&&!q){
 			return true;
 		}
 		if(!p&&q||p&&!q){
-        	return false;
+			return false;
 		}
 		return p->val==q->val&&isSameTree(p->left,q->left)&&isSameTree(p->right,q->right);
-    }
+	}
 };
 /*
 给定一个二叉树，检查它是否是镜像对称的。
@@ -146,12 +146,12 @@ public:
 */
 class Solution {
 public:
-    bool isSymmetric(TreeNode* root) {
+	bool isSymmetric(TreeNode* root) {
 		if(!root){
 			return true;
 		}
 		return dfs(root->left,root->right);
-    }
+	}
 	bool dfs(TreeNode* p,TreeNode* q){
 		if(!p&&!q){
 			return true;
@@ -168,16 +168,16 @@ public:
 /*
 给你一个二叉树的根节点 root ，树中每个节点都存放有一个 0 到 9 之间的数字。
 每条从根节点到叶节点的路径都代表一个数字：
-    例如，从根节点到叶节点的路径 1 -> 2 -> 3 表示数字 123 。
+	例如，从根节点到叶节点的路径 1 -> 2 -> 3 表示数字 123 。
 计算从根节点到叶节点生成的 所有数字之和 。
 叶节点 是指没有子节点的节点。
 129
 */
 class Solution {
 public:
-    int sumNumbers(TreeNode* root) {
+	int sumNumbers(TreeNode* root) {
 		return dfs(root,0);
-    }
+	}
 	int dfs(TreeNode* root,int sum){
 		if(!root){
 			return 0;
@@ -199,8 +199,8 @@ public:
  */
 class Solution {
 public:
-    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        if(root==p||root==q){//如果它的子树下面有另一个，那自己也算祖先，可以立刻返回
+	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+		if(root==p||root==q){//如果它的子树下面有另一个，那自己也算祖先，可以立刻返回
 			return root;
 		}
 		if(root){
@@ -215,27 +215,27 @@ public:
 			}
 		}
 		return nullptr;
-    }
+	}
 };
 class Solution {
 public:
 	TreeNode* res;
-    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        findListNode(root,p->val,q->val);
-        return res;
-    }
-    bool findListNode(TreeNode* root, int p, int q){
-        if(root==nullptr){
-            return false;
-        }
-        bool inCurr=root->val==p||root->val==q;
-        bool inRight=findListNode(root->right,p,q);
-        bool inLeft=findListNode(root->left,p,q);
-        if(inRight&&inLeft||inCurr&&(inRight||inLeft)){//如果一左一右有或者自己是且另一个是子节点
-        	res=root;
-        }
-        return inCurr||inRight||inLeft;
-    }
+	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+		findListNode(root,p->val,q->val);
+		return res;
+	}
+	bool findListNode(TreeNode* root, int p, int q){
+		if(root==nullptr){
+			return false;
+		}
+		bool inCurr=root->val==p||root->val==q;
+		bool inRight=findListNode(root->right,p,q);
+		bool inLeft=findListNode(root->left,p,q);
+		if(inRight&&inLeft||inCurr&&(inRight||inLeft)){//如果一左一右有或者自己是且另一个是子节点
+			res=root;
+		}
+		return inCurr||inRight||inLeft;
+	}
 };
 /*
 给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。
@@ -244,8 +244,8 @@ public:
 */
 class Solution {
 public:
-    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        if(root==nullptr){
+	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+		if(root==nullptr){
 			return nullptr;
 		}
 		if(root->val<=max(p->val,q->val)&&root->val>=min(p->val,q->val)){
@@ -257,7 +257,7 @@ public:
 			return l;
 		}
 		return r;
-    }
+	}
 };
 /*
 给定一棵二叉树的根节点 root，返回给定节点 p 和 q 的最近公共祖先（LCA）节点。
@@ -267,10 +267,10 @@ public:
 class Solution {
 public:
 	TreeNode* res;
-    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        dfs(root,p->val,q->val);
+	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+		dfs(root,p->val,q->val);
 		return res;
-    }
+	}
 	bool dfs(TreeNode* root,int p,int q){
 		if(root==nullptr){
 			return false;
@@ -291,10 +291,10 @@ public:
 给定一棵二叉树中的两个节点 p 和 q，返回它们的最近公共祖先节点（LCA）。
 每个节点都包含其父节点的引用（指针）。Node 的定义如下：
 class Node {
-    public int val;
-    public Node left;
-    public Node right;
-    public Node parent;
+	public int val;
+	public Node left;
+	public Node right;
+	public Node parent;
 }
 1650
 本题不是使用DFS，不过作为LCA的题放一起了
@@ -302,26 +302,26 @@ class Node {
 class Node {
 public:
 	int val;
-    Node *left;
-    Node *right;
-    Node *parent;
+	Node *left;
+	Node *right;
+	Node *parent;
 };
 class Solution {
 public:
-    Node* lowestCommonAncestor(Node* p, Node * q) {
-    	set<int> myset;
-    	while(p){
-    		myset.insert(p->val);
-    		p=p->parent;
-    	}
-    	while(q){
-    		if(myset.count(q->val)){
-    			return q;
-    		}
-    		q=q->parent;
-    	}
-    	return nullptr;
-    }
+	Node* lowestCommonAncestor(Node* p, Node * q) {
+		set<int> myset;
+		while(p){
+			myset.insert(p->val);
+			p=p->parent;
+		}
+		while(q){
+			if(myset.count(q->val)){
+				return q;
+			}
+			q=q->parent;
+		}
+		return nullptr;
+	}
 };
 /*
 给定一棵二叉树的根节点 root 和 TreeNode 类对象的数组（列表） nodes，返回 nodes 中所有节点的最近公共祖先（LCA）。
@@ -332,36 +332,36 @@ public:
 class Solution {
 public:
 	TreeNode* res;
-    TreeNode* lowestCommonAncestor(TreeNode* root, vector<TreeNode*> &nodes) {
-        dfs(root,nodes);
-        return res;
-    }
-    int dfs(TreeNode* root, vector<TreeNode*> &nodes) {
-    	if(root==nullptr){
-    		return 0;
-    	}
-    	int inCurr=0;
-    	for(int i=0;i<nodes.size();++i){
-    		if(nodes[i]->val==root->val){
-    			inCurr=1;
-    			break;
-    		}
-    	}
-    	int inLeft=dfs(root->left,nodes);
-    	int inRight=dfs(root->right,nodes);
-    	if(inCurr+inLeft+inRight==nodes.size()){
-    		res=root;
+	TreeNode* lowestCommonAncestor(TreeNode* root, vector<TreeNode*> &nodes) {
+		dfs(root,nodes);
+		return res;
+	}
+	int dfs(TreeNode* root, vector<TreeNode*> &nodes) {
+		if(root==nullptr){
 			return 0;
-    	}
-    	return inCurr+inLeft+inRight;
-    }
+		}
+		int inCurr=0;
+		for(int i=0;i<nodes.size();++i){
+			if(nodes[i]->val==root->val){
+				inCurr=1;
+				break;
+			}
+		}
+		int inLeft=dfs(root->left,nodes);
+		int inRight=dfs(root->right,nodes);
+		if(inCurr+inLeft+inRight==nodes.size()){
+			res=root;
+			return 0;
+		}
+		return inCurr+inLeft+inRight;
+	}
 };
 class Solution {
 public:
-    TreeNode* lowestCommonAncestor(TreeNode* root, vector<TreeNode*> &nodes) {
+	TreeNode* lowestCommonAncestor(TreeNode* root, vector<TreeNode*> &nodes) {
 		unordered_set<TreeNode*> uset(nodes.begin(),nodes.end());
 		return dfs(root,uset);
-    }
+	}
 	TreeNode* dfs(TreeNode* root,unordered_set<TreeNode*> uset){
 		if(uset.count(root)){
 			return root;
@@ -392,10 +392,10 @@ public:
  */
 class Solution {
 public:
-    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+	TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
 		int n=preorder.size()-1;
 		return dfs(preorder,inorder,0,n,0,n);
-    }
+	}
 	TreeNode* dfs(vector<int>& preorder, vector<int>& inorder,int pre_b,int pre_e,int in_b,int in_e){
 		if(pre_b>pre_e||in_b>in_e){
 			return nullptr;
@@ -422,13 +422,13 @@ public:
  */
 class Solution {
 public:
-    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+	TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
 		int n=inorder.size();
 		for(int i=0;i<n;i++){
 			in[inorder[i]]=i;
 		}
 		return dfs(inorder,postorder,0,n-1,0,n-1);
-    }
+	}
 	TreeNode* dfs(vector<int>& inorder, vector<int>& postorder,int in_b,int in_e,int post_b,int post_e){
 		if(in_b>in_e||post_b>post_e){
 			return nullptr;
@@ -452,14 +452,14 @@ private:
  */
 class Solution {
 public:
-    TreeNode* constructFromPrePost(vector<int>& preorder, vector<int>& postorder) {
+	TreeNode* constructFromPrePost(vector<int>& preorder, vector<int>& postorder) {
 		int n=preorder.size();
 		for(int i=0;i<n;i++){
 			pre[preorder[i]]=i;
 			post[postorder[i]]=i;
 		}
 		return dfs(preorder,postorder,0,n-1,0,n-1);
-    }
+	}
 	TreeNode* dfs(vector<int>& preorder, vector<int>& postorder,int pre_b,int pre_e,int post_b,int post_e){
 		if(pre_b>pre_e||post_b>post_e){
 			return nullptr;
@@ -488,9 +488,9 @@ private:
  */
 class Solution {
 public:
-    TreeNode* bstFromPreorder(vector<int>& preorder) {
+	TreeNode* bstFromPreorder(vector<int>& preorder) {
 		return dfs(preorder,0,preorder.size()-1);
-    }
+	}
 	TreeNode* dfs(vector<int>& preorder,int pre_b,int pre_e){
 		if(pre_b>pre_e){
 			return nullptr;
@@ -521,9 +521,9 @@ public:
  */
 class Solution {
 public:
-    bool verifyPreorder(vector<int>& preorder) {
+	bool verifyPreorder(vector<int>& preorder) {
 		return dfs(preorder,0,preorder.size()-1,INT_MIN,INT_MAX);
-    }
+	}
 	bool dfs(vector<int>& preorder,int pre_b,int pre_e,int minval,int maxval){
 		if(pre_b>pre_e){
 			return true;
@@ -554,7 +554,7 @@ public:
  */
 class Solution {
 public:
-    TreeNode* recoverFromPreorder(string traversal) {
+	TreeNode* recoverFromPreorder(string traversal) {
 		int k=0,index=0,n=traversal.size();
 		vector<int> preorder;
 		for(int i=0;i<traversal.size();i++){
@@ -573,7 +573,7 @@ public:
 			}
 		}
 		return dfs(preorder,0,preorder.size()-1);
-    }
+	}
 	TreeNode* dfs(vector<int> preorder,int pre_b,int pre_e){
 		if(pre_b>pre_e){
 			return nullptr;
@@ -590,11 +590,11 @@ public:
 			}
 		}
 		if(r!=-1){
-            root->left=dfs(preorder,l,r-1);
+			root->left=dfs(preorder,l,r-1);
 			root->right=dfs(preorder,r,pre_e);
 		}else{
-            root->left=dfs(preorder,pre_b+1,pre_e);
-        }
+			root->left=dfs(preorder,pre_b+1,pre_e);
+		}
 		return root;
 	}
 private:
@@ -609,7 +609,7 @@ VLR
  */
 class Solution {
 public:
-    vector<int> preorderTraversal(TreeNode* root) {
+	vector<int> preorderTraversal(TreeNode* root) {
 		vector<int> res;
 		stack<TreeNode*> ms;
 		ms.emplace(root);
@@ -624,7 +624,7 @@ public:
 			ms.emplace(node->left);
 		}	 
 		return res;
-    }
+	}
 };
 /* 
 给定一个二叉树的根节点 root ，返回它的 中序 遍历。
@@ -634,7 +634,7 @@ LVR
  */
 class Solution {
 public:
-    vector<int> inorderTraversal(TreeNode* root) {
+	vector<int> inorderTraversal(TreeNode* root) {
 		vector<int> res;
 		stack<TreeNode*> ms;
 		TreeNode* node=root;
@@ -649,7 +649,7 @@ public:
 			node=node->right;//递归右节点
 		}
 		return res;
-    }
+	}
 };
 /* 
 给定一个二叉树，返回它的 后序 遍历。
@@ -659,7 +659,7 @@ LRV
  */
 class Solution {
 public:
-    vector<int> postorderTraversal(TreeNode* root) {
+	vector<int> postorderTraversal(TreeNode* root) {
 		vector<int> res;
 		stack<TreeNode*> ms;
 		ms.emplace(root);
@@ -675,7 +675,7 @@ public:
 		}	 
 		reverse(res.begin(),res.end());
 		return res;
-    }
+	}
 };
 /* 
 给定一个 N 叉树，返回其节点值的 前序遍历 。
@@ -686,27 +686,27 @@ N 叉树 在输入中按层序遍历进行序列化表示，每组子节点由�
  */
 class Node {
 public:
-    int val;
-    Node *left;//前面题用的
-    Node *right;//同上
-    Node *parent;//同上
-    vector<Node*> children;
+	int val;
+	Node *left;//前面题用的
+	Node *right;//同上
+	Node *parent;//同上
+	vector<Node*> children;
 
-    Node() {}
+	Node() {}
 
-    Node(int _val) {
-        val = _val;
-    }
+	Node(int _val) {
+		val = _val;
+	}
 
-    Node(int _val, vector<Node*> _children) {
-        val = _val;
-        children = _children;
-    }
+	Node(int _val, vector<Node*> _children) {
+		val = _val;
+		children = _children;
+	}
 };
 class Solution {
 public:
-    vector<int> preorder(Node* root) {
-        vector<int> res;
+	vector<int> preorder(Node* root) {
+		vector<int> res;
 		stack<Node*> ms;
 		ms.emplace(root);
 		while(!ms.empty()){
@@ -722,7 +722,7 @@ public:
 			}
 		}
 		return res;
-    }
+	}
 };
 /*
 给定一个 N 叉树，返回其节点值的 后序遍历 。
@@ -732,8 +732,8 @@ N 叉树 在输入中按层序遍历进行序列化表示，每组子节点由�
  */
 class Solution {
 public:
-    vector<int> postorder(Node* root) {    
-	    vector<int> res;
+	vector<int> postorder(Node* root) {	
+		vector<int> res;
 		stack<Node*> ms;
 		ms.emplace(root);
 		while(!ms.empty()){
@@ -749,7 +749,7 @@ public:
 		}
 		reverse(res.begin(),res.end());
 		return res;
-    }
+	}
 };	
 //深度优先遍历的应用
 //1-获得图（树）的一些属性,如129
@@ -762,7 +762,7 @@ public:
  */
 class Solution {
 public:
-    int countComponents(int n, vector<vector<int>>& edges) {
+	int countComponents(int n, vector<vector<int>>& edges) {
 		int res=0;
 		vector<bool> visit(n,false);
 		vector<vector<int>> next(n);
@@ -779,7 +779,7 @@ public:
 			dfs(next,visit,i);
 		}
 		return res;
-    }
+	}
 	void dfs(vector<vector<int>>& next,vector<bool>& visit,int n){//使用引用比传值快的多！
 		for(int i:next[n]){
 			if(visit[i]){
@@ -806,9 +806,9 @@ public:
  */
 class Solution {
 public:
-    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+	vector<int> findRedundantConnection(vector<vector<int>>& edges) {
 
-    }
+	}
 };
 /* 
 在有向图中，从某个节点和每个转向处开始出发，沿着图的有向边走。如果到达的节点是终点（即它没有连出的有向边），则停止。
@@ -824,19 +824,20 @@ public:
  */
 class Solution {
 public:
-    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+	vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
 
-    }
+	}
 };
+//二分图检测
 /* 
 存在一个 无向图 ，图中有 n 个节点。其中每个节点都有一个介于 0 到 n - 1 之间的唯一编号。
 给你一个二维数组 graph ，其中 graph[u] 是一个节点数组，由节点 u 的邻接节点组成。
 形式上，对于 graph[u] 中的每个 v ，都存在一条位于节点 u 和节点 v 之间的无向边。该无向图同时具有以下属性：
 
-    不存在自环（graph[u] 不包含 u）。
-    不存在平行边（graph[u] 不包含重复值）。
-    如果 v 在 graph[u] 内，那么 u 也应该在 graph[v] 内（该图是无向图）
-    这个图可能不是连通图，也就是说两个节点 u 和 v 之间可能不存在一条连通彼此的路径。
+	不存在自环（graph[u] 不包含 u）。
+	不存在平行边（graph[u] 不包含重复值）。
+	如果 v 在 graph[u] 内，那么 u 也应该在 graph[v] 内（该图是无向图）
+	这个图可能不是连通图，也就是说两个节点 u 和 v 之间可能不存在一条连通彼此的路径。
 
 二分图 定义：如果能将一个图的节点集合分割成两个独立的子集 A 和 B ，
 并使图中的每一条边的两个节点一个来自 A 集合，一个来自 B 集合，就将这个图称为 二分图 。
@@ -846,7 +847,375 @@ public:
  */
 class Solution {
 public:
-    bool isBipartite(vector<vector<int>>& graph) {
-
-    }
+	bool dfs(vector<vector<int>>& graph,vector<int> &color,int i,int c){
+		if(color[i]!=-1){//已染色
+			return color[i]==c;//它的邻居肯定已经染色了，判断即可返回，
+		}
+		color[i]=c;
+		for(int next:graph[i]){
+			if(dfs(graph,color,next,!c)==false){
+				return false;
+			}
+		}
+		return true;
+	}
+	bool isBipartite(vector<vector<int>>& graph) {
+		int n=graph.size();
+		vector<int> color(n,-1);
+		for(int i=0;i<n;i++){
+			if(color[i]==-1){//如果节点未染色
+				if(dfs(graph,color,i,0)==false){//染色失败直接返回失败
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 };
+/* 
+给定一组 N 人（编号为 1, 2, ..., N）， 我们想把每个人分进任意大小的两组。
+
+每个人都可能不喜欢其他人，那么他们不应该属于同一组。
+
+形式上，如果 dislikes[i] = [a, b]，表示不允许将编号为 a 和 b 的人归入同一组。
+
+当可以用这种方法将所有人分进两组时，返回 true；否则返回 false。
+886
+ */
+class Solution {
+public:
+	bool dfs(vector<vector<int>>& next,vector<int>& color,int i,int c){
+		if(color[i]!=-1){
+			return color[i]==c;
+		}
+		color[i]=c;
+		for(int j:next[i]){
+			if(false==dfs(next,color,j,!c)){
+				return false;
+			}
+		}
+		return true;
+	}
+	bool possibleBipartition(int n, vector<vector<int>>& dislikes) {
+		vector<vector<int>> next(n+1);
+		vector<int> color(n+1,-1);
+		for(auto vec:dislikes){
+			next[vec[0]].emplace_back(vec[1]);
+			next[vec[1]].emplace_back(vec[0]);
+		}
+		for(int i=1;i<n+1;i++){
+			if(color[i]==-1){
+				if(false==dfs(next,color,i,0)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+};
+//回溯
+//1-排列 组合 子集等问题
+/* 
+给定一个不含重复数字的数组 nums ，返回其 所有可能的全排列 。你可以 按任意顺序 返回答案。
+46
+使用visit数组标记已经访问过的下标
+ */
+class Solution {
+public:
+    vector<vector<int>> res;
+	vector<int> temp;
+	vector<vector<int>> permute(vector<int>& nums) {
+		vector<int> visit(nums.size(),0);
+		dfs(nums,visit);
+		return res;
+    }
+	void dfs(vector<int>& nums,vector<int> visit){
+		if(temp.size()==nums.size()){
+			res.emplace_back(temp);
+			return;
+		}
+		for(int i=0;i<nums.size();i++){
+			if(visit[i]==1){
+				continue;
+			}
+			visit[i]=1;
+			temp.emplace_back(nums[i]);
+			dfs(nums,visit);
+			temp.pop_back();
+			visit[i]=0;
+		}
+	}
+};
+/* 
+给定一个可包含重复数字的序列 nums ，按任意顺序 返回所有不重复的全排列。
+47
+与上题不同的是，此题存在重复数字！
+ */
+class Solution {
+public:
+	vector<vector<int>> res;
+	vector<int> temp,visit;
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+		visit.resize(nums.size());
+		sort(nums.begin(),nums.end());
+		dfs(nums);
+		return res;
+    }
+	void dfs(vector<int> &nums){
+		if(temp.size()==nums.size()){
+			res.emplace_back(temp);
+			return;
+		}
+		for(int i=0;i<nums.size();i++){
+			if(visit[i]==1||i>0&&nums[i]==nums[i-1]&&visit[i-1]==0){//如果i和i-1相同，那么只存在都拿或者只拿前者
+				continue;//前者未拿的情况也不能拿这个
+			}
+			temp.emplace_back(nums[i]);
+			visit[i]=1;
+			dfs(nums);
+			temp.pop_back();
+			visit[i]=0;
+		}
+	}
+};
+/* 
+给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+
+candidates 中的数字可以无限制重复被选取。
+39
+ */
+class Solution {
+public:
+	vector<vector<int>> res;
+	vector<int> temp;
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+		dfs(candidates,target,0);
+		return res;
+    }
+	void dfs(vector<int>& candidates,int target,int index){
+		if(target<=0){
+			if(target==0){
+				res.emplace_back(temp);
+			}
+			return;
+		}
+		for(int i=index;i<candidates.size();i++){
+			temp.emplace_back(candidates[i]);
+			dfs(candidates,target-candidates[i],i);
+			temp.pop_back();
+		}
+	}
+};
+/* 
+给定一个数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+
+candidates 中的每个数字在每个组合中只能使用一次。
+
+说明：
+    所有数字（包括目标数）都是正整数。
+    解集不能包含重复的组合。 
+40
+存在重复元素
+ */
+class Solution {
+public:
+	vector<vector<int>> res;
+	vector<int> temp,visit;
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+		visit.resize(candidates.size());
+		sort(candidates.begin(),candidates.end());
+		dfs(candidates,target,0);
+		return res;
+    }
+	void dfs(vector<int>& candidates,int target,int index){
+		if(target<=0){
+			if(target==0){
+				res.emplace_back(temp);
+			}
+			return;
+		}
+		for(int i=index;i<candidates.size();i++){
+			/* if(i>0&&candidates[i-1]==candidates[i]&&visit[i-1]==0){//这样可以，与排列的相同
+				continue;
+			} */
+			if(i>index&&candidates[i-1]==candidates[i]){//本轮选择过的不再重复，与排列不同的是，从index开始选择的，前面的自然排除
+				continue;
+			}
+			temp.emplace_back(candidates[i]);
+			visit[i]=1;
+			dfs(candidates,target-candidates[i],i+1);
+			visit[i]=0;
+			temp.pop_back();
+		}
+	}
+};
+/* 
+给定两个整数 n 和 k，返回 1 ... n 中所有可能的 k 个数的组合。
+77
+前两题的中和，非重复数组不无限选
+ */
+class Solution {
+public:
+	vector<vector<int>> res;
+	vector<int> temp;
+    vector<vector<int>> combine(int n, int k) {
+		dfs(n,1,k);
+		return res;
+    }
+	void dfs(int n,int index,int k){
+		if(temp.size()==k){
+			res.emplace_back(temp);
+			return;
+		}
+		for(int i=index;i<=n;i++){
+			temp.emplace_back(i);
+			dfs(n,i+1,k);
+			temp.pop_back();
+		}
+	}
+};
+/* 
+给你一个整数数组 nums ，数组中的元素 互不相同 。返回该数组所有可能的子集（幂集）。
+
+解集 不能 包含重复的子集。你可以按 任意顺序 返回解集。
+78
+ */
+class Solution {
+public:
+	vector<vector<int>> res;
+	vector<int> temp;
+    vector<vector<int>> subsets(vector<int>& nums) {
+		dfs(nums,0);
+		return res;
+    }
+	void dfs(vector<int>& nums,int index){
+		res.emplace_back(temp);
+		for(int i=index;i<nums.size();i++){
+			temp.emplace_back(nums[i]);
+			dfs(nums,i+1);
+			temp.pop_back();
+		}
+	}
+};
+/* 
+给你一个整数数组 nums ，其中可能包含重复元素，请你返回该数组所有可能的子集（幂集）。
+
+解集 不能 包含重复的子集。返回的解集中，子集可以按 任意顺序 排列。
+90
+与上题不同的是：存在重复元素
+ */
+class Solution {
+public:
+	vector<vector<int>> res;
+	vector<int> temp;
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+		sort(nums.begin(),nums.end());
+		dfs(nums,0);
+		return res;
+    }
+	void dfs(vector<int>& nums,int index){
+		res.emplace_back(temp);
+		for(int i=index;i<nums.size();i++){
+			if(i>index&&nums[i]==nums[i-1]){
+				continue;
+			}
+			temp.emplace_back(nums[i]);
+			dfs(nums,i+1);
+			temp.pop_back();
+		}
+	}
+};
+/* 
+给出集合 [1,2,3,...,n]，其所有元素共有 n! 种排列。
+
+按大小顺序列出所有排列情况，并一一标记，当 n = 3 时, 所有排列如下：
+
+    "123"
+    "132"
+    "213"
+    "231"
+    "312"
+    "321"
+
+给定 n 和 k，返回第 k 个排列。
+有数学方法，此处使用回溯----------------
+60
+ */
+class Solution {
+public:
+	vector<int> visit;
+	string res,temp;
+	int index;
+    string getPermutation(int n, int k) {
+		visit.resize(n+1);
+		index=k;
+		dfs(n);
+		return res;
+    }
+	void dfs(int n){
+		if(index==0){//当找到后，不必再去看后面的全排列，明显加快
+			return;
+		}
+		if(temp.size()==n){
+			if(--index==0){
+				res=temp;
+			}
+			return;
+		}
+		for(int i=1;i<=n;i++){
+			if(visit[i]==1){
+				continue;
+			}
+			visit[i]=1;
+			temp+=i+'0';
+			dfs(n);
+			temp.pop_back();
+			visit[i]=0;
+		}
+	}
+};
+/* 
+给定一个只包含数字的字符串，用以表示一个 IP 地址，返回所有可能从 s 获得的 有效 IP 地址 。你可以按任何顺序返回答案。
+
+有效 IP 地址 正好由四个整数（每个整数位于 0 到 255 之间组成，且不能含有前导 0），整数之间用 '.' 分隔。
+
+例如："0.1.2.201" 和 "192.168.1.1" 是 有效 IP 地址，但是 "0.011.255.245"、"192.168.1.312" 和 "192.168@1.1" 是 无效 IP 地址。
+93
+ */
+class Solution {
+public:
+	vector<string> res;
+	vector<string> temp;
+    vector<string> restoreIpAddresses(string s) {
+		dfs(s,0);
+		return res;
+    }
+	void dfs(string s,int index){
+        if(s.size()-index>3*(4-temp.size())){//如果尾巴大于指定值，则直接返回，超出长度
+			return;
+		}
+        if(index>=s.size()){
+            if(temp.size()==4&&index==s.size()){
+                string str="";
+                for(string s:temp){
+                    str+=s+".";
+                }
+                str.pop_back();
+                res.emplace_back(str);
+            }
+            return;
+        }
+		for(int i=1;i<=3;i++){
+			string str=s.substr(index,i);
+			int k=atoi(str.c_str());
+			if(i>1&&str[0]=='0'||k>255){//前置0或者大于255
+				return;
+			}
+			temp.emplace_back(str);
+			dfs(s,index+i);
+			temp.pop_back();
+		}
+	}
+};
+//字符串回溯问题
+//游戏问题
