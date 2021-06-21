@@ -1075,6 +1075,52 @@ public:
 	}
 };
 /* 
+二进制手表顶部有 4 个 LED 代表 小时（0-11），底部的 6 个 LED 代表 分钟（0-59）。每个 LED 代表一个 0 或 1，最低位在右侧。
+给你一个整数 turnedOn ，表示当前亮着的 LED 的数量，返回二进制手表可以表示的所有可能时间。你可以 按任意顺序 返回答案。
+小时不会以零开头：
+    例如，"01:00" 是无效的时间，正确的写法应该是 "1:00" 。
+分钟必须由两位数组成，可能会以零开头：
+    例如，"10:2" 是无效的时间，正确的写法应该是 "10:02" 。
+401
+本题除了爆搜，还有其他做法，更牛逼--------------
+ */
+class Solution {
+public:
+	vector<string> res;
+	int hour,min;
+    vector<string> readBinaryWatch(int turnedOn) {
+		dfs(turnedOn,1);
+		return res;
+    }
+	void dfs(int turnedOn,int index){
+		if(turnedOn==0){
+			if(hour<=11&&min<=59){
+				string temp=to_string(hour);
+				temp+=":";
+				if(min<10){
+					temp+="0";
+				}
+				temp+=to_string(min);
+				res.emplace_back(temp);
+			}
+			return;
+		}
+		for(int i=index;i<=10;i++){
+			if(i>4){
+				min+=pow(2,i-5);
+			}else{
+				hour+=pow(2,i-1);
+			}
+			dfs(turnedOn-1,i+1);
+			if(i>4){
+				min-=pow(2,i-5);
+			}else{
+				hour-=pow(2,i-1);
+			}
+		}
+	}
+};
+/* 
 给你一个整数数组 nums ，数组中的元素 互不相同 。返回该数组所有可能的子集（幂集）。
 
 解集 不能 包含重复的子集。你可以按 任意顺序 返回解集。
@@ -1217,5 +1263,251 @@ public:
 		}
 	}
 };
+/* 
+给定一个整数数组  nums 和一个正整数 k，找出是否有可能把这个数组分成 k 个非空子集，其总和都相等。
+698
+ */
+class Solution {
+public:
+	bool res=false;
+	vector<int> visit;
+    bool canPartitionKSubsets(vector<int>& nums, int k) {
+		int sum=accumulate(nums.begin(),nums.end(),0);
+		if(sum%k){
+			return false;
+		}
+		sort(nums.begin(),nums.end());
+		visit.resize(nums.size());
+		int target=sum/k;
+        dfs(nums,target,0,0,k);
+		return res;
+    }
+	void dfs(vector<int>& nums,int target,int sum,int index,int k){
+		if(k==1){
+			res=true;
+			return;
+		}
+		if(sum==target){
+			dfs(nums,target,0,0,k-1);
+		}
+		for(int i=index;i<nums.size();i++){
+			if(visit[i]==1||i>0&&nums[i-1]==nums[i]&&visit[i-1]==0){
+				continue;
+			}
+			visit[i]=1;
+			dfs(nums,target,sum+nums[i],i+1,k);
+			visit[i]=0;
+		}
+	}
+};
 //字符串回溯问题
+/* 
+给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。答案可以按 任意顺序 返回。
+
+给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+17
+ */
+class Solution {
+public:
+    vector<string> res;
+	string temp;
+	vector<string> words={"","","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
+	vector<string> letterCombinations(string digits) {
+		dfs(digits,0);
+		return res;
+    }
+	void dfs(string digits,int index){
+		if(index==digits.size()){
+            if(index!=0){
+                res.emplace_back(temp);
+            }
+			return;
+		}
+		for(int i=0;i<words[digits[index]-'0'].size();i++){
+			temp+=words[digits[index]-'0'][i];
+			dfs(digits,index+1);
+			temp.pop_back();
+		}
+	}
+};
+/* 
+数字 n 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 有效的 括号组合。
+22
+本题在广度搜索分类中提到过，此处使用回溯来做
+ */
+class Solution {
+public:
+	vector<string> res;
+	string temp;
+    vector<string> generateParenthesis(int n) {
+		dfs(n,n);
+		return res;
+    }
+	void dfs(int left,int right){
+		if(left==0&&right==0){
+			res.emplace_back(temp);
+			return;
+		}
+		if(left>0){
+			temp+="(";
+			dfs(left-1,right);
+			temp.pop_back();
+		}
+		if(right>left){
+			temp+=")";
+			dfs(left,right-1);
+			temp.pop_back();
+		}
+	}
+};
+/* 
+给定一个字符串S，通过将字符串S中的每个字母转变大小写，我们可以获得一个新的字符串。返回所有可能得到的字符串集合。
+    S 的长度不超过12。
+    S 仅由数字和字母组成。
+784
+ */
+class Solution {
+public:
+	vector<string> res;
+	string temp;
+    vector<string> letterCasePermutation(string s) {
+		dfs(s,0);
+		return res;
+    }
+	void dfs(string s,int index){
+		if(temp.size()==s.size()){
+			res.emplace_back(temp);
+			return;
+		}
+		temp+=tolower(s[index]);
+		dfs(s,index+1);
+		temp.pop_back();
+		if(s[index]>'9'||s[index]<'0'){
+			temp+=toupper(s[index]);
+			dfs(s,index+1);
+			temp.pop_back();
+		}
+	}
+};
 //游戏问题
+/* 
+编写一个程序，通过填充空格来解决数独问题。
+
+数独的解法需 遵循如下规则：
+
+    数字 1-9 在每一行只能出现一次。
+    数字 1-9 在每一列只能出现一次。
+    数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。（请参考示例图）
+
+数独部分空格内已填入了数字，空白格用 '.' 表示。
+37
+ */
+/* 
+n 皇后问题 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+
+给你一个整数 n ，返回所有不同的 n 皇后问题 的解决方案。
+
+每一种解法包含一个不同的 n 皇后问题 的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。
+51
+ */
+class Solution {
+public:
+    vector<vector<string>> solveNQueens(int n) {
+
+    }
+};
+/* 
+回忆一下祖玛游戏。现在桌上有一串球，颜色有红色(R)，黄色(Y)，蓝色(B)，绿色(G)，还有白色(W)。 现在你手里也有几个球。
+
+每一次，你可以从手里的球选一个，然后把这个球插入到一串球中的某个位置上（包括最左端，最右端）。接着，如果有出现三个或者三个以上颜色相同的球相连的话，就把它们移除掉。重复这一步骤直到桌上所有的球都被移除。
+
+找到插入并可以移除掉桌上所有球所需的最少的球数。如果不能移除桌上所有的球，输出 -1 。
+488
+ */
+class Solution {
+public:
+    int findMinStep(string board, string hand) {
+
+    }
+};
+/* 
+让我们一起来玩扫雷游戏！
+
+给定一个代表游戏板的二维字符矩阵。 'M' 代表一个未挖出的地雷，'E' 代表一个未挖出的空方块，'B' 代表没有相邻（上，下，左，右，和所有4个对角线）地雷的已挖出的空白方块，数字（'1' 到 '8'）表示有多少地雷与这块已挖出的方块相邻，'X' 则表示一个已挖出的地雷。
+
+现在给出在所有未挖出的方块中（'M'或者'E'）的下一个点击位置（行和列索引），根据以下规则，返回相应位置被点击后对应的面板：
+
+    如果一个地雷（'M'）被挖出，游戏就结束了- 把它改为 'X'。
+    如果一个没有相邻地雷的空方块（'E'）被挖出，修改它为（'B'），并且所有和其相邻的未挖出方块都应该被递归地揭露。
+    如果一个至少与一个地雷相邻的空方块（'E'）被挖出，修改它为数字（'1'到'8'），表示相邻地雷的数量。
+    如果在此次点击中，若无更多方块可被揭露，则返回面板。
+529
+ */
+class Solution {
+public:
+    vector<vector<char>> updateBoard(vector<vector<char>>& board, vector<int>& click) {
+
+    }
+};
+//剪枝
+/* 
+还记得童话《卖火柴的小女孩》吗？现在，你知道小女孩有多少根火柴，请找出一种能使用所有火柴拼成一个正方形的方法。
+不能折断火柴，可以把火柴连接起来，并且每根火柴都要用到。
+
+输入为小女孩拥有火柴的数目，每根火柴用其长度表示。输出即为是否能用所有的火柴拼成正方形。
+
+473
+698的简化题，分为四个集合！
+ */
+class Solution {
+public:
+	bool res=false;
+	vector<int> visit;
+    bool makesquare(vector<int>& matchsticks) {
+		int sum=accumulate(matchsticks.begin(),matchsticks.end(),0);
+		if(sum%4!=0){
+			return false;
+		}
+		visit.resize(matchsticks.size());
+		sort(matchsticks.begin(),matchsticks.end());
+		dfs(matchsticks,sum/4,0,0,4);
+		return res;
+    }
+	void dfs(vector<int> &nums,int target,int sum,int index,int k){
+		if(k==1){
+			res=true;
+			return;
+		}
+		if(sum==target){
+			dfs(nums,target,0,0,k-1);
+		}
+		for(int i=index;i<nums.size();i++){
+			if(visit[i]==1||i>0&&nums[i]==nums[i-1]&&visit[i-1]==0){
+				continue;
+			}
+			if(sum+nums[i]>target){
+				break;
+			}
+			visit[i]=1;
+			dfs(nums,target,sum+nums[i],i+1,k);
+			visit[i]=0;
+		}
+	}
+};
+/* 
+给你一个字符串 s ，请你拆分该字符串，并返回拆分后唯一子字符串的最大数目。
+
+字符串 s 拆分后可以得到若干 非空子字符串 ，这些子字符串连接后应当能够还原为原字符串。但是拆分出来的每个子字符串都必须是 唯一的 。
+
+注意：子字符串 是字符串中的一个连续字符序列。
+1593
+ */
+class Solution {
+public:
+    int maxUniqueSplit(string s) {
+
+    }
+	void dfs(string s,int index){
+		if(index)
+	}
+};
