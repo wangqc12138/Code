@@ -922,13 +922,13 @@ public:
  */
 class Solution {
 public:
-    vector<vector<int>> res;
+	vector<vector<int>> res;
 	vector<int> temp;
 	vector<vector<int>> permute(vector<int>& nums) {
 		vector<int> visit(nums.size(),0);
 		dfs(nums,visit);
 		return res;
-    }
+	}
 	void dfs(vector<int>& nums,vector<int> visit){
 		if(temp.size()==nums.size()){
 			res.emplace_back(temp);
@@ -955,12 +955,12 @@ class Solution {
 public:
 	vector<vector<int>> res;
 	vector<int> temp,visit;
-    vector<vector<int>> permuteUnique(vector<int>& nums) {
+	vector<vector<int>> permuteUnique(vector<int>& nums) {
 		visit.resize(nums.size());
 		sort(nums.begin(),nums.end());
 		dfs(nums);
 		return res;
-    }
+	}
 	void dfs(vector<int> &nums){
 		if(temp.size()==nums.size()){
 			res.emplace_back(temp);
@@ -988,10 +988,10 @@ class Solution {
 public:
 	vector<vector<int>> res;
 	vector<int> temp;
-    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
 		dfs(candidates,target,0);
 		return res;
-    }
+	}
 	void dfs(vector<int>& candidates,int target,int index){
 		if(target<=0){
 			if(target==0){
@@ -1012,8 +1012,8 @@ public:
 candidates 中的每个数字在每个组合中只能使用一次。
 
 说明：
-    所有数字（包括目标数）都是正整数。
-    解集不能包含重复的组合。 
+	所有数字（包括目标数）都是正整数。
+	解集不能包含重复的组合。 
 40
 存在重复元素
  */
@@ -1021,12 +1021,12 @@ class Solution {
 public:
 	vector<vector<int>> res;
 	vector<int> temp,visit;
-    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+	vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
 		visit.resize(candidates.size());
 		sort(candidates.begin(),candidates.end());
 		dfs(candidates,target,0);
 		return res;
-    }
+	}
 	void dfs(vector<int>& candidates,int target,int index){
 		if(target<=0){
 			if(target==0){
@@ -1058,10 +1058,10 @@ class Solution {
 public:
 	vector<vector<int>> res;
 	vector<int> temp;
-    vector<vector<int>> combine(int n, int k) {
+	vector<vector<int>> combine(int n, int k) {
 		dfs(n,1,k);
 		return res;
-    }
+	}
 	void dfs(int n,int index,int k){
 		if(temp.size()==k){
 			res.emplace_back(temp);
@@ -1078,9 +1078,9 @@ public:
 二进制手表顶部有 4 个 LED 代表 小时（0-11），底部的 6 个 LED 代表 分钟（0-59）。每个 LED 代表一个 0 或 1，最低位在右侧。
 给你一个整数 turnedOn ，表示当前亮着的 LED 的数量，返回二进制手表可以表示的所有可能时间。你可以 按任意顺序 返回答案。
 小时不会以零开头：
-    例如，"01:00" 是无效的时间，正确的写法应该是 "1:00" 。
+	例如，"01:00" 是无效的时间，正确的写法应该是 "1:00" 。
 分钟必须由两位数组成，可能会以零开头：
-    例如，"10:2" 是无效的时间，正确的写法应该是 "10:02" 。
+	例如，"10:2" 是无效的时间，正确的写法应该是 "10:02" 。
 401
 本题除了爆搜，还有其他做法，更牛逼--------------
  */
@@ -1088,10 +1088,10 @@ class Solution {
 public:
 	vector<string> res;
 	int hour,min;
-    vector<string> readBinaryWatch(int turnedOn) {
+	vector<string> readBinaryWatch(int turnedOn) {
 		dfs(turnedOn,1);
 		return res;
-    }
+	}
 	void dfs(int turnedOn,int index){
 		if(turnedOn==0){
 			if(hour<=11&&min<=59){
@@ -1130,10 +1130,10 @@ class Solution {
 public:
 	vector<vector<int>> res;
 	vector<int> temp;
-    vector<vector<int>> subsets(vector<int>& nums) {
+	vector<vector<int>> subsets(vector<int>& nums) {
 		dfs(nums,0);
 		return res;
-    }
+	}
 	void dfs(vector<int>& nums,int index){
 		res.emplace_back(temp);
 		for(int i=index;i<nums.size();i++){
@@ -1154,11 +1154,11 @@ class Solution {
 public:
 	vector<vector<int>> res;
 	vector<int> temp;
-    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+	vector<vector<int>> subsetsWithDup(vector<int>& nums) {
 		sort(nums.begin(),nums.end());
 		dfs(nums,0);
 		return res;
-    }
+	}
 	void dfs(vector<int>& nums,int index){
 		res.emplace_back(temp);
 		for(int i=index;i<nums.size();i++){
@@ -1176,12 +1176,12 @@ public:
 
 按大小顺序列出所有排列情况，并一一标记，当 n = 3 时, 所有排列如下：
 
-    "123"
-    "132"
-    "213"
-    "231"
-    "312"
-    "321"
+	"123"
+	"132"
+	"213"
+	"231"
+	"312"
+	"321"
 
 给定 n 和 k，返回第 k 个排列。
 有数学方法，此处使用回溯----------------
@@ -1192,12 +1192,12 @@ public:
 	vector<int> visit;
 	string res,temp;
 	int index;
-    string getPermutation(int n, int k) {
+	string getPermutation(int n, int k) {
 		visit.resize(n+1);
 		index=k;
 		dfs(n);
 		return res;
-    }
+	}
 	void dfs(int n){
 		if(index==0){//当找到后，不必再去看后面的全排列，明显加快
 			return;
@@ -1232,25 +1232,25 @@ class Solution {
 public:
 	vector<string> res;
 	vector<string> temp;
-    vector<string> restoreIpAddresses(string s) {
+	vector<string> restoreIpAddresses(string s) {
 		dfs(s,0);
 		return res;
-    }
+	}
 	void dfs(string s,int index){
-        if(s.size()-index>3*(4-temp.size())){//如果尾巴大于指定值，则直接返回，超出长度
+		if(s.size()-index>3*(4-temp.size())){//如果尾巴大于指定值，则直接返回，超出长度
 			return;
 		}
-        if(index>=s.size()){
-            if(temp.size()==4&&index==s.size()){
-                string str="";
-                for(string s:temp){
-                    str+=s+".";
-                }
-                str.pop_back();
-                res.emplace_back(str);
-            }
-            return;
-        }
+		if(index>=s.size()){
+			if(temp.size()==4&&index==s.size()){
+				string str="";
+				for(string s:temp){
+					str+=s+".";
+				}
+				str.pop_back();
+				res.emplace_back(str);
+			}
+			return;
+		}
 		for(int i=1;i<=3;i++){
 			string str=s.substr(index,i);
 			int k=atoi(str.c_str());
@@ -1271,7 +1271,7 @@ class Solution {
 public:
 	bool res=false;
 	vector<int> visit;
-    bool canPartitionKSubsets(vector<int>& nums, int k) {
+	bool canPartitionKSubsets(vector<int>& nums, int k) {
 		int sum=accumulate(nums.begin(),nums.end(),0);
 		if(sum%k){
 			return false;
@@ -1279,9 +1279,9 @@ public:
 		sort(nums.begin(),nums.end());
 		visit.resize(nums.size());
 		int target=sum/k;
-        dfs(nums,target,0,0,k);
+		dfs(nums,target,0,0,k);
 		return res;
-    }
+	}
 	void dfs(vector<int>& nums,int target,int sum,int index,int k){
 		if(k==1){
 			res=true;
@@ -1309,18 +1309,18 @@ public:
  */
 class Solution {
 public:
-    vector<string> res;
+	vector<string> res;
 	string temp;
 	vector<string> words={"","","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
 	vector<string> letterCombinations(string digits) {
 		dfs(digits,0);
 		return res;
-    }
+	}
 	void dfs(string digits,int index){
 		if(index==digits.size()){
-            if(index!=0){
-                res.emplace_back(temp);
-            }
+			if(index!=0){
+				res.emplace_back(temp);
+			}
 			return;
 		}
 		for(int i=0;i<words[digits[index]-'0'].size();i++){
@@ -1339,10 +1339,10 @@ class Solution {
 public:
 	vector<string> res;
 	string temp;
-    vector<string> generateParenthesis(int n) {
+	vector<string> generateParenthesis(int n) {
 		dfs(n,n);
 		return res;
-    }
+	}
 	void dfs(int left,int right){
 		if(left==0&&right==0){
 			res.emplace_back(temp);
@@ -1362,18 +1362,18 @@ public:
 };
 /* 
 给定一个字符串S，通过将字符串S中的每个字母转变大小写，我们可以获得一个新的字符串。返回所有可能得到的字符串集合。
-    S 的长度不超过12。
-    S 仅由数字和字母组成。
+	S 的长度不超过12。
+	S 仅由数字和字母组成。
 784
  */
 class Solution {
 public:
 	vector<string> res;
 	string temp;
-    vector<string> letterCasePermutation(string s) {
+	vector<string> letterCasePermutation(string s) {
 		dfs(s,0);
 		return res;
-    }
+	}
 	void dfs(string s,int index){
 		if(temp.size()==s.size()){
 			res.emplace_back(temp);
@@ -1389,15 +1389,50 @@ public:
 		}
 	}
 };
+/* 
+输入一个字符串，打印出该字符串中字符的所有排列。
+
+你可以以任意顺序返回这个字符串数组，但里面不能有重复元素。
+剑指38
+求排列就知道大概率是回溯
+ */
+class Solution {
+public:
+	vector<string> res;
+	string temp;
+	vector<int> visit;
+	vector<string> permutation(string s) {
+		visit.resize(s.size());
+		sort(s.begin(),s.end());
+		dfs(s);
+		return res;
+	}
+	void dfs(string s){
+		if(temp.size()==s.size()){
+			res.emplace_back(temp);
+			return;
+		}
+		for(int i=0;i<s.size();i++){
+			if(visit[i]==1||i>0&&s[i]==s[i-1]&&visit[i-1]==0){
+				continue;
+			}
+			visit[i]=1;
+			temp+=s[i];
+			dfs(s);
+			visit[i]=0;
+			temp.pop_back();
+		}
+	}
+};
 //游戏问题
 /* 
 编写一个程序，通过填充空格来解决数独问题。
 
 数独的解法需 遵循如下规则：
 
-    数字 1-9 在每一行只能出现一次。
-    数字 1-9 在每一列只能出现一次。
-    数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。（请参考示例图）
+	数字 1-9 在每一行只能出现一次。
+	数字 1-9 在每一列只能出现一次。
+	数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。（请参考示例图）
 
 数独部分空格内已填入了数字，空白格用 '.' 表示。
 37
@@ -1412,9 +1447,9 @@ n 皇后问题 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，�
  */
 class Solution {
 public:
-    vector<vector<string>> solveNQueens(int n) {
+	vector<vector<string>> solveNQueens(int n) {
 
-    }
+	}
 };
 /* 
 回忆一下祖玛游戏。现在桌上有一串球，颜色有红色(R)，黄色(Y)，蓝色(B)，绿色(G)，还有白色(W)。 现在你手里也有几个球。
@@ -1426,9 +1461,9 @@ public:
  */
 class Solution {
 public:
-    int findMinStep(string board, string hand) {
+	int findMinStep(string board, string hand) {
 
-    }
+	}
 };
 /* 
 让我们一起来玩扫雷游戏！
@@ -1437,17 +1472,17 @@ public:
 
 现在给出在所有未挖出的方块中（'M'或者'E'）的下一个点击位置（行和列索引），根据以下规则，返回相应位置被点击后对应的面板：
 
-    如果一个地雷（'M'）被挖出，游戏就结束了- 把它改为 'X'。
-    如果一个没有相邻地雷的空方块（'E'）被挖出，修改它为（'B'），并且所有和其相邻的未挖出方块都应该被递归地揭露。
-    如果一个至少与一个地雷相邻的空方块（'E'）被挖出，修改它为数字（'1'到'8'），表示相邻地雷的数量。
-    如果在此次点击中，若无更多方块可被揭露，则返回面板。
+	如果一个地雷（'M'）被挖出，游戏就结束了- 把它改为 'X'。
+	如果一个没有相邻地雷的空方块（'E'）被挖出，修改它为（'B'），并且所有和其相邻的未挖出方块都应该被递归地揭露。
+	如果一个至少与一个地雷相邻的空方块（'E'）被挖出，修改它为数字（'1'到'8'），表示相邻地雷的数量。
+	如果在此次点击中，若无更多方块可被揭露，则返回面板。
 529
  */
 class Solution {
 public:
-    vector<vector<char>> updateBoard(vector<vector<char>>& board, vector<int>& click) {
+	vector<vector<char>> updateBoard(vector<vector<char>>& board, vector<int>& click) {
 
-    }
+	}
 };
 //剪枝
 /* 
@@ -1463,7 +1498,7 @@ class Solution {
 public:
 	bool res=false;
 	vector<int> visit;
-    bool makesquare(vector<int>& matchsticks) {
+	bool makesquare(vector<int>& matchsticks) {
 		int sum=accumulate(matchsticks.begin(),matchsticks.end(),0);
 		if(sum%4!=0){
 			return false;
@@ -1472,7 +1507,7 @@ public:
 		sort(matchsticks.begin(),matchsticks.end());
 		dfs(matchsticks,sum/4,0,0,4);
 		return res;
-    }
+	}
 	void dfs(vector<int> &nums,int target,int sum,int index,int k){
 		if(k==1){
 			res=true;
@@ -1504,10 +1539,282 @@ public:
  */
 class Solution {
 public:
-    int maxUniqueSplit(string s) {
+	int res=-1;
+	int temp=0;
+	unordered_set<string> us;
+	int maxUniqueSplit(string s) {
+		dfs(s,0);
+		return res;
+	}
+	void dfs(string s,int index){
+		if(index==s.size()){
+			res=max(res,temp);
+			return;
+		}
+		int k=s.size()-index;
+		if(temp+k<=res){//剪枝，如果未分割的挨个分也不超过res，则可以放弃这条路
+			return;
+		}
+		for(int i=index+1;i<=s.size();i++){
+			string str=s.substr(index,i-index);
+			if(!us.count(str)){
+				us.emplace(str);
+				temp++;
+				dfs(s,i);
+				temp--;
+				us.erase(str);
+			}
+		}
+	}
+};
+/* 
+你有一套活字字模 tiles，其中每个字模上都刻有一个字母 tiles[i]。返回你可以印出的非空字母序列的数目。
+
+注意：本题中，每个活字字模只能使用一次。
+1079
+方案一：先找出子集，然后每个子集的全排列个数
+方案二：全排列那题查找是等长度为源字符串长，而只要每个不为0的长度记录下来就是所有长度的全排列了！
+ */
+class Solution {
+public:
+	int res=0;
+	vector<int> visit;
+	int numTilePossibilities(string tiles) {
+		sort(tiles.begin(),tiles.end());
+		visit.resize(tiles.size());
+		dfs(tiles);
+		return res;
+	}
+	void dfs(string tiles){
+		for(int i=0;i<tiles.size();i++){
+			if(visit[i]==1||i>0&&tiles[i]==tiles[i-1]&&visit[i-1]==0){
+				continue;
+			}
+			visit[i]=1;
+			res++;
+			dfs(tiles);
+			visit[i]=0;
+		}
+	}
+};
+//二维平面搜索(岛屿问题的衍生和合集)
+/* 
+给定一个 m x n 二维字符网格 board 和一个字符串单词 word 。如果 word 存在于网格中，返回 true ；否则，返回 false 。
+
+单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。
+同一个单元格内的字母不允许被重复使用。
+79
+应该也是可以用BFS的
+ */
+class Solution {
+public:
+	const vector<pair<int, int>> directions{{0, 1},{1, 0},{0, -1},{-1, 0}};
+	bool exist(vector<vector<char>>& board, string word) {
+		for(int i=0;i<board.size();++i){
+			for(int j=0;j<board[0].size();++j){
+				if(board[i][j]==word[0]){
+					if(dfs(board,word,i,j,0)){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	bool dfs(vector<vector<char>>& board,string& word,int i,int j,int k){
+		if(k==word.size()){
+			return true;
+		}
+		if(i<0||j<0||i>=board.size()||j>=board[i].size()||board[i][j]!=word[k]||board[i][j]=='#'){
+			return false;
+		}
+		board[i][j]='#';
+		if(dfs(board,word,i,j-1,k+1)){
+			return true;
+		}
+		if(dfs(board,word,i-1,j,k+1)){
+			return true;
+		}
+		if(dfs(board,word,i,j+1,k+1)){
+			return true;
+		}
+		if(dfs(board,word,i+1,j,k+1)){
+			return true;
+		}
+		board[i][j]=word[k];
+		return false;
+	}
+};
+/* 
+给你一个 m x n 的矩阵 board ，由若干字符 'X' 和 'O' ，找到所有被 'X' 围绕的区域，并将这些区域里所有的 'O' 用 'X' 填充。 
+130
+ */
+class Solution {
+public:
+    void solve(vector<vector<char>>& board) {
 
     }
-	void dfs(string s,int index){
-		if(index)
-	}
+};
+/* 
+给你一个由 '1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。
+
+岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+
+此外，你可以假设该网格的四条边均被水包围。
+200
+ */
+class Solution {
+public:
+    int numIslands(vector<vector<char>>& grid) {
+
+    }
+};
+/* 
+给定一个 m x n 的非负整数矩阵来表示一片大陆上各个单元格的高度。“太平洋”处于大陆的左边界和上边界，而“大西洋”处于大陆的右边界和下边界。
+
+规定水流只能按照上、下、左、右四个方向流动，且只能从高到低或者在同等高度上流动。
+
+请找出那些水流既可以流动到“太平洋”，又能流动到“大西洋”的陆地单元的坐标。
+
+ 
+
+提示：
+
+    输出坐标的顺序不重要
+    m 和 n 都小于150
+417
+ */
+class Solution {
+public:
+    vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {
+
+    }
+};
+/* 
+有一幅以二维整数数组表示的图画，每一个整数表示该图画的像素值大小，数值在 0 到 65535 之间。
+
+给你一个坐标 (sr, sc) 表示图像渲染开始的像素值（行 ，列）和一个新的颜色值 newColor，让你重新上色这幅图像。
+
+为了完成上色工作，从初始坐标开始，记录初始坐标的上下左右四个方向上像素值与初始坐标相同的相连像素点，
+接着再记录这四个方向上符合条件的像素点与他们对应四个方向上像素值与初始坐标相同的相连像素点，……，重复该过程。
+将所有有记录的像素点的颜色值改为新的颜色值。
+
+最后返回经过上色渲染后的图像。
+733
+ */
+class Solution {
+public:
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
+
+    }
+};
+/* 
+给出一个二维数组 A，每个单元格为 0（代表海）或 1（代表陆地）。
+
+移动是指在陆地上从一个地方走到另一个地方（朝四个方向之一）或离开网格的边界。
+
+返回网格中无法在任意次数的移动中离开网格边界的陆地单元格的数量。
+1020
+ */
+class Solution {
+public:
+    int numEnclaves(vector<vector<int>>& grid) {
+
+    }
+};
+/* 
+给出一个二维整数网格 grid，网格中的每个值表示该位置处的网格块的颜色。
+
+只有当两个网格块的颜色相同，而且在四个方向中任意一个方向上相邻时，它们属于同一连通分量。
+
+连通分量的边界是指连通分量中的所有与不在分量中的正方形相邻（四个方向上）的所有正方形，
+或者在网格的边界上（第一行/列或最后一行/列）的所有正方形。
+
+给出位于 (r0, c0) 的网格块和颜色 color，使用指定颜色 color 为所给网格块的连通分量的边界进行着色，并返回最终的网格 grid 。
+1034
+ */
+class Solution {
+public:
+    vector<vector<int>> colorBorder(vector<vector<int>>& grid, int r0, int c0, int color) {
+
+    }
+};
+/* 
+有一个二维矩阵 grid ，每个位置要么是陆地（记号为 0 ）要么是水域（记号为 1 ）。
+
+我们从一块陆地出发，每次可以往上下左右 4 个方向相邻区域走，能走到的所有陆地区域，我们将其称为一座「岛屿」。
+
+如果一座岛屿 完全 由水域包围，即陆地边缘上下左右所有相邻区域都是水域，那么我们将其称为 「封闭岛屿」。
+
+请返回封闭岛屿的数目。
+1254
+ */
+class Solution {
+public:
+    int closedIsland(vector<vector<int>>& grid) {
+
+    }
+};
+/* 
+给你无向 连通 图中一个节点的引用，请你返回该图的 深拷贝（克隆）。
+
+图中的每个节点都包含它的值 val（int） 和其邻居的列表（list[Node]）。
+
+class Node {
+    public int val;
+    public List<Node> neighbors;
+}
+
+ 
+
+测试用例格式：
+
+简单起见，每个节点的值都和它的索引相同。例如，第一个节点值为 1（val = 1），第二个节点值为 2（val = 2），
+以此类推。该图在测试用例中使用邻接列表表示。
+
+邻接列表 是用于表示有限图的无序列表的集合。每个列表都描述了图中节点的邻居集。
+
+给定节点将始终是图中的第一个节点（值为 1）。你必须将 给定节点的拷贝 作为对克隆图的引用返回。
+133
+ */
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> neighbors;
+    Node() {
+        val = 0;
+        neighbors = vector<Node*>();
+    }
+    Node(int _val) {
+        val = _val;
+        neighbors = vector<Node*>();
+    }
+    Node(int _val, vector<Node*> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+};
+*/
+
+class Solution {
+public:
+    Node* cloneGraph(Node* node) {
+        
+    }
+};
+/* 
+地上有一个m行n列的方格，从坐标 [0,0] 到坐标 [m-1,n-1] 。
+一个机器人从坐标 [0, 0] 的格子开始移动，它每次可以向左、右、上、下移动一格（不能移动到方格外），
+也不能进入行坐标和列坐标的数位之和大于k的格子。
+例如，当k为18时，机器人能够进入方格 [35, 37] ，因为3+5+3+7=18。但它不能进入方格 [35, 38]，因为3+5+3+8=19。
+请问该机器人能够到达多少个格子？
+剑指13
+ */
+class Solution {
+public:
+    int movingCount(int m, int n, int k) {
+
+    }
 };

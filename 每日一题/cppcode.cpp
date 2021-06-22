@@ -1435,3 +1435,38 @@ public:
 		}
 	}
 };
+/* 
+输入一个字符串，打印出该字符串中字符的所有排列。
+
+你可以以任意顺序返回这个字符串数组，但里面不能有重复元素。
+剑指38
+求排列就知道大概率是回溯
+ */
+class Solution {
+public:
+	vector<string> res;
+	string temp;
+	vector<int> visit;
+    vector<string> permutation(string s) {
+		visit.resize(s.size());
+		sort(s.begin(),s.end());
+		dfs(s);
+		return res;
+    }
+	void dfs(string s){
+		if(temp.size()==s.size()){
+			res.emplace_back(temp);
+			return;
+		}
+		for(int i=0;i<s.size();i++){
+			if(visit[i]==1||i>0&&s[i]==s[i-1]&&visit[i-1]==0){
+				continue;
+			}
+			visit[i]=1;
+			temp+=s[i];
+			dfs(s);
+			visit[i]=0;
+			temp.pop_back();
+		}
+	}
+};
