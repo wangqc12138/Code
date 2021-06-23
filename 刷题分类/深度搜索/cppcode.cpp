@@ -189,6 +189,104 @@ public:
 		return dfs(root->left,sum*10+root->val)+dfs(root->right,sum*10+root->val);
 	}
 };
+/* 
+给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+
+假设一个二叉搜索树具有如下特征：
+
+    节点的左子树只包含小于当前节点的数。
+    节点的右子树只包含大于当前节点的数。
+    所有左子树和右子树自身必须也是二叉搜索树。
+98
+二叉搜索树的中序遍历是有序的！
+ */
+class Solution {
+public:
+	int pre=-1;
+	bool flag=true;
+    bool isValidBST(TreeNode* root) {
+		if(!root){
+			return false;
+		}
+		return dfs(root);
+    }
+	bool dfs(TreeNode* root){
+		bool res=true; 
+		if(root->left){
+			res=dfs(root->left);
+		}
+		if(flag){
+			flag=false;
+			pre=root->val;
+		}else if(pre>=root->val){
+			return false;
+		}else{
+			pre=root->val;
+		}
+		if(root->right){
+			res&=dfs(root->right);
+		}
+		return res;
+	}
+};
+/* 
+给你二叉搜索树的根节点 root ，该树中的两个节点被错误地交换。请在不改变其结构的情况下，恢复这棵树。
+
+进阶：使用 O(n) 空间复杂度的解法很容易实现。你能想出一个只使用常数空间的解决方案吗？
+99
+ */
+class Solution {
+public:
+    TreeNode *pre;
+	TreeNode *first,*second;
+	void recoverTree(TreeNode* root) {
+		midorder(root);
+		swap(first->val,second->val);
+    }
+	void midorder(TreeNode* root){
+		if(root->left){
+			midorder(root->left);
+		}
+		if(pre&&pre->val>=root->val){
+			second=pre;
+			if(!first){
+				first=root;
+			}else{
+				return;
+			}
+		}
+		pre=root;
+		if(root->right){
+			midorder(root->right);
+		}
+	}
+};
+/*
+给你一棵所有节点为非负值的二叉搜索树，请你计算树中任意两节点的差的绝对值的最小值。
+二叉搜索树--有序--中序遍历为递增
+530
+*/
+class Solution {
+public:
+    int res=INT_MAX,pre=-1;
+    int getMinimumDifference(TreeNode* root) {
+        midorder(root);
+        return res;
+    }
+    void midorder(TreeNode* root){
+        if(root==nullptr){
+            return;
+        }
+        midorder(root->left);
+        if(pre==-1){
+            pre=root->val;
+        }else{
+            res=min(res,root->val-pre);
+            pre=root->val;
+        }
+        midorder(root->right);
+    }
+};
 //LCA问题
 /* 
 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。

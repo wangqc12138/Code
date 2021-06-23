@@ -24,7 +24,7 @@ public:
                 }
                 ms.push(i);
             }else{
-                return true
+                return true;
             }
 
         }
