@@ -125,3 +125,41 @@ public:
 如果不存在满足条件的子数组，则返回 0 。
 1438
 */
+/* 
+给定一个字符串 s 和一些 长度相同 的单词 words 。找出 s 中恰好可以由 words 中所有单词串联形成的子串的起始位置。
+
+注意子串要与 words 中的单词完全匹配，中间不能有其他字符 ，但不需要考虑 words 中单词串联的顺序。
+30
+ */
+class Solution {
+public:
+    vector<int> findSubstring(string s, vector<string>& words) {
+		vector<int> res;
+		map<string,int> wm;
+		for(auto word:words){
+			wm[word]++;
+		}
+		int len=words[0].size()*words.size();
+		int l=words[0].size();
+		int left=0;
+		while(left+len<s.size()){
+			map<string,int> sm=wm;
+			int i=left;
+			for(;i<left+len;i+=l){
+				string str=s.substr(i,l);
+				if(!sm.count(str)){
+					break;
+				}else{
+					if(sm[str]==0){
+						break;
+					}
+					sm[str]--;
+				}
+			}
+			if(i==left+len){
+				res.emplace_back(left);
+			}
+			left++;
+		}
+    }
+};

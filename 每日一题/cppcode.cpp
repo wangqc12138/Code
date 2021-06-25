@@ -1486,3 +1486,38 @@ public:
 		return res;
     }
 };
+/* 
+给你一个数组 points ，其中 points[i] = [xi, yi] 表示 X-Y 平面上的一个点。求最多有多少个点在同一条直线上。
+149
+ */
+class Solution {
+public:
+    int maxPoints(vector<vector<int>>& points) {
+		int res=-1;
+		int n=points.size();
+		for(int i=0;i<n;i++){
+			int a=points[i][0];
+			int b=points[i][1];
+			map<double,int> m;	
+			int maxk=1;		
+			for(int j=0;j<n;j++){
+				if(i==j){
+					continue;
+				}
+				int c=points[j][0];
+				int d=points[j][1];
+				if((b-d)==0){
+					maxk++;
+				}else{
+					double k=double(a-c)/(b-d);
+                    m[k]++;
+				}
+			}
+			for(auto [x,y]:m){
+				res=max(res,y+1);
+			}
+			res=max(res,maxk);
+		}
+		return res;
+    }
+};
