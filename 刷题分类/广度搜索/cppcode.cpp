@@ -2399,3 +2399,55 @@ public:
     }
 	void bfs()
 };
+/* 
+给你一个数组 routes ，表示一系列公交线路，其中每个 routes[i] 表示一条公交线路，第 i 辆公交车将会在上面循环行驶。
+
+    例如，路线 routes[0] = [1, 5, 7] 表示第 0 辆公交车会一直按序列 1 -> 5 -> 7 -> 1 -> 5 -> 7 -> 1 -> ... 这样的车站路线行驶。
+
+现在从 source 车站出发（初始时不在公交车上），要前往 target 车站。 期间仅可乘坐公交车。
+
+求出 最少乘坐的公交车数量 。如果不可能到达终点车站，返回 -1 。
+815
+ */
+class Solution {
+public:
+    int numBusesToDestination(vector<vector<int>>& routes, int source, int target) {
+		if(target==source){
+			return 0;
+		}
+		unordered_map<int,vector<int>> ump;
+		unordered_set<int> visit;//不再以车站为访问记录，会超时，需要以线路为访问记录
+		queue<int> mq;
+		int res=1;
+		for(int i=0;i<routes.size();i++){
+			for(int j=0;j<routes[i].size();j++){
+				ump[routes[i][j]].emplace_back(i);
+			}
+		}
+		mq.emplace(source);
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				int k=mq.front();
+				mq.pop();
+				for(int n:ump[k]){
+					if(visit.count(n)){//如果这个线路是已经被访问过的，直接跳过
+						continue;
+					}
+					for(int j:routes[n]){
+						if(visit.count(j)){
+							continue;
+						}
+						if(j==target){
+							return res;
+						}
+						mq.emplace(j);
+					}
+					visit.emplace(n);
+				}
+			}
+			res++;
+		}
+		return -1;
+    }
+};
