@@ -1391,6 +1391,91 @@ public:
     }
 };
 /* 
+给定一个字符串数组 arr，字符串 s 是将 arr 某一子序列字符串连接所得的字符串，如果 s 中的每一个字符都只出现过一次，那么它就是一个可行解。
+
+请返回所有可行解 s 中最长长度。
+1239
+ */
+class Solution {
+public:
+    int maxLength(vector<string>& arr) {
+		
+    }
+};
+/* 
+一个王国里住着国王、他的孩子们、他的孙子们等等。每一个时间点，这个家庭里有人出生也有人死亡。
+
+这个王国有一个明确规定的皇位继承顺序，第一继承人总是国王自己。
+我们定义递归函数 Successor(x, curOrder) ，给定一个人 x 和当前的继承顺序，该函数返回 x 的下一继承人。
+
+Successor(x, curOrder):
+    如果 x 没有孩子或者所有 x 的孩子都在 curOrder 中：
+        如果 x 是国王，那么返回 null
+        否则，返回 Successor(x 的父亲, curOrder)
+    否则，返回 x 不在 curOrder 中最年长的孩子
+
+比方说，假设王国由国王，他的孩子 Alice 和 Bob （Alice 比 Bob 年长）和 Alice 的孩子 Jack 组成。
+
+    一开始， curOrder 为 ["king"].
+    调用 Successor(king, curOrder) ，返回 Alice ，所以我们将 Alice 放入 curOrder 中，得到 ["king", "Alice"] 。
+    调用 Successor(Alice, curOrder) ，返回 Jack ，所以我们将 Jack 放入 curOrder 中，得到 ["king", "Alice", "Jack"] 。
+    调用 Successor(Jack, curOrder) ，返回 Bob ，所以我们将 Bob 放入 curOrder 中，得到 ["king", "Alice", "Jack", "Bob"] 。
+    调用 Successor(Bob, curOrder) ，返回 null 。最终得到继承顺序为 ["king", "Alice", "Jack", "Bob"] 。
+
+通过以上的函数，我们总是能得到一个唯一的继承顺序。
+
+请你实现 ThroneInheritance 类：
+
+    ThroneInheritance(string kingName) 初始化一个 ThroneInheritance 类的对象。国王的名字作为构造函数的参数传入。
+    void birth(string parentName, string childName) 表示 parentName 新拥有了一个名为 childName 的孩子。
+    void death(string name) 表示名为 name 的人死亡。一个人的死亡不会影响 Successor 函数，也不会影响当前的继承顺序。
+	你可以只将这个人标记为死亡状态。
+    string[] getInheritanceOrder() 返回 除去 死亡人员的当前继承顺序列表。
+1600
+多叉树的前序遍历
+ */
+class ThroneInheritance {
+public:
+    ThroneInheritance(string kingName) {
+		next.emplace(kingName,vector<string>{});
+		king=kingName;
+    }
+    
+    void birth(string parentName, string childName) {
+		next[parentName].emplace_back(childName);
+    }
+    
+    void death(string name) {
+		dead.emplace(name);
+    }
+    
+    vector<string> getInheritanceOrder() {
+		vector<string> curOrder;
+		function<void(const string&)> preorder=[&](const string& name){
+			if(!dead.count(name)){
+				curOrder.emplace_back(name);
+			}
+			for(string str:next[name]){
+				preorder(str);
+			}
+		};
+		preorder(king);
+		return curOrder;
+    }
+private:
+	string king;
+	unordered_map<string,vector<string>> next;
+	unordered_set<string> dead;
+};
+
+/**
+ * Your ThroneInheritance object will be instantiated and called as such:
+ * ThroneInheritance* obj = new ThroneInheritance(kingName);
+ * obj->birth(parentName,childName);
+ * obj->death(name);
+ * vector<string> param_3 = obj->getInheritanceOrder();
+ */
+/* 
 二进制手表顶部有 4 个 LED 代表 小时（0-11），底部的 6 个 LED 代表 分钟（0-59）。每个 LED 代表一个 0 或 1，最低位在右侧。
 给你一个整数 turnedOn ，表示当前亮着的 LED 的数量，返回二进制手表可以表示的所有可能时间。你可以 按任意顺序 返回答案。
 小时不会以零开头：
@@ -1522,6 +1607,182 @@ public:
     }
 };
 /* 
+你有一个带有四个圆形拨轮的转盘锁。每个拨轮都有10个数字： '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' 。
+每个拨轮可以自由旋转：例如把 '9' 变为  '0'，'0' 变为 '9' 。每次旋转都只能旋转一个拨轮的一位数字。
+
+锁的初始数字为 '0000' ，一个代表四个拨轮的数字的字符串。
+
+列表 deadends 包含了一组死亡数字，一旦拨轮的数字和列表里的任何一个元素相同，这个锁将会被永久锁定，无法再被旋转。
+
+字符串 target 代表可以解锁的数字，你需要给出最小的旋转次数，如果无论如何不能解锁，返回 -1。
+752
+ */
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+		unordered_set<string> dead(deadends.begin(),deadends.end()),visit;
+        if(dead.count("0000")){
+            return -1;
+        }
+		queue<string> mq;
+		mq.emplace("0000");
+		int res=0;
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				string str=mq.front();
+				if(str==target){
+					return res;
+				}
+				mq.pop();
+				for(int j=0;j<4;j++){
+					for(int k=-1;k<=1;k+=2){
+						string temp=str;
+						temp[j]=(temp[j]-'0'+k+10)%10+'0';
+						if(!dead.count(temp)&&!visit.count(temp)){
+							mq.emplace(temp);
+							visit.emplace(temp);
+						}
+					}
+				}
+			}
+			res++;
+		}
+		return -1;
+    }
+};
+/* 
+在一个 2 x 3 的板上（board）有 5 块砖瓦，用数字 1~5 来表示, 以及一块空缺用 0 来表示.
+
+一次移动定义为选择 0 与一个相邻的数字（上下左右）进行交换.
+
+最终当板 board 的结果是 [[1,2,3],[4,5,0]] 谜板被解开。
+
+给出一个谜板的初始状态，返回最少可以通过多少次移动解开谜板，如果不能解开谜板，则返回 -1 。
+773
+将每个状态设为点，交换可以得到的就存在到达的边
+ */
+class Solution {
+public:
+    int slidingPuzzle(vector<vector<int>>& board) {
+		queue<vector<vector<int>>> mq;
+		mq.emplace(board);
+		set<vector<vector<int>>> visit;
+		visit.emplace(board);
+		int res=0;
+		vector<vector<int>> target={{1,2,3},{4,5,0}};
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				auto k=mq.front();
+				mq.pop();
+				if(k==target){
+					return res;
+				}
+				int x=0,y=0;
+				for(int a=0;a<k.size();a++){
+					for(int b=0;b<k[0].size();b++){
+						if(k[a][b]==0){
+							x=a,y=b;
+						}
+					}
+				}
+				vector<vector<int>> dir={{0,-1},{-1,0},{1,0},{0,1}};
+				for(auto d:dir){
+					int a=x+d[0],b=y+d[1];
+					if(a<0||b<0||a>=2||b>=3){
+						continue;
+					}
+					auto temp=k;
+					temp[a][b]=0;
+					temp[x][y]=k[a][b];
+					if(!visit.count(temp)){
+						visit.emplace(temp);
+						mq.emplace(temp);
+					}
+				}
+			}
+            res++;
+		}
+		return -1;
+    }
+};
+/* 
+N x N 的棋盘 board 上，按从 1 到 N*N 的数字给方格编号，编号 从左下角开始，每一行交替方向。
+
+r 行 c 列的棋盘，按前述方法编号，棋盘格中可能存在 “蛇” 或 “梯子”；如果 board[r][c] != -1，那个蛇或梯子的目的地将会是 board[r][c]。
+
+玩家从棋盘上的方格 1 （总是在最后一行、第一列）开始出发。
+
+每一回合，玩家需要从当前方格 x 开始出发，按下述要求前进：
+
+    选定目标方格：选择从编号 x+1，x+2，x+3，x+4，x+5，或者 x+6 的方格中选出一个目标方格 s ，目标方格的编号 <= N*N。
+        该选择模拟了掷骰子的情景，无论棋盘大小如何，你的目的地范围也只能处于区间 [x+1, x+6] 之间。
+    传送玩家：如果目标方格 S 处存在蛇或梯子，那么玩家会传送到蛇或梯子的目的地。否则，玩家传送到目标方格 S。 
+
+注意，玩家在每回合的前进过程中最多只能爬过蛇或梯子一次：就算目的地是另一条蛇或梯子的起点，你也不会继续移动。
+
+返回达到方格 N*N 所需的最少移动次数，如果不可能，则返回 -1。
+909
+ */
+class Solution {
+public:
+    int snakesAndLadders(vector<vector<int>>& board) {
+		int n=board.size(),res=0;
+		auto nums=board;
+		unordered_map<int,pair<int,int>> ump;
+		vector<int> visit(n*n+1,0);
+		setnum(nums,ump);
+		queue<int> mq;
+		mq.emplace(1);
+		visit[1]=1;
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				int k=mq.front();
+				if(k==n*n){
+					return res;
+				}
+				mq.pop();
+				for(int j=1;j<=6;j++){
+					if(k+j>n*n){
+						break;
+					}
+					if(visit[k+j]){
+						continue;
+					}
+					visit[k+j]=1;
+					int x=ump[k+j].first,y=ump[k+j].second;
+					if(board[x][y]!=-1){
+						mq.emplace(board[x][y]);
+						//visit[board[x][y]]=1;//不可以加，如果下一个也能跳，等下次通过+1遍历到时就是已经访问过了，导致无法跳跃
+					}else{
+						mq.emplace(k+j);
+					}
+				}
+			}
+			res++;
+		}
+		return -1;
+    }
+	void setnum(vector<vector<int>>& nums,unordered_map<int,pair<int,int>>& ump){
+		int k=1;
+		bool flag=true;
+		for(int i=nums.size()-1;i>=0;i--){
+			if(flag){
+				for(int j=0;j<nums[0].size();j++){
+					ump[k++]={i,j};
+				}
+			}else{
+				for(int j=nums[0].size()-1;j>=0;j--){
+					ump[k++]={i,j};
+				}
+			}
+			flag=!flag;
+		}
+	}
+};
+/* 
 给你一个数组 routes ，表示一系列公交线路，其中每个 routes[i] 表示一条公交线路，第 i 辆公交车将会在上面循环行驶。
 
     例如，路线 routes[0] = [1, 5, 7] 表示第 0 辆公交车会一直按序列 1 -> 5 -> 7 -> 1 -> 5 -> 7 -> 1 -> ... 这样的车站路线行驶。
@@ -1612,4 +1873,75 @@ public:
 		return -1;
     }
 };
+/* 
+给定一个正整数，返回它在 Excel 表中相对应的列名称。
+168
+实质上是转换为26进制的问题，注意的是没有0多个26！
+ */
+class Solution {
+public:
+    string convertToTitle(int columnNumber) {
+		int n=columnNumber;
+		string res;
+		while(n){
+			int k=(n-1)%26+1;
+			res+=k-1+'A';
+			n=(n-1)/26;
+		}
+		reverse(res.begin(),res.end());
+		return res;
+    }
+};
+/* 
+请实现两个函数，分别用来序列化和反序列化二叉树。
 
+你需要设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，
+你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+剑指37
+ */
+//前序遍历实现序列化
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        preorder(root);
+		return str;
+    }
+	void preorder(TreeNode* root) {
+        if(root==nullptr){
+			str+="#,";
+			return;
+		}
+		str+=to_string(root->val);
+		str+=",";
+		preorder(root->left);
+		preorder(root->right);
+    }
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        vector<string> vec;
+		splite(data,vec);
+		return depreorder(vec,0);
+	}
+	TreeNode* depreorder(vector<string>& vec,int i){
+		if(i>=vec.size()||vec[i]=="#"){
+			return nullptr;
+		}
+		int val=stoi(vec[i]);
+		TreeNode* root=new TreeNode(val);
+		root->left=depreorder(vec,i+1);
+		root->right=depreorder(vec,i+2);
+		return root;
+	}
+	void splite(string& data,vector<string>& vec){
+		int i=0;
+		while(i<data.size()){
+			int n=data.find(',',i);
+			vec.emplace_back(data.substr(i,n-i));
+			i=n+1;
+		}
+	}
+private:
+	string str;
+};

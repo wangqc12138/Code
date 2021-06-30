@@ -52,4 +52,10 @@ class ArrayReader {
 public:
     int get(int index);
 };
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 #endif
