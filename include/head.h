@@ -14,6 +14,7 @@
 #include <queue>
 #include <stack>
 #include <ctype.h>
+#include <string.h>
 using namespace std;
 typedef unsigned long long ull;
 struct TreeNode {
