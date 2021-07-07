@@ -1945,3 +1945,236 @@ public:
 private:
 	string str;
 };
+/* 
+小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
+
+    有 n 名玩家，所有玩家编号分别为 0 ～ n-1，其中小朋友 A 的编号为 0
+    每个玩家都有固定的若干个可传信息的其他玩家（也可能没有）。传信息的关系是单向的（比如 A 可以向 B 传信息，但 B 不能向 A 传信息）。
+    每轮信息必须需要传递给另一个人，且信息可重复经过同一个人
+
+给定总玩家数 n，以及按 [玩家编号,对应可传递玩家编号] 关系组成的二维数组 relation。
+返回信息从小 A (编号 0 ) 经过 k 轮传递到编号为 n-1 的小伙伴处的方案数；若不能到达，返回 0。
+
+示例 1：
+
+    输入：n = 5, relation = [[0,2],[2,1],[3,4],[2,3],[1,4],[2,0],[0,4]], k = 3
+
+    输出：3
+
+    解释：信息从小 A 编号 0 处开始，经 3 轮传递，到达编号 4。共有 3 种方案，分别是 0->2->0->4， 0->2->1->4， 0->2->3->4。
+
+示例 2：
+
+    输入：n = 3, relation = [[0,2],[2,1]], k = 2
+
+    输出：0
+
+    解释：信息不能从小 A 处经过 2 轮传递到编号 2
+
+限制：
+
+    2 <= n <= 10
+    1 <= k <= 5
+    1 <= relation.length <= 90, 且 relation[i].length == 2
+    0 <= relation[i][0],relation[i][1] < n 且 relation[i][0] != relation[i][1]
+LCP 07
+ */
+class Solution {
+public:
+    int numWays(int n, vector<vector<int>>& relation, int k) {
+		vector<vector<int>> next(n);
+		for(auto vec:relation){
+			next[vec[0]].emplace_back(vec[1]);
+		}
+		queue<int> mq;
+		mq.emplace(0);
+		while(!mq.empty()&&k-->0){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				int j=mq.front();
+				mq.pop();
+				for(int l:next[j]){
+					mq.emplace(l);
+				}
+			}
+		}
+		int res=0;
+		while(!mq.empty()){
+			if(mq.front()==n-1){
+				res++;
+			}
+            mq.pop();
+		}
+		return res;
+    }
+};
+/* 
+夏日炎炎，小男孩 Tony 想买一些雪糕消消暑。
+
+商店中新到 n 支雪糕，用长度为 n 的数组 costs 表示雪糕的定价，其中 costs[i] 表示第 i 支雪糕的现金价格。
+Tony 一共有 coins 现金可以用于消费，他想要买尽可能多的雪糕。
+
+给你价格数组 costs 和现金量 coins ，请你计算并返回 Tony 用 coins 现金能够买到的雪糕的 最大数量 。
+1833
+ */
+class Solution {
+public:
+    int maxIceCream(vector<int>& costs, int coins) {
+		int res=0;
+		sort(costs.begin(),costs.end());
+		for(int i:costs){
+			if(coins>=i){
+				res++;
+				coins-=i;
+			}
+		}
+		return res;
+    }
+};
+/*
+给定一个化学式formula（作为字符串），返回每种原子的数量。
+
+原子总是以一个大写字母开始，接着跟随0个或任意个小写字母，表示原子的名字。
+
+如果数量大于 1，原子后会跟着数字表示原子的数量。如果数量等于 1 则不会跟数字。例如，H2O 和 H2O2 是可行的，但 H1O2 这个表达是不可行的。
+
+两个化学式连在一起是新的化学式。例如 H2O2He3Mg4 也是化学式。
+
+一个括号中的化学式和数字（可选择性添加）也是化学式。例如 (H2O2) 和 (H2O2)3 是化学式。
+
+给定一个化学式，输出所有原子的数量。
+格式为：第一个（按字典序）原子的名子，跟着它的数量（如果数量大于 1），然后是第二个原子的名字（按字典序），跟着它的数量（如果数量大于 1），以此类推。
+726 ---------------------------
+ */
+class Solution {
+public:
+    string countOfAtoms(string formula) {
+        int i = 0, n = formula.length();
+
+        auto parseAtom = [&]() -> string {
+            string atom;
+            atom += formula[i++]; // 扫描首字母
+            while (i < n && islower(formula[i])) {
+                atom += formula[i++]; // 扫描首字母后的小写字母
+            }
+            return atom;
+        };
+
+        auto parseNum = [&]() -> int {
+            if (i == n || !isdigit(formula[i])) {
+                return 1; // 不是数字，视作 1
+            }
+            int num = 0;
+            while (i < n && isdigit(formula[i])) {
+                num = num * 10 + int(formula[i++] - '0'); // 扫描数字
+            }
+            return num;
+        };
+
+        stack<unordered_map<string, int>> stk;
+        stk.push({});
+        while (i < n) {
+            char ch = formula[i];
+            if (ch == '(') {
+                i++;
+                stk.push({}); // 将一个空的哈希表压入栈中，准备统计括号内的原子数量
+            } else if (ch == ')') {
+                i++;
+                int num = parseNum(); // 括号右侧数字
+                auto atomNum = stk.top();
+                stk.pop(); // 弹出括号内的原子数量
+                for (auto &[atom, v] : atomNum) {
+                    stk.top()[atom] += v * num; // 将括号内的原子数量乘上 num，加到上一层的原子数量中
+                }
+            } else {
+                string atom = parseAtom();
+                int num = parseNum();
+                stk.top()[atom] += num; // 统计原子数量
+            }
+        }
+
+        auto &atomNum = stk.top();
+        vector<pair<string, int>> pairs;
+        for (auto &[atom, v] : atomNum) {
+            pairs.emplace_back(atom, v);
+        }
+        sort(pairs.begin(), pairs.end());
+
+        string ans;
+        for (auto &p : pairs) {
+            ans += p.first;
+            if (p.second > 1) {
+                ans += to_string(p.second);
+            }
+        }
+        return ans;
+    }
+};
+/* 
+给你一个数组 orders，表示客户在餐厅中完成的订单，确切地说， orders[i]=[customerNamei,tableNumberi,foodItemi] ，
+其中 customerNamei 是客户的姓名，tableNumberi 是客户所在餐桌的桌号，而 foodItemi 是客户点的餐品名称。
+
+请你返回该餐厅的 点菜展示表 。在这张表中，表中第一行为标题，其第一列为餐桌桌号 “Table” ，后面每一列都是按字母顺序排列的餐品名称。
+接下来每一行中的项则表示每张餐桌订购的相应餐品数量，第一列应当填对应的桌号，后面依次填写下单的餐品数量。
+
+注意：客户姓名不是点菜展示表的一部分。此外，表中的数据行应该按餐桌桌号升序排列。
+1418
+ */
+class Solution {
+public:
+    vector<vector<string>> displayTable(vector<vector<string>>& orders) {
+		map<int,map<string,int>> mp;
+		set<string> st;
+		for(auto vec:orders){
+			mp[stoi(vec[1])][vec[2]]++;
+			st.emplace(vec[2]);
+		}
+		vector<vector<string>> res(mp.size()+1);
+		res[0].emplace_back("Table");
+		for(auto str:st){
+			res[0].emplace_back(str);
+		}
+		int i=1;
+		for(auto [k,m]:mp){
+			res[i].emplace_back(to_string(k));
+			for(int j=1;j<res[0].size();j++){
+				res[i].emplace_back(to_string(m[res[0][j]]));
+			}
+			i++;
+		}
+		return res;
+    }
+};
+/* 
+大餐 是指 恰好包含两道不同餐品 的一餐，其美味程度之和等于 2 的幂。
+
+你可以搭配 任意 两道餐品做一顿大餐。
+
+给你一个整数数组 deliciousness ，其中 deliciousness[i] 是第 i​​​​​​​​​​​​​​ 道餐品的美味程度，返回你可以用数组中的餐品做出的不同 大餐 的数量。
+结果需要对 109 + 7 取余。
+
+注意，只要餐品下标不同，就可以认为是不同的餐品，即便它们的美味程度相同。
+1711
+
+    1 <= deliciousness.length <= 105
+    0 <= deliciousness[i] <= 220
+进阶版的二数之和
+ */
+class Solution {
+public:
+    int countPairs(vector<int>& deliciousness) {
+		unordered_map<int,int> ump;
+		int res=0;
+		for(int num:deliciousness){
+			for(int i=0;i<=21;i++){
+				int sum=pow(2,i);
+				if(ump.count(sum-num)){
+					res+=ump[sum-num];
+				}
+				res%=1000000007;
+			}
+			ump[num]++;
+		}
+		return res;
+    }
+};
