@@ -2178,3 +2178,329 @@ public:
 		return res;
     }
 };
+/* 
+给你一个二元数组 nums ，和一个整数 goal ，请你统计并返回有多少个和为 goal 的 非空 子数组。
+
+子数组 是数组的一段连续部分。
+930
+求这种子数组为固定值的一般是前缀和做
+ */
+class Solution {
+public:
+    int numSubarraysWithSum(vector<int>& nums, int goal) {
+		int sum=0,res=0;
+		unordered_map<int,int> ump;
+		ump.emplace(0,1);
+		for(int num:nums){
+			sum+=num;
+			if(ump.count(sum-goal)){
+				res+=ump[sum-goal];
+			}
+			ump[sum]++;
+		}
+		return res;
+    }
+};
+/* 
+给定一位研究者论文被引用次数的数组（被引用次数是非负整数）。编写一个方法，计算出研究者的 h 指数。
+
+h 指数的定义：h 代表“高引用次数”（high citations），
+一名科研人员的 h 指数是指他（她）的 （N 篇论文中）总共有 h 篇论文分别被引用了至少 h 次。
+且其余的 N - h 篇论文每篇被引用次数 不超过 h 次。
+
+例如：某人的 h 指数是 20，这表示他已发表的论文中，每篇被引用了至少 20 次的论文总共有 20 篇。
+274
+百度可得：让其按被引次数从高到低排列，往下核对，直到某篇论文的序号大于该论文被引次数，那个序号减去1就是h指数
+ */
+class Solution {
+public:
+    int hIndex(vector<int>& citations) {
+		sort(citations.begin(),citations.end(),greater<int>());
+		int i=1;
+		for(;i<=citations.size();i++){
+			if(i>citations[i-1]){
+				break;
+			}
+		}
+		return i-1;
+    }
+};
+/* 
+给定一位研究者论文被引用次数的数组（被引用次数是非负整数），数组已经按照 升序排列 。编写一个方法，计算出研究者的 h 指数。
+
+h 指数的定义: “h 代表“高引用次数”（high citations），
+一名科研人员的 h 指数是指他（她）的 （N 篇论文中）总共有 h 篇论文分别被引用了至少 h 次。
+（其余的 N - h 篇论文每篇被引用次数不多于 h 次。）"
+275
+ */
+class Solution {
+public:
+    int hIndex(vector<int>& citations) {
+		reverse(citations.begin(),citations.end());
+		int i=1;
+		for(;i<=citations.size();i++){
+			if(i>citations[i-1]){
+				break;
+			}
+		}
+		return i-1;
+    }
+};
+//二分--感觉是强行二分
+class Solution {
+public:
+    int hIndex(vector<int>& citations) {
+        int l=0,r=citations.size();
+        while(l<r){
+            int mid=l+r+1>>1;
+            if(citations[citations.size()-mid]>=mid) l=mid;
+            else r=mid-1;
+        }
+        return r;
+    }
+};
+/* 
+给你两个正整数数组 nums1 和 nums2 ，数组的长度都是 n 。
+
+数组 nums1 和 nums2 的 绝对差值和 定义为所有 |nums1[i] - nums2[i]|（0 <= i < n）的 总和（下标从 0 开始）。
+
+你可以选用 nums1 中的 任意一个 元素来替换 nums1 中的 至多 一个元素，以 最小化 绝对差值和。
+
+在替换数组 nums1 中最多一个元素 之后 ，返回最小绝对差值和。因为答案可能很大，所以需要对 109 + 7 取余 后返回。
+
+|x| 定义为：
+
+    如果 x >= 0 ，值为 x ，或者
+    如果 x <= 0 ，值为 -x
+1818
+ */
+class Solution {
+public:
+    int minAbsoluteSumDiff(vector<int>& nums1, vector<int>& nums2) {
+		
+    }
+};
+/* 
+元素的 频数 是该元素在一个数组中出现的次数。
+
+给你一个整数数组 nums 和一个整数 k 。在一步操作中，你可以选择 nums 的一个下标，并将该下标对应元素的值增加 1 。
+
+执行最多 k 次操作后，返回数组中最高频元素的 最大可能频数 。
+1838
+ */
+class Solution {
+public:
+    int maxFrequency(vector<int>& nums, int k) {
+		int n=nums.size();
+		sort(nums.begin(),nums.end());
+		int left=0,right=1,res=0;
+        long long temp=0;
+		while(right<n){
+			while(right<n&&temp+(long long)(nums[right]-nums[right-1])*(right-left)<=k){
+				temp+=(long long)(nums[right]-nums[right-1])*(right-left);
+				right++;
+				res=max(res,right-left);
+			}
+			while(temp>k){
+				temp-=nums[right-1]-nums[left];
+				left++;
+			}
+		}
+		return res;
+    }
+};
+class Solution {
+public:
+    int maxFrequency(vector<int>& nums, int k) {
+        sort(nums.begin(), nums.end());
+        int n = nums.size();
+        long long total = 0;
+        int l = 0, res = 1;
+        for (int r = 1; r < n; ++r) {
+            total += (long long)(nums[r] - nums[r - 1]) * (r - l);
+            while (total > k) {
+                total -= nums[r] - nums[l];
+                ++l;
+            }
+            cout<<l<<" "<<r<<" "<<total<<endl;
+            res = max(res, r - l + 1);
+        }
+        return res;
+    }
+};
+/* 
+在一棵无限的二叉树上，每个节点都有两个子节点，树中的节点 逐行 依次按 “之” 字形进行标记。
+
+如下图所示，在奇数行（即，第一行、第三行、第五行……）中，按从左到右的顺序进行标记；
+
+而偶数行（即，第二行、第四行、第六行……）中，按从右到左的顺序进行标记
+
+给你树上某一个节点的标号 label，请你返回从根节点到该标号为 label 节点的路径，该路径是由途经的节点标号所组成的。
+1104
+ */
+class Solution {
+public:
+    vector<int> pathInZigZagTree(int label) {
+		int n=1;
+		vector<int> res;
+		while(pow(2,++n)-1<label){}
+		while(n-->=1){
+            res.emplace_back(label);
+			label=pow(2,n)-1-(label/2-pow(2,n-1));
+		}
+        sort(res.begin(),res.end());
+		return res;
+    }
+};
+/* 
+给定一个包含非负整数的数组，你的任务是统计其中可以组成三角形三条边的三元组个数。
+611
+ */
+class Solution {
+public:
+    int triangleNumber(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+		int n=nums.size(),res=0;
+		for(int i=0;i<n-2;i++){
+			for(int j=i+1;j<n-1;j++){
+				int left=j+1,right=n-1;
+				while(left<right){
+					//向上取整
+					int mid=left+(right-left+1)/2;
+					if(nums[mid]>=nums[i]+nums[j]){
+						right=mid-1;
+					}else{
+						left=mid;
+					}
+				}
+				//当跳出二分时，其实不知道left是否合适的
+                if(nums[left]<nums[i]+nums[j]){
+                    res+=left-j;
+                }
+			}
+		}
+		return res;
+    }
+};
+class Solution {
+public:
+    int triangleNumber(vector<int>& nums) {
+		//双指针
+		int n=nums.size(),res=0;
+		sort(nums.begin(),nums.end());
+		for(int i=n-1;i>=2;i--){
+			int l=0,r=i-1;
+			while(l<r){
+				if(nums[l]+nums[r]<=nums[i]){
+					l++;
+				}else{
+					res+=r-l;
+					r--;
+				}
+			}
+		}
+		return res;
+    }
+};
+/* 
+如果一个数列 至少有三个元素 ，并且任意两个相邻元素之差相同，则称该数列为等差数列。
+
+    例如，[1,3,5,7,9]、[7,7,7,7] 和 [3,-1,-5,-9] 都是等差数列。
+
+给你一个整数数组 nums ，返回数组 nums 中所有为等差数组的 子数组 个数。
+
+子数组 是数组中的一个连续序列。
+413
+本题可以使用dp，类似于递增子数组的做法
+还可以使用双指针
+ */
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& nums) {
+        if(nums.size()<3){
+            return 0;
+        }
+		int n=nums.size(),res=0,diff=nums[1]-nums[0];
+		vector<int> dp(n,0);
+		for(int i=2;i<n;i++){
+			if(nums[i]-nums[i-1]==diff){
+				dp[i]=dp[i-1]+1;
+				res+=dp[i];
+			}else{
+				diff=nums[i]-nums[i-1];
+			}
+		}
+		return res;
+    }
+};
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& nums) {
+		if(nums.size()<3){
+            return 0;
+        }
+		int n=nums.size(),res=0,diff,len=0;
+		for(int i=0;i<n-2;i+=len){
+			diff=nums[i+1]-nums[i],len=1;
+			for(int j=i+1;j<n&&nums[j+1]-nums[j]==diff;j++){
+				len++;
+			}
+			if(len>=3){
+				res+=(len-2)*(len-1)/2;
+			}
+		}
+		return res;
+    }
+};
+/* 
+给你一个字符串 s ，找出其中最长的回文子序列，并返回该序列的长度。
+
+子序列定义为：不改变剩余字符顺序的情况下，删除某些字符或者不删除任何字符形成的一个序列。
+516
+ */
+class Solution {
+public:
+    int longestPalindromeSubseq(string s) {
+		int n=s.size();
+		vector<vector<int>> dp(n,vector<int>(n,0));
+		for(int i=0;i<n;i++){
+			dp[i][i]=1;
+			for(int j=i-1;j>=0;j--){
+				if(s[i]==s[j]){
+					dp[j][i]=dp[j+1][i-1]+2;
+				}else{
+					dp[j][i]=max(dp[j+1][i],dp[j][i-1]);
+				}
+			}
+		}
+		return dp[0][n-1];
+    }
+};
+/* 
+给定一个整数 n，计算所有小于等于 n 的非负整数中数字 1 出现的个数。
+233
+ */
+class Solution {
+public:
+    int countDigitOne(int n) {
+		int high,low,cur,res=0;
+        long long digit;
+		for(int i=0;;i++){
+			digit=pow(10,i);
+            if(digit>n){
+                break;
+            }
+			high=n/(digit*10);
+			low=n%digit;
+			cur=(n/digit)%10;
+			if(cur==0){
+				res+=high*digit;
+			}else if(cur==1){
+				res+=high*digit+low+1;
+			}else{
+				res+=(high+1)*digit;
+			}
+		}
+		return res;
+    }
+};

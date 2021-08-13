@@ -2389,16 +2389,7 @@ public:
 		return -1;
     }
 };
-class Solution {
-public:
-	queue<pair<vector<vector<int>>,pair<int,int>>> mq1;
-	queue<pair<vector<vector<int>>,pair<int,int>>> mq2;
-	vector<pair<int,int>> dir={{0,-1},{-1,0},{0,1},{1,0}};
-    int slidingPuzzle(vector<vector<int>>& board) {
-		return -1;	
-    }
-	void bfs()
-};
+
 /* 
 给你一个数组 routes ，表示一系列公交线路，其中每个 routes[i] 表示一条公交线路，第 i 辆公交车将会在上面循环行驶。
 
@@ -2449,5 +2440,17 @@ public:
 			res++;
 		}
 		return -1;
+    }
+};
+/* 
+给你一个由若干括号和字母组成的字符串 s ，删除最小数量的无效括号，使得输入的字符串有效。
+
+返回所有可能的结果。答案可以按 任意顺序 返回。
+301
+ */
+class Solution {
+public:
+    vector<string> removeInvalidParentheses(string s) {
+		
     }
 };

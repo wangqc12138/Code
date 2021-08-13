@@ -1,14 +1,96 @@
+#include "head.h"
 /*
 有 n 个城市通过 m 个航班连接。每个航班都从城市 u 开始，以价格 w 抵达 v。
-现在给定所有的城市和航班，以及出发城市 src 和目的地 dst，你的任务是找到从 src 到 dst 最多经过 k 站中转的最便宜的价格。 如果没有这样的路线，则输出 -1。
+现在给定所有的城市和航班，以及出发城市 src 和目的地 dst，你的任务是找到从 src 到 dst 最多经过 k 站中转的最便宜的价格。 
+如果没有这样的路线，则输出 -1。
 787
 */
+class Solution {
+public:
+class Node{
+public:
+	Node(int c,int s,int w):city(c),step(s),weight(w){};
+	bool operator>(const Node &n)const{
+		return weight>n.weight;
+	}
+	int city;
+	int step;
+	int weight;
+};
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
+		unordered_map<int,unordered_map<int,int>> ump;
+		for(auto flight:flights){
+			ump[flight[0]].emplace(flight[1],flight[2]);
+		}
+		vector<vector<int>> price(n,vector<int>(k+2,INT_MAX));//每个城市经过a次航班的最小花费
+		priority_queue<Node,vector<Node>,greater<Node>> mpq;
+		mpq.emplace(Node(src,0,0));
+		while(!mpq.empty()){
+			Node node=mpq.top();
+            mpq.pop();
+			if(node.city==dst){
+				return node.weight;
+			}
+			if(node.step>k){
+				continue;
+			}
+			for(auto [next,cost]:ump[node.city]){
+				if(price[next][node.step+1]>node.weight+cost){//不加会超时！
+                    price[next][node.step+1]=node.weight+cost;
+				    mpq.emplace(Node(next,node.step+1,node.weight+cost));
+                }
+			}
+			
+		}
+		return -1;
+    }
+};
+
 /*
 有 n 个网络节点，标记为 1 到 n。
 给你一个列表 times，表示信号经过 有向 边的传递时间。 times[i] = (ui, vi, wi)，其中 ui 是源节点，vi 是目标节点， wi 是一个信号从源节点传递到目标节点的时间。
 现在，从某个节点 K 发出一个信号。需要多久才能使所有节点都收到信号？如果不能使所有节点收到信号，返回 -1 。
 743
+把k到每个节点的最短路径算出来，答案=max(l1,l2,l3,...);
 */
+class Solution {
+public:
+class Node{
+public:
+	int cost;
+	int node;
+	Node(int c,int n):cost(c),node(n){};
+	bool operator>(const Node& n)const{
+		return cost>n.cost;
+	}
+};
+    int networkDelayTime(vector<vector<int>>& times, int n, int k) {
+		unordered_map<int,unordered_map<int,int>> graph;
+		vector<int> price(n+1,INT_MAX);
+		for(auto vec:times){
+			graph[vec[0]][vec[1]]=vec[2];
+		}
+		priority_queue<Node,vector<Node>,greater<Node>> mpq;
+		mpq.emplace(Node(0,k));
+        price[k]=0;
+		while(!mpq.empty()){
+			Node i=mpq.top();
+			mpq.pop();
+			for(auto [next,cost]:graph[i.node]){
+				if(price[next]<=cost+i.cost){
+					continue;
+				}
+				price[next]=cost+i.cost;
+				mpq.emplace(Node(cost+i.cost,next));
+			}
+		}
+        for(int i:price){
+            cout<<i<<" ";
+        }
+		int res=*max_element(price.begin()+1,price.end());
+		return res==INT_MAX?-1:res;
+    }
+};
 /*
 由空地和墙组成的迷宫中有一个球。球可以向上下左右四个方向滚动，但在遇到墙壁前不会停止滚动。当球停下时，可以选择下一个方向。
 给定球的起始位置，目的地和迷宫，找出让球停在目的地的最短距离。距离的定义是球从起始位置（不包括）到目的地（包括）经过的空地个数。如果球无法停在目的地，返回 -1。

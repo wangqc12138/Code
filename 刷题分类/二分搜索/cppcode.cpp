@@ -3,12 +3,65 @@
 给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target  ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。
 704
 */
+//当判断条件为left<right时，如果需要查找是否有此值，则还需判断left的值！
+//当判断条件为left<=right，已经判断过了，直接返回-1即可！
+//私以为需要找到是否有目标值则用<=比较好，而找出范围什么的就用<比较好，另外right的初值也可以用size来设置
+//当要排除右半部分时---righ=mid-1，left=mid；mid最好向上取整，才不会死循环
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+		int left=0,right=nums.size();
+		while(left<right){
+			int mid=left+(right-left)/2;
+			if(nums[mid]==target){
+				return mid;
+			}else if(nums[mid]<target){
+				left=mid+1;
+			}else{
+				right=mid-1;
+			}
+		}
+		return nums[left]==target?left:-1;
+    }
+};
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+		int left=0,right=nums.size()-1;
+		while(left<=right){
+			int mid=left+(right-left)/2;
+			if(nums[mid]==target){
+				return mid;
+			}else if(nums[mid]<target){
+				left=mid+1;
+			}else{
+				right=mid-1;
+			}
+		}
+		return -1;
+    }
+};
 /*
 实现 int sqrt(int x) 函数。
 计算并返回 x 的平方根，其中 x 是非负整数。
 由于返回类型是整数，结果只保留整数的部分，小数部分将被舍去。
 69
 */
+class Solution {
+public:
+    int mySqrt(int x) {
+		long left=0,right=x;
+		while(left<right){
+			long mid=left+(right-left+1)/2;//向上取整
+			if(mid>x/mid){
+				right=mid-1;
+			}else{
+				left=mid;
+			}
+		}
+		return left;
+    }
+};
 /*
 猜数字游戏的规则如下：
     每轮游戏，我都会从 1 到 n 随机选择一个数字。 请你猜选出的是哪个数字。
@@ -26,6 +79,7 @@
 例如，[0,1,2,4,5,6,7]在下标3处经旋转后可能变为[4,5,6,7,0,1,2]。
 给你旋转后的数组nums和一个整数target，如果nums中存在这个目标值target，则返回它的索引，否则返回-1。
 33
+不重复！
 */
 class Solution {
 public:

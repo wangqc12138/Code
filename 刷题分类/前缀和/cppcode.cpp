@@ -298,6 +298,7 @@ public:
 如果数组不存在中心下标，返回 -1 。如果数组有多个中心下标，应该返回最靠近左边的那一个。
 
 注意：中心下标可能出现在数组的两端。
+724
  */
 class Solution {
 public:
@@ -422,6 +423,66 @@ public:
     }
 };
 /* 
+给你一份工作时间表 hours，上面记录着某一位员工每天的工作小时数。
+
+我们认为当员工一天中的工作小时数大于 8 小时的时候，那么这一天就是「劳累的一天」。
+
+所谓「表现良好的时间段」，意味在这段时间内，「劳累的天数」是严格 大于「不劳累的天数」。
+
+请你返回「表现良好时间段」的最大长度。
+前缀和+单调栈 -----------------
+1124
+ */
+class Solution {
+public:
+    int longestWPI(vector<int>& hours) {
+		int sum=0;//劳累天数-不劳累天数
+		unordered_map<int,int> ump;
+		for(int i=0;i<hours.size();i++){
+			sum+=hours[i]>8?1:-1;
+		}
+    }
+};
+/* 
+给定一个正整数数组 w ，其中 w[i] 代表下标 i 的权重（下标从 0 开始），
+请写一个函数 pickIndex ，它可以随机地获取下标 i，选取下标 i 的概率与 w[i] 成正比。
+
+例如，对于 w = [1, 3]，挑选下标 0 的概率为 1 / (1 + 3) = 0.25 （即，25%），而选取下标 1 的概率为 3 / (1 + 3) = 0.75（即，75%）。
+
+也就是说，选取下标 i 的概率为 w[i] / sum(w) 。
+528
+ */
+/* 
+给定一个非重叠轴对齐矩形的列表 rects，写一个函数 pick 随机均匀地选取矩形覆盖的空间中的整数点。
+
+提示：
+
+    整数点是具有整数坐标的点。
+    矩形周边上的点包含在矩形覆盖的空间中。
+    第 i 个矩形 rects [i] = [x1，y1，x2，y2]，其中 [x1，y1] 是左下角的整数坐标，[x2，y2] 是右上角的整数坐标。
+    每个矩形的长度和宽度不超过 2000。
+    1 <= rects.length <= 100
+    pick 以整数坐标数组 [p_x, p_y] 的形式返回一个点。
+    pick 最多被调用10000次。
+497
+ */
+class Solution {
+public:
+    Solution(vector<int>& w) {
+
+    }
+    
+    int pickIndex() {
+        return 0;
+    }
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(w);
+ * int param_1 = obj->pickIndex();
+ */
+/* 
 给你一个整数数组 arr 。
 现需要从数组中取三个下标 i、j 和 k ，其中 (0 <= i < j <= k < arr.length) 。
 a 和 b 定义如下：
@@ -429,6 +490,7 @@ a 和 b 定义如下：
     b = arr[j] ^ arr[j + 1] ^ ... ^ arr[k]
 注意：^ 表示 按位异或 操作。
 请返回能够令 a == b 成立的三元组 (i, j , k) 的数目。
+1442
  */
 //前缀异或
 class Solution {
