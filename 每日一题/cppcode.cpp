@@ -2504,3 +2504,57 @@ public:
 		return res;
     }
 };
+/* 
+假设有从 1 到 N 的 N 个整数，如果从这 N 个数字中成功构造出一个数组，
+使得数组的第 i 位 (1 <= i <= N) 满足如下两个条件中的一个，我们就称这个数组为一个优美的排列。条件：
+
+    第 i 位的数字能被 i 整除
+    i 能被第 i 位上的数字整除
+i%num[i]==0||num[i]%i==0
+现在给定一个整数 N，请问可以构造多少个优美的排列？
+526
+ */
+class Solution {
+public:
+	int res=0;
+	vector<int> visit;
+    int countArrangement(int n) {
+		visit.resize(n+1);
+		dfs(1,n);
+		return res;
+    }
+	void dfs(int index,int n){
+		if(index==n+1){
+			res++;
+            return;
+		}
+		for(int i=1;i<=n;i++){
+			if(index%i!=0&&i%index!=0||visit[i]==1){
+				continue;
+			}
+			visit[i]=1;
+			dfs(index+1,n);
+			visit[i]=0;
+		}
+	}
+};
+/* 
+实现 pow(x, n) ，即计算 x 的 n 次幂函数（即，xn）。
+50
+快速幂，周赛碰到没算出来！
+ */
+class Solution {
+public:
+    double myPow(double x, int n) {
+		long N=n;
+		return N>=0?getPow(x,N):1.0/getPow(x,-N);
+    }
+	//递归
+	double getPow(double x,int N){
+		if(N==0){
+			return 1.0;
+		}
+		double y=getPow(x,N/2);
+		return N%2==0?y*y:y*y*x;
+	}
+};
