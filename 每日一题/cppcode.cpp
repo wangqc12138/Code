@@ -2588,3 +2588,38 @@ public:
 		return res;
     }
 };
+/* 
+给你一个字符串 s 和一个字符串数组 dictionary 作为字典，找出并返回字典中最长的字符串，该字符串可以通过删除 s 中的某些字符得到。
+
+如果答案不止一个，返回长度最长且字典序最小的字符串。如果答案不存在，则返回空字符串。
+524
+ */
+class Solution {
+public:
+    string findLongestWord(string s, vector<string>& dictionary) {
+		string res;
+		auto cmp=[](auto i,auto j){
+			if(i.size()==j.size()){
+				return i<j;
+			}
+			return i.size()>j.size();
+		};
+		sort(dictionary.begin(),dictionary.end(),cmp);
+		for(auto str:dictionary){
+			if(str.size()>s.size()){
+				continue;
+			}
+			int i=0,j=0;
+			for(;i<s.size()&&j<str.size();i++){
+				if(str[j]==s[i]){
+					j++;
+				}
+			}
+			if(j==str.size()){
+				res=str;
+				break;
+			}
+		}
+		return res;
+    }
+};
