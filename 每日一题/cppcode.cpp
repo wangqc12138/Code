@@ -2623,3 +2623,59 @@ public:
 		return res;
     }
 };
+/* 
+给定一个 m x n 二维字符网格 board 和一个单词（字符串）列表 words，找出所有同时在二维网格和字典中出现的单词。
+
+单词必须按照字母顺序，通过 相邻的单元格 内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。
+同一个单元格内的字母在一个单词中不允许被重复使用。
+212
+ */
+class Solution {
+public:
+	vector<vector<int>> dir={{-1,0},{1,0},{0,-1},{0,1}};
+	bool dfs(vector<vector<char>>& board, string str, int index, int i, int j){
+		if(index==str.size()){
+			return true;
+		}
+		if(i<0||j<0||i>=board.size()||j>=board[0].size()||board[i][j]!=str[index]){
+			return false;
+		}
+		board[i][j]='#';
+		for(auto vec:dir){
+			if(dfs(board,str,index+1,i+vec[0],j+vec[1])){
+				board[i][j]=str[index];
+				return true;
+			}
+		}
+		board[i][j]=str[index];
+		return false;
+	}
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+		vector<string> res;
+		map<char,int> mp;
+		for(auto vec:board){
+			for(auto i:vec){
+				mp[i]++;
+			}
+		}
+		for(auto str:words){
+			auto tp=mp;
+			bool flag=true;
+			for(auto i:str){
+				if(--tp[i]<0){
+					flag=false;
+					break;
+				}
+			}
+			for(int i=0;i<board.size()&&flag;i++){
+				for(int j=0;j<board[0].size()&&flag;j++){
+					if(dfs(board,str,0,i,j)){
+						res.emplace_back(str);
+						flag=false;
+					}
+				}
+			}
+		}
+		return res;
+    }
+};
