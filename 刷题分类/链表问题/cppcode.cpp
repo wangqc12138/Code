@@ -150,3 +150,131 @@ public:
 		return dum->next;
     }
 };
+/* 
+运用你所掌握的数据结构，设计和实现一个  LRU (最近最少使用) 缓存机制 。
+
+实现 LRUCache 类：
+
+    LRUCache(int capacity) 以正整数作为容量 capacity 初始化 LRU 缓存
+    int get(int key) 如果关键字 key 存在于缓存中，则返回关键字的值，否则返回 -1 。
+    void put(int key, int value) 如果关键字已经存在，则变更其数据值；如果关键字不存在，则插入该组「关键字-值」。
+	当缓存容量达到上限时，它应该在写入新数据之前删除最久未使用的数据值，从而为新的数据值留出空间。
+
+ 
+
+进阶：你是否可以在 O(1) 时间复杂度内完成这两种操作？
+146
+ */
+class DLNode{
+public:
+	int key,val;
+	DLNode *pre, *next;
+	DLNode():key(0),val(0),pre(nullptr),next(nullptr){};
+	DLNode(int key,int val):key(key),val(val),pre(nullptr),next(nullptr){};
+	DLNode(int key,int val,DLNode *pre,DLNode *next):key(key),val(val),pre(pre),next(next){};
+};
+class LRUCache {
+public:
+    LRUCache(int capacity) {
+		s=capacity;
+		head=new DLNode();
+		tail=new DLNode();
+        head->next=tail;
+        tail->pre=head;
+    }
+    int get(int key) {
+		if(!ump.count(key)){
+			return -1;
+		}
+		DLNode* tmp=ump[key];
+		DLNode* p=tmp->pre, *q=tmp->next;
+		p->next=q;
+		q->pre=p;
+		p=head->next;
+		tmp->next=p;
+		p->pre=tmp;
+		head->next=tmp;
+		tmp->pre=head;
+		return ump[key]->val;
+    }
+    
+    void put(int key, int value) {
+		if(ump.count(key)){
+			DLNode* tmp=ump[key];
+			DLNode* p=tmp->pre, *q=tmp->next;
+			p->next=q;
+			q->pre=p;
+			p=head->next;
+			tmp->next=p;
+			p->pre=tmp;
+			head->next=tmp;
+			tmp->pre=head;
+			ump[key]->val=value;
+		}else{
+			DLNode* ptr=new DLNode(key,value,head,head->next);
+			ump[key]=ptr;
+            DLNode* tmp=head->next;
+			tmp->pre=ptr;
+			head->next=ptr;
+			if(s>0){
+				s--;
+			}else{
+                int dk=tail->pre->key;
+                ump.erase(dk);
+				DLNode* tmp=tail->pre->pre;
+				tmp->next=tail;
+				tail->pre=tmp;
+			}	
+		}
+    }
+private:
+	unordered_map<int,DLNode*> ump;
+	DLNode *head,*tail;
+	int s;
+};
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache* obj = new LRUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
+/* 
+请你为 最不经常使用（LFU）缓存算法设计并实现数据结构。
+
+实现 LFUCache 类：
+
+    LFUCache(int capacity) - 用数据结构的容量 capacity 初始化对象
+    int get(int key) - 如果键存在于缓存中，则获取键的值，否则返回 -1。
+    void put(int key, int value) - 如果键已存在，则变更其值；如果键不存在，请插入键值对。
+	当缓存达到其容量时，则应该在插入新项之前，使最不经常使用的项无效。
+	在此问题中，当存在平局（即两个或更多个键具有相同使用频率）时，应该去除 最近最久未使用 的键。
+
+注意「项的使用次数」就是自插入该项以来对其调用 get 和 put 函数的次数之和。使用次数会在对应项被移除后置为 0 。
+
+为了确定最不常使用的键，可以为缓存中的每个键维护一个 使用计数器 。使用计数最小的键是最久未使用的键。
+
+当一个键首次插入到缓存中时，它的使用计数器被设置为 1 (由于 put 操作)。对缓存中的键执行 get 或 put 操作，使用计数器的值将会递增。
+460
+ */
+class LFUCache {
+public:
+    LFUCache(int capacity) {
+
+    }
+    
+    int get(int key) {
+
+    }
+    
+    void put(int key, int value) {
+
+    }
+};
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * LFUCache* obj = new LFUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
