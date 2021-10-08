@@ -2966,3 +2966,242 @@ public:
         return dfs(root, 0, targetSum);
     }
 };
+/* 
+给你一份旅游线路图，该线路图中的旅行线路用数组 paths 表示，
+其中 paths[i] = [cityAi, cityBi] 表示该线路将会从 cityAi 直接前往 cityBi 。
+请你找出这次旅行的终点站，即没有任何可以通往其他城市的线路的城市。
+
+题目数据保证线路图会形成一条不存在循环的线路，因此恰有一个旅行终点站。
+1436
+ */
+class Solution {
+public:
+    string destCity(vector<vector<string>>& paths) {
+		unordered_set<string> f,s;
+		for(auto vec:paths){
+			f.emplace(vec[0]);
+			s.emplace(vec[1]);
+		}
+		for(auto i:s){
+			if(!f.count(i)){
+				return i;
+			}
+		}
+		return "";
+    }
+};
+/* 
+给定一个整数，编写一个算法将这个数转换为十六进制数。对于负整数，我们通常使用 补码运算 方法。
+
+注意:
+
+    十六进制中所有字母(a-f)都必须是小写。
+    十六进制字符串中不能包含多余的前导零。
+	如果要转化的数为0，那么以单个字符'0'来表示；对于其他情况，十六进制字符串中的第一个字符将不会是0字符。 
+    给定的数确保在32位有符号整数范围内。
+    不能使用任何由库提供的将数字直接转换或格式化为十六进制的方法。
+405
+ */
+class Solution {
+public:
+    string toHex(int num) {
+		string res;
+		if(num>0){
+			while(num){
+				int i=num%16;
+				if(i>=10){
+					res+='a'+i-10;
+				}else{
+					res+='0'+i;
+				}
+				num/=16;
+			}
+		}
+		reverse(res.begin(),res.end());
+		return res;
+    }
+};
+/* 
+给定两个整数，分别表示分数的分子 numerator 和分母 denominator，以 字符串形式返回小数 。
+
+如果小数部分为循环小数，则将循环的部分括在括号内。
+
+如果存在多个答案，只需返回 任意一个 。
+
+对于所有给定的输入，保证 答案字符串的长度小于 104 。
+166
+ */
+class Solution {
+public:
+    string fractionToDecimal(int numerator, int denominator) {
+
+    }
+};
+/* 
+有一个密钥字符串 S ，只包含字母，数字以及 '-'（破折号）。其中， N 个 '-' 将字符串分成了 N+1 组。
+
+给你一个数字 K，请你重新格式化字符串，使每个分组恰好包含 K 个字符。
+特别地，第一个分组包含的字符个数必须小于等于 K，但至少要包含 1 个字符。
+两个分组之间需要用 '-'（破折号）隔开，并且将所有的小写字母转换为大写字母。
+
+给定非空字符串 S 和数字 K，按照上面描述的规则进行格式化。
+482
+ */
+class Solution {
+public:
+    string licenseKeyFormatting(string s, int k) {
+		string str;
+		for(auto i:s){
+			if(i=='_'){
+				continue;
+			}
+			if(i>='a'&&i<='z'){
+				i-=32;
+			}
+			str+=i;
+		}
+		reverse(str.begin(),str.end());
+		string res;
+		for(int i=0;i<str.size();i++){
+			if(i!=0&&i%k==0){
+				res+='_';
+			}
+			res+=str[i];
+		}
+		reverse(res.begin(),res.end());
+		return res;
+	}
+};
+/* 
+请你设计一个迭代器，除了支持 hasNext 和 next 操作外，还支持 peek 操作。
+
+实现 PeekingIterator 类：
+
+    PeekingIterator(int[] nums) 使用指定整数数组 nums 初始化迭代器。
+    int next() 返回数组中的下一个元素，并将指针移动到下个元素处。
+    bool hasNext() 如果数组中存在下一个元素，返回 true ；否则，返回 false 。
+    int peek() 返回数组中的下一个元素，但 不 移动指针。
+284
+ */
+
+/*  Below is the interface for Iterator, which is already defined for you.
+ **DO NOT** modify the interface for Iterator. */
+
+class Iterator {
+	struct Data;
+	Data* data;
+public:
+	Iterator(const vector<int>& nums);
+	Iterator(const Iterator& iter);
+		// Returns the next element in the iteration.
+	int next();
+	// Returns true if the iteration has more elements.
+	bool hasNext() const;
+};
+class PeekingIterator : public Iterator {
+public:
+	PeekingIterator(const vector<int>& nums) : Iterator(nums) {
+	    // Initialize any member here.
+	    // **DO NOT** save a copy of nums and manipulate it directly.
+	    // You should only use the Iterator interface methods.
+	    flag=Iterator::hasNext();
+		if(flag){
+			nextele=Iterator::next();
+		}
+	}
+	
+    // Returns the next element in the iteration without advancing the iterator.
+	int peek() {
+        return nextele;
+	}
+	
+	// hasNext() and next() should behave the same as in the Iterator interface.
+	// Override them if needed.
+	int next() {
+		int res=nextele;
+	    flag=Iterator::hasNext();
+		if(flag){
+			nextele=Iterator::next();
+		}
+		return res;
+	}
+	
+	bool hasNext() const {
+	    return flag;
+	}
+private:
+	int nextele;
+	bool flag;
+};
+/* 
+给你一个非空数组，返回此数组中 第三大的数 。如果不存在，则返回数组中最大的数。
+414
+ */
+class Solution {
+public:
+    int thirdMax(vector<int>& nums) {
+		priority_queue<int> mpq;
+		for(int i:nums){
+			mpq.emplace(i);
+		}
+		int max=mpq.top();
+		int temp=max-1;
+		int index=0;
+		while(!mpq.empty()){
+			if(mpq.top()==temp){
+				mpq.pop();
+				continue;
+			}
+			temp=mpq.top();
+			index++;
+			if(index==3){
+				break;
+			}
+		}
+		return index==3?temp:max;
+    }
+};
+/*
+统计字符串中的单词个数，这里的单词指的是连续的不是空格的字符。
+
+请注意，你可以假定字符串里不包括任何不可打印的字符。
+434 
+ */
+class Solution {
+public:
+    int countSegments(string s) {
+		int res=0;
+		int i=1;
+		for(int i=1;i<s.size();i++){
+			if(s[i]==' '&&s[i-1]!=' '){
+				res++;
+			}
+		}
+		if(s.size()>0&&s.back()!=' '){
+			res++;
+		}
+		return res;
+    }
+};
+/* 
+所有 DNA 都由一系列缩写为 'A'，'C'，'G' 和 'T' 的核苷酸组成，例如："ACGAATTCCG"。在研究 DNA 时，识别 DNA 中的重复序列有时会对研究非常有帮助。
+
+编写一个函数来找出所有目标子串，目标子串的长度为 10，且在 DNA 字符串 s 中出现次数超过一次。
+187
+ */
+class Solution {
+public:
+    vector<string> findRepeatedDnaSequences(string s) {
+		string tmp;
+		unordered_map<string,int> ump;
+		vector<string> res;
+		for(int i=0;i<s.size()-10;i++){
+			tmp=s.substr(i,10);
+			if(ump.count(tmp)&&ump[tmp]==1){
+				res.emplace_back(tmp);
+			}
+			ump[tmp]++;
+		}
+		return res;
+    }
+};
