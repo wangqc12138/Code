@@ -3205,3 +3205,68 @@ public:
 		return res;
     }
 };
+/* 
+将非负整数 num 转换为其对应的英文表示。
+273
+ */
+class Solution {
+public:
+    string numberToWords(int num) {
+        if(num==0){
+            return "Zero";
+        }
+		vector<int> vec;
+        string res="";
+		while(num){
+            //cout<<num%1000<<endl;
+			vec.emplace_back(num%1000);
+			num/=1000;
+		}
+		vector<string> str1={"","Thousand","Million","Billion"};
+		vector<string> str2={"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"};
+		vector<string> str3={"", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+		vector<string> str4={"Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+		for(int i=vec.size()-1;i>=0;i--){
+            if(vec[i]==0){
+                continue;
+            }
+			if(vec[i]/100==0){
+                if(i!=vec.size()-1){
+                    res+=" ";
+                }
+				if(vec[i]/10){
+					if(vec[i]/10==1){
+						res+=str4[vec[i]%10];
+					}else{
+						res+=str3[(vec[i]/10)%10]+" "+str2[vec[i]%10];
+					}
+				}else{
+					res+=str2[vec[i]%10];
+				}
+				while(res.back()==' '){
+                    res.pop_back();
+                }
+			}else{
+                if(i!=vec.size()-1){
+                    res+=" ";
+                }
+				if((vec[i]/10)%10==1){
+					res+=str2[vec[i]/100]+" Hundred "+str4[vec[i]%10];
+				}else{
+                    if((vec[i]/10)%10){
+                        res+=str2[vec[i]/100]+" Hundred "+str3[(vec[i]/10)%10]+" "+str2[vec[i]%10];
+                    }else{
+                        res+=str2[vec[i]/100]+" Hundred "+str2[vec[i]%10];
+                    }
+				}
+                while(res.back()==' '){
+                    res.pop_back();
+                }
+			}
+            if(i>0){
+                res+=" "+str1[i];
+            }
+		}
+		return res;
+    }	
+};
