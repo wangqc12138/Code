@@ -3270,3 +3270,145 @@ public:
 		return res;
     }	
 };
+/*
+给定一个正整数 n ，输出外观数列的第 n 项。
+
+「外观数列」是一个整数序列，从数字 1 开始，序列中的每一项都是对前一项的描述。
+
+你可以将其视作是由递归公式定义的数字字符串序列：
+
+    countAndSay(1) = "1"
+    countAndSay(n) 是对 countAndSay(n-1) 的描述，然后转换成另一个数字字符串。
+38
+ */
+class Solution {
+public:
+    string countAndSay(int n) {
+		string res="1",temp="1";
+		for(int i=1;i<n;i++){
+			res="";
+			char c=temp[0];
+			int k=1;
+			for(int j=1;j<temp.size();j++){
+				if(temp[j]==c){
+					k++;
+				}else{
+                    string str=k==0?"0":"";
+                    while(k){
+                        str+=k%10+'0';
+                        k/=10;
+                    }
+                    reverse(str.begin(),str.end());
+					res+=str;
+					res+=c;
+					c=temp[j];
+                    k=1;
+				}
+			}
+			string str=k==0?"0":"";
+            while(k){
+                str+=k%10+'0';
+                k/=10;
+            }
+            reverse(str.begin(),str.end());
+			res+=str;
+            res+=c;
+			temp=res;
+		}
+		return res;
+    }
+};
+/* 
+请你设计一个数据结构，支持 添加新单词 和 查找字符串是否与任何先前添加的字符串匹配 。
+
+实现词典类 WordDictionary ：
+
+    WordDictionary() 初始化词典对象
+    void addWord(word) 将 word 添加到数据结构中，之后可以对它进行匹配
+    bool search(word) 如果数据结构中存在字符串与 word 匹配，则返回 true ；
+	否则，返回  false 。word 中可能包含一些 '.' ，每个 . 都可以表示任何一个字母。
+211
+ */
+class WordDictionary {
+public:
+    WordDictionary() {
+
+    }
+    
+    void addWord(string word) {
+
+    }
+    
+    bool search(string word) {
+
+    }
+};
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary* obj = new WordDictionary();
+ * obj->addWord(word);
+ * bool param_2 = obj->search(word);
+ */
+ /* 
+给你一个由若干括号和字母组成的字符串 s ，删除最小数量的无效括号，使得输入的字符串有效。
+返回所有可能的结果。答案可以按 任意顺序 返回。
+301
+输入：s = "()())()"
+输出：["(())()","()()()"]
+*/
+class Solution {
+public:
+	int maxn=0,t=0;
+	unordered_set<string> res;
+	string tmp="";
+    vector<string> removeInvalidParentheses(string s) {
+        int l=0,r=0;
+		for(auto i:s){
+			if(i!=')'&&i!='('){
+				t++;
+			}else if(i=='('){
+				l++;
+			}else{
+				r++;
+			}
+		}
+		t+=2*min(l,r);
+		dfs(s,0);
+		return vector<string>(res.begin(),res.end());
+	}
+	void dfs(string &s,int index){
+		if(index>s.size()||tmp.size()>t){
+			return;
+		}
+		if(isTrue(tmp)){
+			if(tmp.size()>maxn){
+				maxn=tmp.size();
+				res.clear();
+				res.emplace(tmp);
+			}else if(tmp.size()==maxn){
+				res.emplace(tmp);
+			}
+		}
+		tmp+=s[index];
+		dfs(s,index+1);
+		tmp.pop_back();
+		dfs(s,index+1);
+	}
+	bool isTrue(string &s){
+		int l=0,r=0;
+		for(auto i:s){
+			if(i=='('){
+				l++;
+			}
+			if(i==')'){
+				r++;
+				if(r>l){
+					return false;
+				}
+			}
+		}
+		return l==r;
+	}
+};
+
