@@ -3411,4 +3411,60 @@ public:
 		return l==r;
 	}
 };
+/* 
+给定正整数 N ，我们按任何顺序（包括原始顺序）将数字重新排序，注意其前导数字不能为零。
 
+如果我们可以通过上述方式得到 2 的幂，返回 true；否则，返回 false
+869
+ */
+class Solution {
+public:
+	string tmp;
+	int visit[11]={0};
+    bool reorderedPowerOf2(int n) {
+		string s=to_string(n);
+		return dfs(s,0);
+    }
+	bool dfs(string &s,int index){
+        //cout<<tmp<<endl;
+		if(index==s.size()){
+            //cout<<tmp<<endl;
+			int k=atoi(tmp.c_str());
+			if(k&(k-1)){
+				return false;
+			}else{
+				return true;
+			} 
+		}
+		for(int i=0;i<s.size();i++){
+			if(index==0&&s[i]=='0'||visit[i]==1){
+				continue;
+			}
+			visit[i]=1;
+			tmp+=s[i];
+			if(dfs(s,index+1)){
+                return true;
+            }
+			tmp.pop_back();
+			visit[i]=0;
+		}
+        return false;
+	}
+};
+/* 
+给你一个整数数组 distance 。
+
+从 X-Y 平面上的点 (0,0) 开始，
+先向北移动 distance[0] 米，然后向西移动 distance[1] 米，向南移动 distance[2] 米，向东移动 distance[3] 米，持续移动。
+也就是说，每次移动后你的方位会发生逆时针变化。
+
+判断你所经过的路径是否相交。如果相交，返回 true ；否则，返回 false 。
+335
+ */
+class Solution {
+public:
+    bool isSelfCrossing(vector<int>& distance) {
+		int n=distance.size();
+		
+    }
+};
