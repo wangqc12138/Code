@@ -3468,3 +3468,59 @@ public:
 		
     }
 };
+/* 
+给你一个整数数组 arr 和一个整数 difference，请你找出并返回 arr 中最长等差子序列的长度，该子序列中相邻元素之间的差等于 difference 。
+
+子序列 是指在不改变其余元素顺序的情况下，通过删除一些元素或不删除任何元素而从 arr 派生出来的序列。
+1218
+ */
+class Solution {
+public:
+    int longestSubsequence(vector<int>& arr, int difference) {
+		unordered_map<int,int> mmp;
+        int res=1;
+		for(int i:arr){
+			mmp[i]=max(mmp[i-difference]+1,mmp[i]);
+			res=max(mmp[i],res);
+		}
+		return res;
+    }
+};
+/* 
+你在和朋友一起玩 猜数字（Bulls and Cows）游戏，该游戏规则如下：
+
+写出一个秘密数字，并请朋友猜这个数字是多少。朋友每猜测一次，你就会给他一个包含下述信息的提示：
+
+    猜测数字中有多少位属于数字和确切位置都猜对了（称为 "Bulls", 公牛），
+    有多少位属于数字猜对了但是位置不对（称为 "Cows", 奶牛）。也就是说，这次猜测中有多少位非公牛数字可以通过重新排列转换成公牛数字。
+
+给你一个秘密数字 secret 和朋友猜测的数字 guess ，请你返回对朋友这次猜测的提示。
+
+提示的格式为 "xAyB" ，x 是公牛个数， y 是奶牛个数，A 表示公牛，B 表示奶牛。
+
+请注意秘密数字和朋友猜测的数字都可能含有重复数字。
+299
+ */
+class Solution {
+public:
+    string getHint(string secret, string guess) {
+		int A=0,B=0,n=secret.size();
+		vector<int> t1(26,0),t2(26,0);
+		for(int i=0;i<n;i++){
+			t1[secret[i]-'a']++;
+			t2[guess[i]-'a']++;
+		}
+		for(int i=0;i<26;i++){
+			B+=min(t1[i],t2[i]);
+		}
+		for(int i=0;i<n;i++){
+			if(secret[i]==guess[i]){
+				A++;
+				B--;
+			}
+		}
+		string res;
+		sprintf(res.c_str(),"%dA%dB",A,B);
+		return res;
+    }
+};

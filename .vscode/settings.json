@@ -49,6 +49,7 @@
 		"streambuf": "cpp",
 		"typeinfo": "cpp",
 		"*.ipp": "cpp",
-		"variant": "cpp"
+		"variant": "cpp",
+		"unordered_set": "cpp"
 	}
 }
