@@ -3519,8 +3519,48 @@ public:
 				B--;
 			}
 		}
-		string res;
-		sprintf(res.c_str(),"%dA%dB",A,B);
-		return res;
+    }
+};
+/* 
+给出两个整数 n 和 k，找出所有包含从 1 到 n 的数字，且恰好拥有 k 个逆序对的不同的数组的个数。
+
+逆序对的定义如下：对于数组的第i个和第 j个元素，如果满i < j且 a[i] > a[j]，则其为一个逆序对；否则不是。
+
+由于答案可能很大，只需要返回 答案 mod 109 + 7 的值。
+ */
+class Solution {
+public:
+    int kInversePairs(int n, int k) {
+					
+    }
+};
+/* 
+我们正在玩一个猜数游戏，游戏规则如下：
+
+    我从 1 到 n 之间选择一个数字。
+    你来猜我选了哪个数字。
+    如果你猜到正确的数字，就会 赢得游戏 。
+    如果你猜错了，那么我会告诉你，我选的数字比你的 更大或者更小 ，并且你需要继续猜数。
+    每当你猜了数字 x 并且猜错了的时候，你需要支付金额为 x 的现金。如果你花光了钱，就会 输掉游戏 。
+
+给你一个特定的数字 n ，返回能够 确保你获胜 的最小现金数，不管我选择那个数字 。
+375
+ */
+class Solution {
+public:
+    int getMoneyAmount(int n) {
+
+    }
+};
+/* 
+给你一个数组 rectangles ，其中 rectangles[i] = [xi, yi, ai, bi] 表示一个坐标轴平行的矩形。这个矩形的左下顶点是 (xi, yi) ，右上顶点是 (ai, bi) 。
+
+如果所有矩形一起精确覆盖了某个矩形区域，则返回 true ；否则，返回 false 。
+391
+ */
+class Solution {
+public:
+    bool isRectangleCover(vector<vector<int>>& rectangles) {
+
     }
 };
