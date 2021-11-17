@@ -49,20 +49,30 @@ int getfilenum(const string& dir,int iThreshold){
 	closedir (dDir);
 	return iFileNum;
 }
+string time2str (const time_t& dt)
+{
+	struct tm tt = *localtime (&dt);
+	tt.tm_year = tt.tm_year + 1900;
+	tt.tm_mon = tt.tm_mon + 1;
+
+	char buf[20];
+	sprintf (buf, "%04d%02d%02d%02d%02d%02d",
+		tt.tm_year,
+		tt.tm_mon,
+		tt.tm_mday,
+		tt.tm_hour,
+		tt.tm_min,
+		tt.tm_sec);
+
+	return string (buf);
+}
 static map<int,int> mmp;
 int main(){
 	//string dir="/home/wangqc/wqc_code/CppPracticeCode";
 	//cout<<getfilenum(dir.c_str(),1000)<<endl;
-	mmp[0]=1;
-	for(int i=0;i<10000;i++){
-		mmp.clear();
-	}
-	mmp.clear();
-	mmp.clear();
-	auto itr=mmp.begin();
-	for(;itr!=mmp.end();itr++){
-		cout<<"111"<<endl;
-	}
-	cout<<"end"<<endl;
+	string now=time2str(time(NULL));
+	cout<<now<<endl;
+	cout<<now.substr(0,10)<<" ";
+	cout<<now.substr(0,8);
 	return 0;
 }
