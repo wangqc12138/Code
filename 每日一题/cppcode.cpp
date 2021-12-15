@@ -3564,3 +3564,267 @@ public:
 
     }
 };
+/* 
+给定一个字符串数组 words，找到 length(word[i]) * length(word[j]) 的最大值，并且这两个单词不含有公共字母。
+你可以认为每个单词只包含小写字母。如果不存在这样的两个单词，返回 0。
+318
+ */
+class Solution {
+public:
+    int maxProduct(vector<string>& words) {
+		int n=words.size();
+		vector<int> vec;
+		for(auto i:words){
+			int t=0;
+			for(auto c:i){
+				t|=(1<<(c-'a'));	
+			}
+			vec.emplace_back(t);
+		}
+		int res=0;
+		for(int i=0;i<n;i++){
+			for(int j=i+1;j<n;j++){
+				if((vec[i]&vec[j])==0){
+                    int len=words[i].size()*words[j].size();
+                    res=max(len,res);
+                }
+			}
+		}
+		return res;
+    }
+};
+/* 
+给定一个二叉树，计算 整个树 的坡度 。
+
+一个树的 节点的坡度 定义即为，该节点左子树的节点之和和右子树节点之和的 差的绝对值 。
+如果没有左子树的话，左子树的节点之和为 0 ；没有右子树的话也是一样。空结点的坡度是 0 。
+
+整个树 的坡度就是其所有节点的坡度之和。
+563
+ */
+class Solution {
+public:
+	int res=0;
+    int findTilt(TreeNode* root) {
+		dfs(root);
+		return res;
+    }
+	int dfs(TreeNode* root){
+		if(root==nullptr){
+			return 0;
+		}
+		int l=0,r=0;
+		if(root->left){
+			l=dfs(root->left);
+		}
+		if(root->right){
+			r=dfs(root->right);
+		}
+		res+=abs(l-r);
+		return l+r+root->val;
+	}
+};
+/* 
+给你一个整数数组 nums ，设计算法来打乱一个没有重复元素的数组。
+
+实现 Solution class:
+
+    Solution(int[] nums) 使用整数数组 nums 初始化对象
+    int[] reset() 重设数组到它的初始状态并返回
+    int[] shuffle() 返回数组随机打乱后的结果
+
+384
+ */
+class Solution {
+public:
+    Solution(vector<int>& nums) {
+		vec=nums;
+		now=nums;
+    }
+    
+    vector<int> reset() {
+		return vec;
+    }
+    
+    vector<int> shuffle() {
+		
+    }
+	map<int,int> mp;
+	vector<int> vec,now;
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(nums);
+ * vector<int> param_1 = obj->reset();
+ * vector<int> param_2 = obj->shuffle();
+ */
+ /* 
+ 我们定义，在以下情况时，单词的大写用法是正确的：
+
+    全部字母都是大写，比如 "USA" 。
+    单词中所有字母都不是大写，比如 "leetcode" 。
+    如果单词不只含有一个字母，只有首字母大写， 比如 "Google" 。
+
+给你一个字符串 word 。如果大写用法正确，返回 true ；否则，返回 false 。
+520
+  */
+class Solution {
+public:
+    bool detectCapitalUse(string word) {
+		if(word[0]>='a'){
+            //首字母小写
+			for(int i=1;i<word.size();i++){
+				if(word[i]<'a'){
+					return false;
+				}
+			}
+		}else if(word.size()>1){
+			if(word[1]>='a'){
+				for(int i=2;i<word.size();i++){
+					if(word[i]<'a'){
+						return false;
+					}
+				}
+			}else{
+				for(int i=2;i<word.size();i++){
+					if(word[i]>='a'){
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+    }
+};
+/* 
+给你一个字符串 s ，其中包含字母顺序打乱的用英文单词表示的若干数字（0-9）。按 升序 返回原始的数字
+423
+ */
+class Solution {
+public:
+	string temp;
+	vector<int> res;
+	vector<string> vsrc={"zero","one","two","three","four","five","six","seven","eight","nine"};
+    string originalDigits(string s) {
+        vector<int> visit(s.size(),0);
+		dfs(s,0,visit);
+        sort(res.begin(),res.end());
+        string ans="";
+        for(int i:res){
+            ans+=i+'0';
+        }
+		return ans;
+    }
+	void dfs(string s,int index,vector<int> &visit){
+		if(temp.size()>0){
+			if(temp[0]!='z'&&temp[0]!='o'&&temp[0]!='t'&&temp[0]!='f'&&temp[0]!='s'&&temp[0]!='e'&&temp[0]!='n'){
+				return;
+			}
+		}
+		if(temp.size()>=3&&temp.size()<=5){
+			int i=0;
+			for(;i<10;i++){
+				if(vsrc[i]==temp){
+                    //cout<<temp<<" ";
+					res.emplace_back(i);
+					temp="";
+					break;
+				}
+			}
+		}
+        if(temp.size()>5){
+            return;
+        }
+		if(index==s.size()){
+			return;
+		}
+		for(int i=0;i<s.size();i++){
+            if(visit[i]==1){
+                continue;
+            }
+            visit[i]=1;
+			temp+=s[i];
+			dfs(s,index+1,visit);
+            if(temp.empty()){
+                break;
+            }else{
+                temp.pop_back();
+            }
+            visit[i]=0;
+		}
+	}
+};
+/* 
+有 buckets 桶液体，其中 正好 有一桶含有毒药，其余装的都是水。它们从外观看起来都一样。
+为了弄清楚哪只水桶含有毒药，你可以喂一些猪喝，通过观察猪是否会死进行判断。
+不幸的是，你只有 minutesToTest 分钟时间来确定哪桶液体是有毒的。
+
+喂猪的规则如下：
+
+    选择若干活猪进行喂养
+    可以允许小猪同时饮用任意数量的桶中的水，并且该过程不需要时间。
+    小猪喝完水后，必须有 minutesToDie 分钟的冷却时间。在这段时间里，你只能观察，而不允许继续喂猪。
+    过了 minutesToDie 分钟后，所有喝到毒药的猪都会死去，其他所有猪都会活下来。
+    重复这一过程，直到时间用完。
+
+给你桶的数目 buckets ，minutesToDie 和 minutesToTest ，返回在规定时间内判断哪个桶有毒所需的 最小 猪数。
+458
+ */
+class Solution {
+public:
+    int poorPigs(int buckets, int minutesToDie, int minutesToTest) {
+		int n=minutesToTest/minutesToDie+1;
+		int pig=1;
+		while(pow(buckets,pig)>n){
+			pig++;
+		}
+		return pig;
+    }
+};
+/* 
+给你一个按递增顺序排序的数组 arr 和一个整数 k 。数组 arr 由 1 和若干 素数  组成，且其中所有整数互不相同。
+
+对于每对满足 0 < i < j < arr.length 的 i 和 j ，可以得到分数 arr[i] / arr[j] 。
+
+那么第 k 个最小的分数是多少呢?  以长度为 2 的整数数组返回你的答案, 这里 answer[0] == arr[i] 且 answer[1] == arr[j] 。
+786
+ */
+class Solution {
+public:
+    vector<int> kthSmallestPrimeFraction(vector<int>& arr, int k) {
+		
+    }
+};
+/* 
+给你一个整数 n ，请你在无限的整数序列 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ...] 中找出并返回第 n 位数字。
+400
+ */
+class Solution {
+public:
+    int findNthDigit(int n) {
+		/* 
+		1-9      9
+		10-99    180
+		100-999  2700
+		1000-9999 36000
+		 */
+		int k=9;
+		int t=1;
+		while(n>k*t){
+			n-=k*t;
+			k*=10;
+			t++;
+		}
+		int m=pow(10,t-1);
+		while(n>=t){
+			m++;
+			n-=t;
+		}
+		k=pow(10,n);
+		return m/n;
+    }
+};
+/* 
+
+ */
