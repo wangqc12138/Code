@@ -3826,5 +3826,47 @@ public:
     }
 };
 /* 
+有一组 n 个人作为实验对象，从 0 到 n - 1 编号，其中每个人都有不同数目的钱，以及不同程度的安静值（quietness）。
+为了方便起见，我们将编号为 x 的人简称为 "person x "。
 
+给你一个数组 richer ，其中 richer[i] = [ai, bi] 表示 person ai 比 person bi 更有钱。
+另给你一个整数数组 quiet ，其中 quiet[i] 是 person i 的安静值。richer 中所给出的数据 逻辑自恰
+（也就是说，在 person x 比 person y 更有钱的同时，不会出现 person y 比 person x 更有钱的情况 ）。
+
+现在，返回一个整数数组 answer 作为答案，其中 answer[x] = y 的前提是，
+在所有拥有的钱肯定不少于 person x 的人中，person y 是最安静的人（也就是安静值 quiet[y] 最小的人）。
+851
  */
+class Solution {
+public:
+	map<int,vector<int>> next;
+    vector<int> loudAndRich(vector<vector<int>>& richer, vector<int>& quiet) {	
+		int n=quiet.size();
+		vector<int> head(n,1),res(n,n);
+		for(auto vec:richer){
+			next[vec[1]].emplace_back(vec[0]);
+			head[vec[1]]=0;
+		}
+		for(int i=0;i<n;i++){
+			if(head[i]==1){
+				dfs(i,quiet,res);
+			}
+		}
+		map<int,int> help;
+		for(int i=0;i<n;i++){
+			help[quiet[i]]=i;
+		} 
+		for(int i=0;i<n;i++){
+			res[i]=help[res[i]];
+		}
+		return res;
+    }
+	int dfs(int i,vector<int> &quiet,vector<int> &res){
+		int m=quiet[i];
+		for(auto j:next[i]){
+			m=min(dfs(j,quiet,res),m);
+		}
+		res[i]=min(m,res[i]);
+		return m;
+	}
+};
