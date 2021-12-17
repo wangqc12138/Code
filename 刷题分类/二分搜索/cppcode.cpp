@@ -753,3 +753,39 @@ public:
 		return {};
     }
 };
+/* 
+给你一个数组 colors，里面有  1、2、 3 三种颜色。
+
+我们需要在 colors 上进行一些查询操作 queries，其中每个待查项都由两个整数 i 和 c 组成。
+
+现在请你帮忙设计一个算法，查找从索引 i 到具有目标颜色 c 的元素之间的最短距离。
+
+如果不存在解决方案，请返回 -1。
+1182
+ */
+class Solution {
+public:
+    vector<int> shortestDistanceColor(vector<int>& colors, vector<vector<int>>& queries) {
+		vector<vector<int>> vec(4);
+		for(int i=0;i<colors.size();i++){
+			vec[colors[i]].emplace_back(i);
+		}
+		vector<int> res;
+		for(auto v:queries){
+			int m=v[1];
+			if(vec[m].empty()){
+				res.emplace_back(-1);
+				continue;
+			}
+			auto i=lower_bound(vec[m].begin(),vec[m].end(),v[0])-vec[m].begin();
+			if(i==0){
+				res.emplace_back(vec[m][0]-v[0]);
+			}else if(i==vec[m].size()){
+				res.emplace_back(v[0]-vec[m][i-1]);
+			}else{
+				res.emplace_back(min(vec[m][i]-v[0],v[0]-vec[m][i-1]));
+			}
+		}
+		return res;
+    }
+};
