@@ -38,17 +38,22 @@ public:
 class Solution {
 public:
     int trap(vector<int>& height) {
-        stack<int> s_stack;
-        int n=height.size(),left,res=0;
-        for(int i=0;i<n;i++){
-            while(!s_stack.empty()&&height[i]<height[s_stack.top()]){
-                left=height[s_stack.top()];
-                res+=left*(i-s_stack.top());
-                s_stack.pop();
-            }
-            s_stack.push(i);
-        } 
-        return res;      
+		stack<int> sk;
+		int res=0;
+		for(int i=0;i<height.size();i++){
+			while(!sk.empty()&&height[sk.top()]<height[i]){
+				int j=sk.top();
+				sk.pop();
+				if(sk.empty()){
+					break;
+				}
+				int k=sk.top();
+                int h=min(height[i],height[k])-height[j];
+                res+=(i-k-1)*h;
+			}
+			sk.emplace(i);
+		}
+		return res;
     }
 };
 /* 

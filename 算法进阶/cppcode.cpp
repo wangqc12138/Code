@@ -347,9 +347,623 @@ public:
 给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
 42
  */
+/*
+单调栈及其他方法…… 
+ */
 class Solution {
 public:
     int trap(vector<int>& height) {
+		stack<int> sk;
+		int res=0;
+		for(int i=0;i<height.size();i++){
+			while(!sk.empty()&&height[sk.top()]<height[i]){
+				int j=sk.top();
+				sk.pop();
+				if(sk.empty()){
+					break;
+				}
+				int k=sk.top();
+                int h=min(height[i],height[k])-height[j];
+                res+=(i-k-1)*h;
+			}
+			sk.emplace(i);
+		}
+		return res;
+    }
+};
+/* 
+行程编码（Run-length encoding）是一种压缩算法，
+能让一个含有许多段连续重复数字的整数类型数组 nums 以一个（通常更小的）二维数组 encoded 表示。
+每个 encoded[i] = [vali, freqi] 表示 nums 中第 i 段重复数字，其中 vali 是该段重复数字，重复了 freqi 次。
 
+    例如， nums = [1,1,1,2,2,2,2,2] 可表示称行程编码数组 encoded = [[1,3],[2,5]] 。对此数组的另一种读法是“三个 1 ，后面有五个 2 ”。
+
+两个行程编码数组 encoded1 和 encoded2 的积可以按下列步骤计算：
+
+    将 encoded1 和 encoded2 分别扩展成完整数组 nums1 和 nums2 。
+    创建一个新的数组 prodNums ，长度为 nums1.length 并设 prodNums[i] = nums1[i] * nums2[i] 。
+    将 prodNums 压缩成一个行程编码数组并返回之。
+
+给定两个行程编码数组 encoded1 和 encoded2 ，分别表示完整数组 nums1 和 nums2 。nums1 和 nums2 的长度相同。
+每一个 encoded1[i] = [vali, freqi] 表示 nums1 中的第 i 段，每一个 encoded2[j] = [valj, freqj] 表示 nums2 中的第 j 段。
+
+返回 encoded1 和 encoded2 的乘积。
+
+注：行程编码数组需压缩成可能的最小长度。
+
+ */
+class Solution {
+public:
+    vector<vector<int>> findRLEArray(vector<vector<int>>& encoded1, vector<vector<int>>& encoded2) {
+		int m=encoded1.size(),n=encoded2.size(),i=0,j=0;
+		vector<vector<int>> temp;
+		while(i<m&&j<n){
+			if(encoded1[i][1]==encoded2[j][1]){
+				temp.push_back({encoded1[i][0]*encoded2[j][0],encoded1[i][1]});
+				i++;j++;
+			}else if(encoded1[i][1]<encoded2[j][1]){
+				temp.push_back({encoded1[i][0]*encoded2[j][0],encoded1[i][1]});
+				encoded2[j][1]-=encoded1[i][1];
+                i++;
+			}else{
+				temp.push_back({encoded1[i][0]*encoded2[j][0],encoded2[j][1]});
+				encoded1[i][1]-=encoded2[j][1];
+                j++;
+			}
+		}
+		vector<vector<int>> res;
+		for(auto vec:temp){
+			if(res.empty()){
+				res.emplace_back(vec);
+			}else if(vec[0]==res.back()[0]){
+				res.back()[1]+=vec[1];
+			}else{
+				res.emplace_back(vec);
+			}
+		}
+		return res;
+    }
+};
+//DAY5
+/*
+给定一个字符串 s ，找出 至多 包含两个不同字符的最长子串 t ，并返回该子串的长度。
+159
+ */
+class Solution {
+public:
+    int lengthOfLongestSubstringTwoDistinct(string s) {
+		map<char,int> wind;
+		int left=0,right=0,n=s.size(),res=0;
+		while(right<n){
+			while(right<n&&wind.size()<=2){
+				if(wind.count(s[right])){
+					wind[s[right]]++;
+				}else if(wind.size()==2){
+					break;
+				}else{
+					wind[s[right]]++;
+				}
+				right++;
+			}
+			res=max(right-left,res);
+            //cout<<left<<" "<<right<<endl;
+			while(left<right){
+				if(--wind[s[left]]==0){
+					wind.erase(s[left++]);
+					break;
+				}
+                left++;
+			}
+		}
+        res=max(right-left-1,res);
+		return res;
+    }
+};
+/* 
+给定一个字符串 s ，找出 至多 包含 k 个不同字符的最长子串 T。
+340
+ */
+class Solution {
+public:
+    int lengthOfLongestSubstringKDistinct(string s, int k) {
+        if(k==0){
+            return 0;
+        }
+		map<char,int> wind;
+		int left=0,right=0,n=s.size(),res=0;
+		while(right<n){
+			while(right<n&&wind.size()<=k){
+				if(wind.count(s[right])){
+					wind[s[right]]++;
+				}else if(wind.size()==k){
+					break;
+				}else{
+					wind[s[right]]++;
+				}
+				right++;
+			}
+			res=max(right-left,res);
+            //cout<<left<<" "<<right<<endl;
+			while(left<right){
+				if(--wind[s[left]]==0){
+					wind.erase(s[left++]);
+					break;
+				}
+                left++;
+			}
+		}
+        res=max(right-left-1,res);
+		return res;
+    }
+};
+//DAY6
+/* 
+给定一个由若干 0 和 1 组成的数组 A，我们最多可以将 K 个值从 0 变成 1 。
+
+返回仅包含 1 的最长（连续）子数组的长度。
+1004
+ */
+class Solution {
+public:
+    int longestOnes(vector<int>& nums, int k) {
+		int z=0,n=nums.size(),left=0,right=0,res=0;
+		while(right<n){
+			if(nums[right++]==0){
+				z++;
+			}
+			while(z>k&&left<right){
+				if(nums[left++]==0){
+					z--;
+				}
+			}
+			res=max(right-left,res);
+		}
+		return res;
+    }
+};
+/* 
+给你一个整数数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。
+你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。
+
+返回滑动窗口中的最大值。
+239
+ */
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+		deque<int> mdq;
+		vector<int> res;
+		for(int i=0;i<nums.size();i++){
+			while(!mdq.empty()&&i-k>=mdq.front()){
+				mdq.pop_front();
+			}
+			while(!mdq.empty()&&nums[i]>nums[mdq.back()]){
+				mdq.pop_back();
+			}
+			mdq.emplace_back(i);
+			if(i<k-1){
+				continue;
+			}else{
+				res.emplace_back(nums[mdq.front()]);
+			}
+		}
+        return res;
+	}
+};
+/* 
+给你一个字符串 s 、一个字符串 t 。返回 s 中涵盖 t 所有字符的最小子串。如果 s 中不存在涵盖 t 所有字符的子串，则返回空字符串 "" 。
+76
+ */
+class Solution {
+public:
+    string minWindow(string s, string t) {
+		map<char,int> need,wind;
+		for(auto i:t){
+			need[i]++;
+		}
+		int n=s.size(),left=0,right=0,index=0;
+		int k=-1,len=n+1;
+		while(right<n){
+			while(right<n){
+				char c=s[right++];
+				if(need.count(c)&&++wind[c]==need[c]){
+					index++;
+				}
+				if(index==need.size()){
+					break;
+				}
+			}
+			while(left<right&&index==need.size()){
+				if(right-left<len){
+					len=right-left;
+					k=left;
+				}
+				char c=s[left++];
+				if(need.count(c)&&wind[c]--==need[c]){
+					index--;
+				}
+				if(index<need.size()){
+					break;
+				}
+			}
+		}
+		return k==-1?"":s.substr(k,len);
+    }
+};
+/*
+你被给定一个 m × n 的二维网格 rooms ，网格中有以下三种可能的初始化值：
+
+    -1 表示墙或是障碍物
+    0 表示一扇门
+    INF 无限表示一个空的房间。然后，我们用 231 - 1 = 2147483647 代表 INF。你可以认为通往门的距离总是小于 2147483647 的。
+
+你要给每个空房间位上填上该房间到 最近门的距离 ，如果无法到达门，则填 INF 即可。
+286
+ */
+class Solution {
+public:
+    void wallsAndGates(vector<vector<int>>& rooms) {
+		int m=rooms.size(),n=rooms[0].size();
+		for(int i=0;i<m;i++){
+			for(int j=0;j<n;j++){
+				if(rooms[i][j]==0){
+					dfs(i,j,m,n,0,rooms);
+				}
+			}
+		}
+    }
+	vector<vector<int>> dir={{0,1},{1,0},{0,-1},{-1,0}};
+	void dfs(int i,int j,int m,int n,int len,vector<vector<int>> &rooms){
+		if(i<0||j<0||i>=m||j>=n||rooms[i][j]==-1){
+			return;
+		}
+		if(rooms[i][j]!=0&&rooms[i][j]<=len||rooms[i][j]==0&&len!=0){
+			return;
+		}
+		rooms[i][j]=len;
+		for(auto vec:dir){
+			dfs(i+vec[0],j+vec[1],m,n,len+1,rooms);
+		}
+	}
+};
+//多点BFS！！！！！
+class Solution {
+public:
+	vector<vector<int>> dir={{0,1},{1,0},{0,-1},{-1,0}};
+    void wallsAndGates(vector<vector<int>>& rooms) {
+		int m=rooms.size(),n=rooms[0].size();
+		queue<pair<int,int>> mq;
+		int l=0;
+		vector<vector<int>> visit(m,vector<int>(n,0));
+		for(int i=0;i<m;i++){
+			for(int j=0;j<n;j++){
+				if(rooms[i][j]==0){
+					mq.emplace(i,j);
+				}
+			}
+		}
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				auto k=mq.front();
+                mq.pop();
+				rooms[k.first][k.second]=l;
+				for(auto vec:dir){
+					int x=k.first+vec[0],y=k.second+vec[1];
+					if(x<0||y<0||x>=m||y>=n||visit[x][y]==1||rooms[x][y]==-1||rooms[x][y]==0){
+						continue;
+					}
+					visit[x][y]=1;
+					mq.emplace(x,y);
+				}
+			}
+			l++;
+		}
+    }
+};
+/* 
+给定一个 m x n 的非负整数矩阵来表示一片大陆上各个单元格的高度。“太平洋”处于大陆的左边界和上边界，而“大西洋”处于大陆的右边界和下边界。
+
+规定水流只能按照上、下、左、右四个方向流动，且只能从高到低或者在同等高度上流动。
+
+请找出那些水流既可以流动到“太平洋”，又能流动到“大西洋”的陆地单元的坐标。
+417
+ */
+class Solution {
+public:
+	vector<vector<int>> dir={{0,1},{1,0},{0,-1},{-1,0}};
+	vector<vector<int>> res;
+    vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {
+		queue<pair<int,int>> mq;
+		int m=heights.size(),n=heights[0].size();
+        vector<vector<int>> copy=heights;
+		for(int i=0;i<m;i++){
+			dfs(i,0,m,n,heights,-1,copy);
+		}
+		for(int j=0;j<n;j++){
+			dfs(0,j,m,n,heights,-1,copy);
+		}
+        for(int i=0;i<m;i++){
+			dfs(i,n-1,m,n,heights,-2,copy);
+		}
+        for(int j=0;j<n;j++){
+			dfs(m-1,j,m,n,heights,-2,copy);
+		}
+		return res;
+    }
+	void dfs(int i,int j,int m,int n,vector<vector<int>>& heights,int index,vector<vector<int>>& copy){
+		if(heights[i][j]<0&&heights[i][j]!=index){
+			res.emplace_back(vector<int>{i,j});
+		}
+		heights[i][j]=index;
+		for(auto vec:dir){
+			int x=i+vec[0],y=j+vec[1];
+			if(x<0||y<0||x>=m||y>=n||heights[x][y]==index||copy[x][y]<copy[i][j]){
+				continue;
+			}
+			dfs(x,y,m,n,heights,index,copy);
+		}
+	}
+};
+//DAY8
+/* 
+二叉树中，如果一个节点是其父节点的唯一子节点，则称这样的节点为 “独生节点” 。二叉树的根节点不会是独生节点，因为它没有父节点。
+
+给定一棵二叉树的根节点 root ，返回树中 所有的独生节点的值所构成的数组 。数组的顺序 不限 。
+1469
+ */
+class Solution {
+public:
+    vector<int> getLonelyNodes(TreeNode* root) {
+		queue<TreeNode*> mq;
+		mq.emplace(root);
+		vector<int> res;
+		while(!mq.empty()){
+			auto k=mq.front();
+			mq.pop();
+			if(k==nullptr){
+				continue;
+			}
+			if(k->left==nullptr&&k->right){
+                res.emplace_back(k->right->val);
+            }
+            if(k->right==nullptr&&k->left){
+				res.emplace_back(k->left->val);
+			}
+			mq.emplace(k->left);
+			mq.emplace(k->right);
+		}
+		return res;
+    }
+};
+/* 
+系统中存在 n 个进程，形成一个有根树结构。给你两个整数数组 pid 和 ppid ，
+其中 pid[i] 是第 i 个进程的 ID ，
+ppid[i] 是第 i 个进程的父进程 ID 。
+
+每一个进程只有 一个父进程 ，但是可能会有 一个或者多个子进程 。只有一个进程的 ppid[i] = 0 ，意味着这个进程 没有父进程 。
+
+当一个进程 被杀掉 的时候，它所有的子进程和后代进程都要被杀掉。
+
+给你一个整数 kill 表示要杀掉​​进程的 ID ，返回杀掉该进程后的所有进程 ID 的列表。可以按 任意顺序 返回答案。
+582
+ */
+class Solution {
+public:
+    vector<int> killProcess(vector<int>& pid, vector<int>& ppid, int kill) {
+		map<int,vector<int>> mp;
+		for(int i=0;i<ppid.size();i++){
+			mp[ppid[i]].emplace_back(pid[i]);
+		}
+		queue<int> mq;
+		mq.emplace(kill);
+		vector<int> res;
+		while(!mq.empty()){
+			auto k=mq.front();
+			mq.pop();
+			res.emplace_back(k);
+			for(auto i:mp[k]){
+				mq.emplace(i);
+			}
+		}
+		return res;
+    }
+};
+//DAY9
+/* 
+给定一个二叉树（具有根结点 root）， 一个目标结点 target ，和一个整数值 K 。
+
+返回到目标结点 target 距离为 K 的所有结点的值的列表。 答案可以以任何顺序返回。
+863
+ */
+class Solution {
+public:
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+		map<TreeNode*,TreeNode*> parent;
+		queue<TreeNode*> mq;
+		mq.emplace(root);
+		while(!mq.empty()){
+			auto node=mq.front();
+			mq.pop();
+			if(node->left){
+				parent[node->left]=node;
+				mq.emplace(node->left);
+			}
+			if(node->right){
+				parent[node->right]=node;
+				mq.emplace(node->right);
+			}
+		}
+		vector<int> res;
+		set<TreeNode*> visit;
+		mq.emplace(target);
+		visit.emplace(target);
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				auto node=mq.front();
+				if(k==0){
+					res.emplace_back(node->val);
+				}
+				mq.pop();
+				if(node->left&&!visit.count(node->left)){
+					mq.emplace(node->left);
+				}
+				if(node->right&&!visit.count(node->right)){
+					mq.emplace(node->right);
+				}
+				if(parent.count(node)&&!visit.count(parent[node])){
+					mq.emplace(parent[node]);
+				}
+			}
+			k--;
+		}
+		return res;
+    }
+};
+/* 
+你有一个带有四个圆形拨轮的转盘锁。每个拨轮都有10个数字： '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' 。
+每个拨轮可以自由旋转：例如把 '9' 变为 '0'，'0' 变为 '9' 。每次旋转都只能旋转一个拨轮的一位数字。
+
+锁的初始数字为 '0000' ，一个代表四个拨轮的数字的字符串。
+
+列表 deadends 包含了一组死亡数字，一旦拨轮的数字和列表里的任何一个元素相同，这个锁将会被永久锁定，无法再被旋转。
+
+字符串 target 代表可以解锁的数字，你需要给出解锁需要的最小旋转次数，如果无论如何不能解锁，返回 -1 。
+752
+ */
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+		queue<string> mq;
+		set<string> visit;
+		int res=0;
+		for(auto s:deadends){
+			visit.emplace(s);
+		}
+		if(!visit.count("0000")){
+			mq.push("0000");
+			visit.emplace("0000");
+		}
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				auto str=mq.front();
+				if(str==target){
+					return res;
+				}
+				mq.pop();
+				for(int i=0;i<4;i++){
+					string temp=str;
+					temp[i]=(str[i]-'0'+1)%10+'0';
+					if(!visit.count(temp)){
+						mq.emplace(temp);
+						visit.emplace(temp);
+					}
+					temp[i]=(str[i]-'0'+9)%10+'0';		
+					if(!visit.count(temp)){
+						mq.emplace(temp);
+						visit.emplace(temp);
+					}			
+				}
+			}
+			res++;
+		}
+		return -1;
+    }
+};
+//DAY10
+/* 
+用以太网线缆将 n 台计算机连接成一个网络，计算机的编号从 0 到 n-1。
+线缆用 connections 表示，其中 connections[i] = [a, b] 连接了计算机 a 和 b。
+
+网络中的任何一台计算机都可以通过网络直接或者间接访问同一个网络中其他任意一台计算机。
+
+给你这个计算机网络的初始布线 connections，你可以拔开任意两台直连计算机之间的线缆，并用它连接一对未直连的计算机。
+请你计算并返回使所有计算机都连通所需的最少操作次数。如果不可能，则返回 -1 。 
+1319
+ */
+//以前是用并查集做的，这次用dfs
+class Solution {
+public:
+	unordered_map<int,vector<int>> ump;
+    int makeConnected(int n, vector<vector<int>>& connections) {
+		if(n>connections.size()+1){
+			return -1;
+		}
+		for(auto vec:connections){
+			ump[vec[0]].emplace_back(vec[1]);
+			ump[vec[1]].emplace_back(vec[0]);
+		}
+		int res=0;
+		vector<int> visit(n,0);
+		for(int i=0;i<n;i++){
+			if(visit[i]==1){
+				continue;
+			}else{
+				dfs(i,visit);
+				res++;
+			}
+		}
+		return res-1;
+    }
+	void dfs(int i,vector<int>& visit){
+		if(visit[i]==1){
+			return;
+		}
+		visit[i]=1;
+		for(auto j:ump[i]){
+			dfs(j,visit);
+		}
+	}
+};
+/* 
+给你一个 m x n 的网格图 grid 。 grid 中每个格子都有一个数字，对应着从该格子出发下一步走的方向。 grid[i][j] 中的数字可能为以下几种情况：
+
+    1 ，下一步往右走，也就是你会从 grid[i][j] 走到 grid[i][j + 1]
+    2 ，下一步往左走，也就是你会从 grid[i][j] 走到 grid[i][j - 1]
+    3 ，下一步往下走，也就是你会从 grid[i][j] 走到 grid[i + 1][j]
+    4 ，下一步往上走，也就是你会从 grid[i][j] 走到 grid[i - 1][j]
+
+注意网格图中可能会有 无效数字 ，因为它们可能指向 grid 以外的区域。
+
+一开始，你会从最左上角的格子 (0,0) 出发。
+我们定义一条 有效路径 为从格子 (0,0) 出发，每一步都顺着数字对应方向走，最终在最右下角的格子 (m - 1, n - 1) 结束的路径。
+有效路径 不需要是最短路径 。
+
+你可以花费 cost = 1 的代价修改一个格子中的数字，但每个格子中的数字 只能修改一次 。
+
+请你返回让网格图至少有一条有效路径的最小代价。
+1368
+ */
+using pii=pair<int,int>;
+class Solution {
+public:
+    int minCost(vector<vector<int>>& grid) {
+		int m=grid.size(),n=grid[0].size();
+		vector<vector<int>> dp;
+		for(int i=0;i<m;i++){
+			for(int j=0;j<n;j++){
+				unordered_set<pii> visit;
+			}
+		}
+    }
+	vector<pii> dir={{},{0,1},{0,-1},{1,0},{-1,0}};
+	void dfs(int i,int j,int m,int n,vector<vector<int>>& grid,unordered_set<pii> &visit){
+		if(i<0||j<0||i>=m||j>=n||visit.count({i,j})){
+			return;
+		}
+		visit.emplace(pii{i,j});
+		dfs(i+dir[grid[i][j]].first,j+dir[grid[i][j]].second,m,n,grid,visit);
+	}
+};
+/*
+整数可以被看作是其因子的乘积。
+254
+ */
+class Solution {
+public:
+    vector<vector<int>> getFactors(int n) {
+		
     }
 };

@@ -3870,3 +3870,108 @@ public:
 		return m;
 	}
 };
+/* 
+冬季已经来临。 你的任务是设计一个有固定加热半径的供暖器向所有房屋供暖。
+
+在加热器的加热半径范围内的每个房屋都可以获得供暖。
+
+现在，给出位于一条水平线上的房屋 houses 和供暖器 heaters 的位置，请你找出并返回可以覆盖所有房屋的最小加热半径。
+
+说明：所有供暖器都遵循你的半径标准，加热的半径也一样。
+475
+ */
+class Solution {
+public:
+    int findRadius(vector<int>& houses, vector<int>& heaters) {
+		
+    }
+};
+/* 
+有一棵特殊的苹果树，一连 n 天，每天都可以长出若干个苹果。
+在第 i 天，树上会长出 apples[i] 个苹果，这些苹果将会在 days[i] 天后（也就是说，第 i + days[i] 天时）腐烂，变得无法食用。
+也可能有那么几天，树上不会长出新的苹果，此时用 apples[i] == 0 且 days[i] == 0 表示。
+
+你打算每天 最多 吃一个苹果来保证营养均衡。注意，你可以在这 n 天之后继续吃苹果。
+
+给你两个长度为 n 的整数数组 days 和 apples ，返回你可以吃掉的苹果的最大数目。
+1705
+ */
+using PII=pair<int,int>;
+class Solution {
+public:
+    int eatenApples(vector<int>& apples, vector<int>& days) {
+		auto cmp=[](PII A,PII B){
+			return A.first>B.first;
+		};
+		priority_queue<PII,vector<PII>,decltype(cmp)> mpq(cmp);
+		int n=apples.size(),res=0,i=0;
+		for(;i<n;i++){
+			if(apples[i]==0&&days[i]==0){
+
+			}else{
+				mpq.emplace(i+days[i],apples[i]);
+			}
+			while(!mpq.empty()&&(mpq.top().first<=i||mpq.top().second<=0)){
+				mpq.pop();
+			}
+			if(!mpq.empty()){
+				auto t=mpq.top();
+				mpq.pop();
+				if(--t.second>0){
+					mpq.emplace(t);
+				}
+				res++;
+			}
+		}
+		while(!mpq.empty()){
+			while(!mpq.empty()&&(mpq.top().first<=i||mpq.top().second<=0)){
+				mpq.pop();
+			}
+			if(!mpq.empty()){
+				auto t=mpq.top();
+				mpq.pop();
+				if(--t.second>0){
+					mpq.emplace(t);
+				}
+				res++;
+			}
+			i++;
+		}
+		return res;
+    }
+};
+/* 
+在社交媒体网站上有 n 个用户。给你一个整数数组 ages ，其中 ages[i] 是第 i 个用户的年龄。
+
+如果下述任意一个条件为真，那么用户 x 将不会向用户 y（x != y）发送好友请求：
+
+    age[y] <= 0.5 * age[x] + 7
+    age[y] > age[x]
+    age[y] > 100 && age[x] < 100
+
+否则，x 将会向 y 发送一条好友请求。
+
+注意，如果 x 向 y 发送一条好友请求，y 不必也向 x 发送一条好友请求。另外，用户不会向自己发送好友请求。
+
+返回在该社交媒体网站上产生的好友请求总数。
+825
+ */
+class Solution {
+public:
+    int numFriendRequests(vector<int>& ages) {
+		sort(ages.begin(),ages.end(),greater<int>());
+		int res=0;
+		for(int i=0;i<ages.size();i++){
+			for(int j=i+1;j<ages.size();j++){
+				if(ages[j]<=0.5*ages[i]+7){
+					break;
+				}
+				if(ages[i]<100&&ages[j]>100){
+					continue;
+				}
+				res++;
+			}
+		}
+		return res;
+    }
+};

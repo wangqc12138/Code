@@ -163,3 +163,74 @@ public:
 		}
     }
 };
+/*
+给定一个字符串 s ，找出 至多 包含两个不同字符的最长子串 t ，并返回该子串的长度。
+159
+ */
+class Solution {
+public:
+    int lengthOfLongestSubstringTwoDistinct(string s) {
+		map<char,int> wind;
+		int left=0,right=0,n=s.size(),res=0;
+		while(right<n){
+			while(right<n&&wind.size()<=2){
+				if(wind.count(s[right])){
+					wind[s[right]]++;
+				}else if(wind.size()==2){
+					break;
+				}else{
+					wind[s[right]]++;
+				}
+				right++;
+			}
+			res=max(right-left,res);
+            //cout<<left<<" "<<right<<endl;
+			while(left<right){
+				if(--wind[s[left]]==0){
+					wind.erase(s[left++]);
+					break;
+				}
+                left++;
+			}
+		}
+        res=max(right-left-1,res);
+		return res;
+    }
+};
+/* 
+给定一个字符串 s ，找出 至多 包含 k 个不同字符的最长子串 T。
+340
+ */
+class Solution {
+public:
+    int lengthOfLongestSubstringKDistinct(string s, int k) {
+        if(k==0){
+            return 0;
+        }
+		map<char,int> wind;
+		int left=0,right=0,n=s.size(),res=0;
+		while(right<n){
+			while(right<n&&wind.size()<=k){
+				if(wind.count(s[right])){
+					wind[s[right]]++;
+				}else if(wind.size()==k){
+					break;
+				}else{
+					wind[s[right]]++;
+				}
+				right++;
+			}
+			res=max(right-left,res);
+            //cout<<left<<" "<<right<<endl;
+			while(left<right){
+				if(--wind[s[left]]==0){
+					wind.erase(s[left++]);
+					break;
+				}
+                left++;
+			}
+		}
+        res=max(right-left-1,res);
+		return res;
+    }
+};
