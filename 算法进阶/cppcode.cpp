@@ -937,25 +937,72 @@ public:
 1368
  */
 using pii=pair<int,int>;
+using ppi=pair<pii,int>;
+vector<vector<int>> dir={{0,1},{0,-1},{1,0},{-1,0}};
 class Solution {
 public:
     int minCost(vector<vector<int>>& grid) {
 		int m=grid.size(),n=grid[0].size();
-		vector<vector<int>> dp;
-		for(int i=0;i<m;i++){
-			for(int j=0;j<n;j++){
-				unordered_set<pii> visit;
+		auto cmp=[](ppi a,ppi b){
+			return a.second>b.second;
+		};
+		auto hash=[](pii a){
+			return a.first^a.second;
+		};
+		priority_queue<ppi,vector<ppi>,decltype(cmp)> mpq(cmp);
+		mpq.push({{0,0},0});
+		vector<vector<int>> visit(m,vector<int>(n,0));
+		while(!mpq.empty()){
+			auto node=mpq.top();
+			mpq.pop();
+            if(visit[node.first.first][node.first.second]==1){
+                continue;
+            }
+            visit[node.first.first][node.first.second]=1;
+			if(node.first==pii{m-1,n-1}){
+				return node.second;
+			}
+			// cout<<node.first.first<<" "<<node.first.second<<" "<<node.second<<endl;
+			for(int i=0;i<4;i++){
+				int j=dir[i][0]+node.first.first;
+				int k=dir[i][1]+node.first.second;
+				if(j<0||k<0||j>=m||k>=n||visit[j][k]==1){
+					continue;
+				}
+				int w=node.second;
+				if(grid[node.first.first][node.first.second]!=i+1){
+					w++;
+				}
+				mpq.push({{j,k},w});
 			}
 		}
+		return -1;
     }
-	vector<pii> dir={{},{0,1},{0,-1},{1,0},{-1,0}};
-	void dfs(int i,int j,int m,int n,vector<vector<int>>& grid,unordered_set<pii> &visit){
-		if(i<0||j<0||i>=m||j>=n||visit.count({i,j})){
-			return;
-		}
-		visit.emplace(pii{i,j});
-		dfs(i+dir[grid[i][j]].first,j+dir[grid[i][j]].second,m,n,grid,visit);
-	}
+};
+/* 
+力扣数据中心有 n 台服务器，分别按从 0 到 n-1 的方式进行了编号。
+
+它们之间以「服务器到服务器」点对点的形式相互连接组成了一个内部集群，其中连接 connections 是无向的。
+
+从形式上讲，connections[i] = [a, b] 表示服务器 a 和 b 之间形成连接。任何服务器都可以直接或者间接地通过网络到达任何其他服务器。
+
+「关键连接」是在该集群中的重要连接，也就是说，假如我们将它移除，便会导致某些服务器无法访问其他服务器。
+
+请你以任意顺序返回该集群内的所有 「关键连接」。
+1192
+ */
+//最小生成树？----不是
+//这里用k算法
+using pii=pair<int,int>;
+class Solution {
+public:
+    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
+		auto cmp=[](pii a,pii b){
+			return a.second>b.second;
+		};
+		priority_queue<pii,vector<pii>,decltype(cmp)> mpq(cmp);
+		mpq.emplace(0,0);
+    }
 };
 /*
 整数可以被看作是其因子的乘积。
@@ -963,7 +1010,26 @@ public:
  */
 class Solution {
 public:
+	vector<vector<int>> res;
+	vector<int> temp;
     vector<vector<int>> getFactors(int n) {
-		
+
     }
+	void dfs(vector<int> temp){
+		if(temp.size()>1){
+			res.emplace_back(temp);
+		}
+		for(int i=0;i<temp.size();i++){
+			if(i>=1&&temp[i]==temp[i-1]){
+				continue;
+			}
+			for(int j=2;j<temp[i]/2;j++){
+				if(temp[i]%j==0){
+					temp.emplace_back(temp[i]);
+					temp.emplace_back(j);
+				}
+			}
+		}
+		
+	}
 };
