@@ -3975,3 +3975,144 @@ public:
 		return res;
     }
 };
+/* 
+Given a string path, which is an absolute path (starting with a slash '/') to a file or directory in a Unix-style file system, convert it to the simplified canonical path.
+
+In a Unix-style file system, a period '.' refers to the current directory, a double period '..' refers to the directory up a level, and any multiple consecutive slashes (i.e. '//') are treated as a single slash '/'. For this problem, any other format of periods such as '...' are treated as file/directory names.
+
+The canonical path should have the following format:
+
+    The path starts with a single slash '/'.
+    Any two directories are separated by a single slash '/'.
+    The path does not end with a trailing '/'.
+    The path only contains the directories on the path from the root directory to the target file or directory (i.e., no period '.' or double period '..')
+
+Return the simplified canonical path.
+71
+ */
+class Solution {
+public:
+    string simplifyPath(string path) {
+		stack<string> sk;
+		int n=path.size();
+		for(int i=0;i<n;i++){
+			if(path[i]!='/'){
+				string temp="";
+				int j=i;
+				for(;j<n&&path[j]!='/';j++){
+					temp+=path[j];
+				}
+				if(temp==".."){
+					if(!sk.empty()){
+						sk.pop();
+					}
+				}else if(temp!="."){
+					sk.emplace(temp);
+				}
+				i=j;
+			}
+		}
+		string res="";
+		stack<string> temp;
+		while(!sk.empty()){
+			temp.emplace(sk.top());
+			sk.pop();
+		}
+		while(!temp.empty()){
+			res+='/'+temp.top();
+			temp.pop();
+		}
+		return res==""?"/":res;
+    }
+};
+/* 
+给你一个仅由整数组成的有序数组，其中每个元素都会出现两次，唯有一个数只会出现一次。
+
+请你找出并返回只出现一次的那个数。
+
+你设计的解决方案必须满足 O(log n) 时间复杂度和 O(1) 空间复杂度。
+540
+ */
+class Solution {
+public:
+    int singleNonDuplicate(vector<int>& nums) {
+		int n=nums.size(),left=0,right=n-1;
+		while(left<right){
+			int mid=left+(right-left)/2;
+			if(mid%2==1){
+				mid--;
+			}
+			if(nums[mid]!=nums[mid+1]){
+				right=mid;
+			}else{
+				left=mid+2;
+			}
+		}
+		return left;
+    }
+};
+/* 
+n 张多米诺骨牌排成一行，将每张多米诺骨牌垂直竖立。在开始时，同时把一些多米诺骨牌向左或向右推。
+
+每过一秒，倒向左边的多米诺骨牌会推动其左侧相邻的多米诺骨牌。同样地，倒向右边的多米诺骨牌也会推动竖立在其右侧的相邻多米诺骨牌。
+
+如果一张垂直竖立的多米诺骨牌的两侧同时有多米诺骨牌倒下时，由于受力平衡， 该骨牌仍然保持不变。
+
+就这个问题而言，我们会认为一张正在倒下的多米诺骨牌不会对其它正在倒下或已经倒下的多米诺骨牌施加额外的力。
+
+给你一个字符串 dominoes 表示这一行多米诺骨牌的初始状态，其中：
+
+    dominoes[i] = 'L'，表示第 i 张多米诺骨牌被推向左侧，
+    dominoes[i] = 'R'，表示第 i 张多米诺骨牌被推向右侧，
+    dominoes[i] = '.'，表示没有推动第 i 张多米诺骨牌。
+
+返回表示最终状态的字符串。
+838
+ */
+/*
+每一秒，每一秒，BFS 
+ */
+class Solution {
+public:
+    string pushDominoes(string dominoes) {
+		int n=dominoes.size();
+		string temp=dominoes,res=temp;
+		queue<int> mq;
+		for(int i=0;i<n;i++){
+			if(dominoes[i]!='.'){
+				mq.emplace(i);
+			}
+		}
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				int f=mq.front();
+				mq.pop();
+				if(res[f]=='L'){
+					if(f>0){
+						if(res[f-1]=='.'){
+							res[f-1]='L';
+							mq.emplace(f-1);
+						}
+						if(res[f-1]=='R'&&temp[f-1]=='.'){
+							res[f-1]='.';
+						}
+					}
+				}else if(res[f]=='R'){
+					if(f<n-1){
+						if(res[f+1]=='.'){
+							res[f+1]='R';
+							mq.emplace(f+1);
+						}
+						if(res[f+1]=='L'&&temp[f+1]=='.'){
+							res[f-1]='.';
+						}
+					}
+				}
+			}
+            //cout<<res<<endl;
+			temp=res;
+		}
+		return res;
+    }
+};

@@ -19,6 +19,23 @@ public:
     	return dp[n-1];
     }
 };
+//还可以使用贪心+二分来做
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+		vector<int> temp;
+		int n=nums.size();
+		for(int i=0;i<n;i++){
+			auto j=lower_bound(temp.begin(),temp.end(),nums[i]);
+			if(j==temp.end()){
+				temp.emplace_back(nums[i]);
+			}else{
+                *j=nums[i];
+			}
+		}
+		return temp.size();
+    }
+};
 /*
 给定一个未排序的整数数组，找到最长递增子序列的个数。
 673
