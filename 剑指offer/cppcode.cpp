@@ -375,3 +375,61 @@ public:
 /*
 每位相加对三求余 
  */
+/* 
+在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组，求出这个数组中的逆序对的总数。
+ */
+//法一：归并
+class Solution {
+public:
+	vector<int> res;
+	map<int,int> mp;
+    vector<int> countSmaller(vector<int>& nums) {
+		int n=nums.size();
+		res.resize(n);
+		for(int i=0;i<n;i++){
+			mp[i]=i;
+		}
+		mergesort(nums,0,n-1);
+		return res;
+    }
+	void mergesort(vector<int>& nums,int left,int right){
+		if(left>=right){
+			return;
+		}
+		int mid=left+(right-left)/2;
+		mergesort(nums,left,mid);
+		mergesort(nums,mid+1,right);
+		merge(nums,left,right);
+	}
+	void merge(vector<int>& nums,int left,int right){
+		vector<int> help(right-left+1);
+		int mid=left+(right-left)/2;
+		int p1=left,p2=mid+1,index=0;
+		while(p1<=mid&&p2<=right){
+			if(nums[p1]<=nums[p2]){
+				help[index]=nums[p1];
+				res[mp[p1]]+=p2-mid-1;
+                mp[p1]=mp[left+index];
+				index++,p1++;
+			}else{
+				help[index]=nums[p2];
+				mp[p2]=mp[left+index];
+				index++,p2++;
+			}
+		}
+		while(p1<=mid){
+			help[index]=nums[p1];
+            //res[mp[p1]]+=p2-mid-1;
+			mp[p1]=mp[left+index];
+			index++,p1++;
+		}
+		while(p2<=right){
+			help[index]=nums[p2];
+			mp[p2]=mp[left+index];
+			index++,p2++;
+		}
+		for(int i=0;i<=right-left;i++){
+			nums[left+i]=help[i];
+		}
+	}
+};

@@ -451,6 +451,29 @@ public:
 
 也就是说，选取下标 i 的概率为 w[i] / sum(w) 。
 528
+类似于函数piecewise_constant_distribution();
+ */
+class Solution {
+public:
+    Solution(vector<int>& w) {
+		dis=uniform_int_distribution<int>(1,accumulate(w.begin(),w.end(),0));
+		partial_sum(w.begin(),w.end(),pre);
+		rm=(mt19937)random_device{}();
+	}
+    int pickIndex() {
+		int x=dis(rm);
+		return lower_bound(pre.begin(),pre.end(),x)-pre.begin();
+    }
+private:
+	vector<int> pre;
+	uniform_int_distribution<int> dis;
+	mt19937 rm;
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(w);
+ * int param_1 = obj->pickIndex();
  */
 /* 
 给定一个非重叠轴对齐矩形的列表 rects，写一个函数 pick 随机均匀地选取矩形覆盖的空间中的整数点。
@@ -564,5 +587,90 @@ public:
 			pq.pop();
 		}
 		return pq.top();
+    }
+};
+/* 
+给你一个长桌子，桌子上盘子和蜡烛排成一列。给你一个下标从 0 开始的字符串 s ，
+它只包含字符 '*' 和 '|' ，其中 '*' 表示一个 盘子 ，'|' 表示一支 蜡烛 。
+
+同时给你一个下标从 0 开始的二维整数数组 queries ，
+其中 queries[i] = [lefti, righti] 表示 子字符串 s[lefti...righti] （包含左右端点的字符）。
+对于每个查询，你需要找到 子字符串中 在 两支蜡烛之间 的盘子的 数目 。
+如果一个盘子在 子字符串中 左边和右边 都 至少有一支蜡烛，那么这个盘子满足在 两支蜡烛之间 。
+
+    比方说，s = "||**||**|*" ，查询 [3, 8] ，表示的是子字符串 "*||**|" 。
+	子字符串中在两支蜡烛之间的盘子数目为 2 ，子字符串中右边两个盘子在它们左边和右边 都 至少有一支蜡烛。
+
+请你返回一个整数数组 answer ，其中 answer[i] 是第 i 个查询的答案。
+2055
+ */
+class Solution {
+public:
+    vector<int> platesBetweenCandles(string s, vector<vector<int>>& queries) {
+		map<int,int> pre;
+		vector<int> vec;
+		for(int i=0;i<s.size();i++){
+			if(s[i]=='|'){
+				if(!vec.empty()){
+					pre[i]+=pre[vec.back()]+i-vec.back()-1;
+				}else{
+					pre[i]=0;
+				}
+				vec.emplace_back(i);
+			}
+		}
+        // for(auto [x,y]:pre){
+        //     cout<<x<<" "<<y<<endl;
+        // }
+        // for(auto i:vec){
+        //     cout<<i<<endl;
+        // }
+		vector<int> res;
+		for(auto v:queries){
+			if(vec.empty()||v[0]>=vec.back()||v[1]<=vec[0]){
+				res.emplace_back(0);
+				continue;
+			}
+			auto l=lower_bound(vec.begin(),vec.end(),v[0])-vec.begin();
+			auto r=upper_bound(vec.begin(),vec.end(),v[1])-vec.begin()-1;
+            //cout<<vec[l]<<" "<<vec[r]<<endl;
+            if(l>=r){
+                res.emplace_back(0);
+                continue;
+            }
+			res.emplace_back(pre[vec[r]]-pre[vec[l]]);
+		}
+		return res;
+    }
+};
+class Solution {
+public:
+    vector<int> platesBetweenCandles(string s, vector<vector<int>>& queries) {
+		int n=s.size();
+		vector<int> Left(n),Right(n),pre(n);
+		int L=-1,R=-1;
+		for(int i=0,j=n-1;i<n;i++,j--){
+			if(s[i]=='*'){
+				pre[i]=i==0?1:pre[i-1]+1;
+			}else{
+				L=i;
+				pre[i]=i==0?0:pre[i-1];
+			}
+			if(s[j]=='|'){
+				R=j;
+			}
+			Left[i]=L;
+			Right[j]=R;
+		}
+		vector<int> res;
+		for(auto vec:queries){
+            L=Right[vec[0]],R=Left[vec[1]];
+			if(L==-1||R==-1||R<=L){
+				res.emplace_back(0);
+			}else{
+				res.emplace_back(pre[R]-pre[L]);
+			}
+		}
+		return res;
     }
 };
