@@ -96,14 +96,14 @@ int Judge(char str[])
 }
 int main()
 {
-    char str[30];
+    //char str[30];
     int k;
     cout << "请输入字符串" << endl;
     cin >> str;
     k = Circle(str);
     if (k != 0)
     {
-        cout << k << endl;
+        //cout << k << endl;
     }
     return 0;
 }
