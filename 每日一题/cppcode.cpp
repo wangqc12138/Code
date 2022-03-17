@@ -4116,3 +4116,204 @@ public:
 		return res;
     }
 };
+/* 
+用一个大小为 m x n 的二维网格 grid 表示一个箱子。你有 n 颗球。箱子的顶部和底部都是开着的。
+
+箱子中的每个单元格都有一个对角线挡板，跨过单元格的两个角，可以将球导向左侧或者右侧。
+
+    将球导向右侧的挡板跨过左上角和右下角，在网格中用 1 表示。
+    将球导向左侧的挡板跨过右上角和左下角，在网格中用 -1 表示。
+
+在箱子每一列的顶端各放一颗球。每颗球都可能卡在箱子里或从底部掉出来。
+如果球恰好卡在两块挡板之间的 "V" 形图案，或者被一块挡导向到箱子的任意一侧边上，就会卡住。
+
+返回一个大小为 n 的数组 answer ，其中 answer[i] 是球放在顶部的第 i 列后从底部掉出来的那一列对应的下标，如果球卡在盒子里，则返回 -1 。
+1706
+ */
+class Solution {
+public:
+    vector<int> findBall(vector<vector<int>>& grid) {
+
+    }
+};
+/* 
+复数 可以用字符串表示，遵循 "实部+虚部i" 的形式，并满足下述条件：
+
+    实部 是一个整数，取值范围是 [-100, 100]
+    虚部 也是一个整数，取值范围是 [-100, 100]
+    i2 == -1
+
+给你两个字符串表示的复数 num1 和 num2 ，请你遵循复数表示形式，返回表示它们乘积的字符串。
+537
+ */
+/* 
+给定一个表示整数的字符串 n ，返回与它最近的回文整数（不包括自身）。如果不止一个，返回较小的那个。
+
+“最近的”定义为两个整数差的绝对值最小。
+564
+5种情况:
+前半部分回，
+前半部分+1回
+前半部分-1回
+99999
+10000001
+ */
+class Solution {
+public:
+    string nearestPalindromic(string n) {
+		long long t=stoll(n);
+		if(t<10||to_string(t-1).size()<n.size()){
+			return to_string(t-1);
+		}
+		long long k=stoll(n.substr(0,(n.size()+1)/2));
+		long long r1=-1,r2=-1,r3=-1,r4=-1,r5=-1;
+		vector<pair<long long,long long>> vec;
+		if(to_string(t+1).size()>n.size()){
+			r1=t+2;
+			vec.emplace_back(2,t+2);
+		}
+		if(to_string(t-2).size()<n.size()){
+			r2=t-2;
+			vec.emplace_back(2,t-2);
+		}
+		string str;
+		if(n.size()%2==0){
+			str=to_string(k);
+		}else{
+			str=to_string(k/10);
+		}
+		reverse(str.begin(),str.end());
+		r3=stoll(to_string(k)+str);
+        if(r3!=t){
+           vec.emplace_back(abs(r3-t),r3); 
+        }
+		if(n.size()%2==0){
+			str=to_string(k+1);
+		}else{
+			str=to_string((k+1)/10);
+		}
+		reverse(str.begin(),str.end());
+		r4=stoll(to_string(k+1)+str);
+		vec.emplace_back(abs(r4-t),r4);
+		if(n.size()%2==0){
+			str=to_string(k-1);
+		}else{
+			str=to_string((k-1)/10);
+		}
+		reverse(str.begin(),str.end());
+		r5=stoll(to_string(k-1)+str);
+		vec.emplace_back(abs(r5-t),r5);
+		auto cmp=[](auto p1,auto p2){
+			if(p1.first<p2.first){
+				return true;
+			}else if(p1.first==p2.first){
+				return p1.second<p2.second;
+			}
+			return false;
+		};
+		sort(vec.begin(),vec.end(),cmp);
+		return to_string(vec[0].second);
+    }
+};
+/* 
+给定一个非负整数 num，反复将各个位上的数字相加，直到结果为一位数。返回这个结果。
+258
+ */
+class Solution {
+public:
+    int addDigits(int num) {
+		while(num/10){
+			string str=to_string(num);
+			num=0;
+			for(auto c:str){
+				num+=c-'0';
+			}
+		}
+		return num;
+    }
+};
+/* 
+给你一个长桌子，桌子上盘子和蜡烛排成一列。给你一个下标从 0 开始的字符串 s ，
+它只包含字符 '*' 和 '|' ，其中 '*' 表示一个 盘子 ，'|' 表示一支 蜡烛 。
+
+同时给你一个下标从 0 开始的二维整数数组 queries ，
+其中 queries[i] = [lefti, righti] 表示 子字符串 s[lefti...righti] （包含左右端点的字符）。
+对于每个查询，你需要找到 子字符串中 在 两支蜡烛之间 的盘子的 数目 。
+如果一个盘子在 子字符串中 左边和右边 都 至少有一支蜡烛，那么这个盘子满足在 两支蜡烛之间 。
+
+    比方说，s = "||**||**|*" ，查询 [3, 8] ，表示的是子字符串 "*||**|" 。
+	子字符串中在两支蜡烛之间的盘子数目为 2 ，子字符串中右边两个盘子在它们左边和右边 都 至少有一支蜡烛。
+
+请你返回一个整数数组 answer ，其中 answer[i] 是第 i 个查询的答案。
+2055
+ */
+class Solution {
+public:
+    vector<int> platesBetweenCandles(string s, vector<vector<int>>& queries) {
+		map<int,int> pre;
+		vector<int> vec;
+		for(int i=0;i<s.size();i++){
+			if(s[i]=='|'){
+				if(!vec.empty()){
+					pre[i]+=pre[vec.back()]+i-vec.back()-1;
+				}else{
+					pre[i]=0;
+				}
+				vec.emplace_back(i);
+			}
+		}
+        // for(auto [x,y]:pre){
+        //     cout<<x<<" "<<y<<endl;
+        // }
+        // for(auto i:vec){
+        //     cout<<i<<endl;
+        // }
+		vector<int> res;
+		for(auto v:queries){
+			if(vec.empty()||v[0]>=vec.back()||v[1]<=vec[0]){
+				res.emplace_back(0);
+				continue;
+			}
+			auto l=lower_bound(vec.begin(),vec.end(),v[0])-vec.begin();
+			auto r=upper_bound(vec.begin(),vec.end(),v[1])-vec.begin()-1;
+            //cout<<vec[l]<<" "<<vec[r]<<endl;
+            if(l>=r){
+                res.emplace_back(0);
+                continue;
+            }
+			res.emplace_back(pre[vec[r]]-pre[vec[l]]);
+		}
+		return res;
+    }
+};
+class Solution {
+public:
+    vector<int> platesBetweenCandles(string s, vector<vector<int>>& queries) {
+		int n=s.size();
+		vector<int> Left(n),Right(n),pre(n);
+		int L=-1,R=-1;
+		for(int i=0,j=n-1;i<n;i++,j--){
+			if(s[i]=='*'){
+				pre[i]=i==0?1:pre[i-1]+1;
+			}else{
+				L=i;
+				pre[i]=i==0?0:pre[i-1];
+			}
+			if(s[j]=='|'){
+				R=j;
+			}
+			Left[i]=L;
+			Right[j]=R;
+		}
+		vector<int> res;
+		for(auto vec:queries){
+            L=Right[vec[0]],R=Left[vec[1]];
+			if(L==-1||R==-1||R<=L){
+				res.emplace_back(0);
+			}else{
+				res.emplace_back(pre[R]-pre[L]);
+			}
+		}
+		return res;
+    }
+};
