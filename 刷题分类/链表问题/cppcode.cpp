@@ -278,3 +278,38 @@ public:
  * int param_1 = obj->get(key);
  * obj->put(key,value);
  */
+//双链表的应用
+/* 
+请你设计一个用于存储字符串计数的数据结构，并能够返回计数最小和最大的字符串。
+
+实现 AllOne 类：
+
+    AllOne() 初始化数据结构的对象。
+    inc(String key) 字符串 key 的计数增加 1 。如果数据结构中尚不存在 key ，那么插入计数为 1 的 key 。
+    dec(String key) 字符串 key 的计数减少 1 。如果 key 的计数在减少后为 0 ，那么需要将这个 key 从数据结构中删除。测试用例保证：在减少计数前，key 存在于数据结构中。
+    getMaxKey() 返回任意一个计数最大的字符串。如果没有元素存在，返回一个空字符串 "" 。
+    getMinKey() 返回任意一个计数最小的字符串。如果没有元素存在，返回一个空字符串 "" 。
+432
+ */
+class AllOne {
+public:
+    AllOne() {
+		
+    }
+    
+    void inc(string key) {
+
+    }
+    
+    void dec(string key) {
+
+    }
+    
+    string getMaxKey() {
+
+    }
+    
+    string getMinKey() {
+
+    }
+};
