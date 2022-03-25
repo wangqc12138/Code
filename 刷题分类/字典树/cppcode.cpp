@@ -402,3 +402,82 @@ public:
 		return res;
     }
 };
+/* 
+请你设计一个数据结构，支持 添加新单词 和 查找字符串是否与任何先前添加的字符串匹配 。
+
+实现词典类 WordDictionary ：
+
+    WordDictionary() 初始化词典对象
+    void addWord(word) 将 word 添加到数据结构中，之后可以对它进行匹配
+    bool search(word) 如果数据结构中存在字符串与 word 匹配，则返回 true ；否则，返回  false 。
+	word 中可能包含一些 '.' ，每个 . 都可以表示任何一个字母。
+
+1 <= word.length <= 25
+addWord 中的 word 由小写英文字母组成
+search 中的 word 由 '.' 或小写英文字母组成
+最多调用 104 次 addWord 和 search
+
+211
+ */
+class WordDictionary {
+public:
+    WordDictionary() {
+		next.resize(26);
+		isEnd=false;
+    }
+    
+    void addWord(string word) {
+		WordDictionary* node=this;
+		for(auto c:word){
+			if(node->next[c-'a']==nullptr){
+				node->next[c-'a']=new WordDictionary();
+			}
+			node=node->next[c-'a'];
+		}
+		bool isEnd=true;
+    }
+    
+    bool search(string word) {
+		WordDictionary* node=this;
+		stack<pair<int,int>> sp;
+		for(int i=0;i<word.size();i++){
+			char c=word[i];
+			if(c=='.'){
+				for(int j=0;j<=26;j++){
+					if(node->next[j]!=nullptr){
+						sp.emplace(i,j+1);
+					}
+				}
+				if(sp.empty()){
+					return false;
+				}
+			}else{
+				if(node->next[c-'a']==nullptr){
+					while(!sp.empty()){
+						sp.pop();
+						int j=sp.top().second;
+						int index=sp.top().first;
+						for(;j<=26;j++){
+							if(node->next[j+'a']!=nullptr){
+								sp.emplace(index,j+1);
+							}
+						}
+						if(j<=26){
+							i=index;
+							break;
+						}
+					}
+					if(sp.empty()){
+						return false;
+					}
+				}else{
+					node=node->next[c-'a'];
+				}
+			}
+		}
+		return isEnd;
+    }
+private:
+	vector<WordDictionary*> next;
+	bool isEnd;
+};
