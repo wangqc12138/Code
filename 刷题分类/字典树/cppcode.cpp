@@ -57,6 +57,51 @@ private:
     vector<Trie*> next;
     bool isEnd; 
 };
+/* -----------20220311------------ */
+//this指针
+class Trie {
+public:
+    Trie() {
+		next.clear();
+		next.resize(26);
+    }
+    
+    void insert(string word) {
+		Trie* node=this;
+		for(auto c:word){
+			if(node->next[c-'a']==nullptr){
+				node->next[c-'a']=new Trie();
+			}
+			node=node->next[c-'a'];
+		}
+		node->isEnd=true;
+    }
+    
+    bool search(string word) {
+		Trie* node=this;
+		for(auto c:word){
+			if(node->next[c-'a']==nullptr){
+				return false;
+			}
+			node=node->next[c-'a'];
+		}
+		return node->isEnd;
+    }
+    
+    bool startsWith(string prefix) {
+		Trie* node=this;
+		for(auto c:prefix){
+			if(node->next[c-'a']==nullptr){
+				return false;
+			}
+			node=node->next[c-'a'];
+		}
+		return true;
+    }
+private:
+	vector<Trie*> next;
+	bool isEnd=false;
+};
 /**
  * Your Trie object will be instantiated and called as such:
  * Trie* obj = new Trie();
@@ -205,4 +250,234 @@ public:
 		}
 		return res;
     }
+};
+/* 
+设计一个 map ，满足以下几点:
+
+    字符串表示键，整数表示值
+    返回具有前缀等于给定字符串的键的值的总和
+
+实现一个 MapSum 类：
+
+    MapSum() 初始化 MapSum 对象
+    void insert(String key, int val) 插入 key-val 键值对，字符串表示键 key ，整数表示值 val 。
+	如果键 key 已经存在，那么原来的键值对 key-value 将被替代成新的键值对。
+    int sum(string prefix) 返回所有以该前缀 prefix 开头的键 key 的值的总和。
+	key 和 prefix 仅由小写英文字母组成
+677
+ */
+class MapSum {
+public:
+    MapSum():tree(26),v(0),s(0){}
+    
+    void insert(string key, int val) {
+		MapSum* node=this;
+		for(auto c:key){
+			if(node->tree[c-'a']==nullptr){
+				node->tree[c-'a']=new MapSum();
+			}
+			node=node->tree[c-'a'];
+            node->s+=val;
+        }
+		if(node->v!=0){
+			MapSum* temp=this;
+			for(auto c:key){
+				temp=temp->tree[c-'a'];
+                temp->s-=node->v;
+			}
+		}
+		node->v=val;
+    }
+    
+    int sum(string prefix) {
+		MapSum* node=this;
+		for(auto c:prefix){
+			if(node->tree[c-'a']==nullptr){
+				return 0;
+			}
+			node=node->tree[c-'a'];
+		}
+		return node->s;
+    }
+private:
+	vector<MapSum*> tree;
+	int v,s;
+};
+
+/**
+ * Your MapSum object will be instantiated and called as such:
+ * MapSum* obj = new MapSum();
+ * obj->insert(key,val);
+ * int param_2 = obj->sum(prefix);
+ */
+/* 
+在英语中，我们有一个叫做 词根(root) 的概念，可以词根后面添加其他一些词组成另一个较长的单词——我们称这个词为 继承词(successor)。
+例如，词根an，跟随着单词 other(其他)，可以形成新的单词 another(另一个)。
+
+现在，给定一个由许多词根组成的词典 dictionary 和一个用空格分隔单词形成的句子 sentence。
+你需要将句子中的所有继承词用词根替换掉。如果继承词有许多可以形成它的词根，则用最短的词根替换它。
+
+你需要输出替换之后的句子。
+648
+1 <= dictionary.length <= 1000
+1 <= dictionary[i].length <= 100
+dictionary[i] 仅由小写字母组成。
+1 <= sentence.length <= 10^6
+sentence 仅由小写字母和空格组成。
+sentence 中单词的总量在范围 [1, 1000] 内。
+sentence 中每个单词的长度在范围 [1, 1000] 内。
+sentence 中单词之间由一个空格隔开。
+sentence 没有前导或尾随空格。
+ */
+class trie{
+public:
+	trie(){
+		next.resize(26);
+		isEnd=false;
+	}
+	void add(const string& str){
+		trie* node=this;
+		for(auto c:str){
+			if(node->next[c-'a']==nullptr){
+				node->next[c-'a']=new trie();
+			}
+			node=node->next[c-'a'];
+		}
+		node->isEnd=true;
+	}
+	string find(const string& str){
+		trie* node=this;
+		string res="";
+		for(auto c:str){
+			if(node->next[c-'a']==nullptr){
+				break;
+			}
+			node=node->next[c-'a'];
+			res+=c;
+			if(node->isEnd==true){
+				return res;
+			}
+		}
+		return "";
+	}
+private:
+	vector<trie*> next;
+	bool isEnd;
+};
+class Solution {
+public:
+	int splite(string str,string x,vector<string> &vstr){
+		int index=0,n=str.size();
+		while(int k=str.find(x,index)!=string::npos){
+			vstr.emplace_back(str.substr(index,k-index+x.size()));
+			index=k+x.size();
+		}
+		return vstr.size();
+	}
+	void splite(string& data,vector<string>& vec){
+		int i=0;
+		while(i<data.size()){
+			int n=data.find(' ',i);
+			vec.emplace_back(data.substr(i,n-i));
+			i=n+1;
+		}
+	}
+    string replaceWords(vector<string>& dictionary, string sentence) {
+		vector<string> vstr;
+		splite(sentence,vstr);
+		trie Trie;
+		for(auto str:dictionary){s
+			Trie.add(str);
+		}
+		string res="";
+		for(auto str:vstr){
+			string s=Trie.find(str);
+			if(s!=""){
+				res+=s+" ";
+			}else{
+				res+=str+" ";
+			}
+		}
+		res.pop_back();
+		return res;
+    }
+};
+/* 
+请你设计一个数据结构，支持 添加新单词 和 查找字符串是否与任何先前添加的字符串匹配 。
+
+实现词典类 WordDictionary ：
+
+    WordDictionary() 初始化词典对象
+    void addWord(word) 将 word 添加到数据结构中，之后可以对它进行匹配
+    bool search(word) 如果数据结构中存在字符串与 word 匹配，则返回 true ；否则，返回  false 。
+	word 中可能包含一些 '.' ，每个 . 都可以表示任何一个字母。
+
+1 <= word.length <= 25
+addWord 中的 word 由小写英文字母组成
+search 中的 word 由 '.' 或小写英文字母组成
+最多调用 104 次 addWord 和 search
+
+211
+ */
+class WordDictionary {
+public:
+    WordDictionary() {
+		next.resize(26);
+		isEnd=false;
+    }
+    
+    void addWord(string word) {
+		WordDictionary* node=this;
+		for(auto c:word){
+			if(node->next[c-'a']==nullptr){
+				node->next[c-'a']=new WordDictionary();
+			}
+			node=node->next[c-'a'];
+		}
+		bool isEnd=true;
+    }
+    
+    bool search(string word) {
+		WordDictionary* node=this;
+		stack<pair<int,int>> sp;
+		for(int i=0;i<word.size();i++){
+			char c=word[i];
+			if(c=='.'){
+				for(int j=0;j<=26;j++){
+					if(node->next[j]!=nullptr){
+						sp.emplace(i,j+1);
+					}
+				}
+				if(sp.empty()){
+					return false;
+				}
+			}else{
+				if(node->next[c-'a']==nullptr){
+					while(!sp.empty()){
+						sp.pop();
+						int j=sp.top().second;
+						int index=sp.top().first;
+						for(;j<=26;j++){
+							if(node->next[j+'a']!=nullptr){
+								sp.emplace(index,j+1);
+							}
+						}
+						if(j<=26){
+							i=index;
+							break;
+						}
+					}
+					if(sp.empty()){
+						return false;
+					}
+				}else{
+					node=node->next[c-'a'];
+				}
+			}
+		}
+		return isEnd;
+    }
+private:
+	vector<WordDictionary*> next;
+	bool isEnd;
 };
