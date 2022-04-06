@@ -386,7 +386,7 @@ public:
 		vector<string> vstr;
 		splite(sentence,vstr);
 		trie Trie;
-		for(auto str:dictionary){s
+		for(auto str:dictionary){
 			Trie.add(str);
 		}
 		string res="";

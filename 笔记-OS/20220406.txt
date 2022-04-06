@@ -1,0 +1,1 @@
+1、shell使用fish/zsh
