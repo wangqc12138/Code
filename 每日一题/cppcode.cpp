@@ -4384,6 +4384,6 @@ class Solution {
 public:
     int lengthLongestPath(string input) {
 		stack<string> sk;
-		for()
+		vector<int> vec;
     }
 };
