@@ -2125,7 +2125,7 @@ public:
  */
 class Solution {
 public:
-	int res=0;
+	int res=1;
     int longestConsecutive(TreeNode* root) {
 		dfs(root);
 		return res;
@@ -2136,5 +2136,69 @@ public:
 		}
 		int L=dfs(root->left);
 		int R=dfs(root->right);
+		int K=1;
+		if(L&&root->val+1==root->left->val){
+			K=max(K,L+1);
+			res=max(res,L+1);
+		}
+		if(R&&root->val+1==root->right->val){
+			K=max(K,R+1);
+			res=max(res,R+1);
+		}
+		return K;
+	}
+};
+/* 
+给定一个二叉树，你需要找出二叉树中最长的连续序列路径的长度。
+
+请注意，该路径可以是递增的或者是递减。例如，[1,2,3,4] 和 [4,3,2,1] 都被认为是合法的，而路径 [1,2,4,3] 则不合法。
+另一方面，路径可以是 子-父-子 顺序，并不一定是 父-子 顺序。
+*/
+class Solution {
+public:
+	int res=1;
+    int longestConsecutive(TreeNode* root) {
+		dfs(root);
+		return res;
+    }
+	int dfs(TreeNode* root){
+		if(root==nullptr){
+			return 0;
+		}
+		int L=dfs(root->left);
+		int R=dfs(root->right);
+		int M=1,V=root->val;
+		if(L<0){
+			if(V==root->left->val-1){
+				M=max(abs(M),abs(L)+1);
+				M=-abs(M);
+			}
+		}
+		if(L>0){
+			if(V==root->left->val+1){
+				M=max(abs(M),abs(L)+1);
+				M=abs(M);
+			}
+		}
+		if(R<0){
+			if(V==root->right->val-1){
+				M=max(abs(M),abs(R)+1);
+				M=-abs(M);
+			}
+		}
+		if(R>0){
+			if(V==root->right->val+1){
+				M=max(abs(M),abs(R)+1);
+				M=abs(M);
+			}
+		}
+		if(L*R<0){
+			if(V==root->left->val-1&&V==root->right->val+1||V==root->right->val-1&&V==root->left->val+1){
+				res=max(res,L+R+1);
+			}
+		}else{
+			res=max(res,abs(M));
+		}
+		return M;
 	}
 };
