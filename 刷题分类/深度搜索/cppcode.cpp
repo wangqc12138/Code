@@ -2125,8 +2125,10 @@ public:
  */
 class Solution {
 public:
+	int res=0;
     int longestConsecutive(TreeNode* root) {
-
+		dfs(root);
+		return res;
     }
 	int dfs(TreeNode* root){
 		if(root==nullptr){
