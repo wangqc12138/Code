@@ -2070,3 +2070,69 @@ public:
 
     }
 };
+//树形DP
+/* 
+给定一棵二叉树，你需要计算它的直径长度。一棵二叉树的直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。
+543
+ */
+class Solution {
+public:
+	int res=0;
+    int diameterOfBinaryTree(TreeNode* root) {
+		dfs(root);
+		return res;
+    }
+	int dfs(TreeNode* root){
+		if(root==nullptr){
+			return 0;
+		}
+		int left_len=dfs(root->left);
+		int right_len=dfs(root->right);
+		res=max(res,right_len+left_len);
+		return max(left_len,right_len)+1;
+	}
+};
+/* 
+路径 被定义为一条从树中任意节点出发，沿父节点-子节点连接，达到任意节点的序列。同一个节点在一条路径序列中 至多出现一次 。该路径 至少包含一个 节点，且不一定经过根节点。
+
+路径和 是路径中各节点值的总和。
+
+给你一个二叉树的根节点 root ，返回其 最大路径和 。
+124
+ */
+class Solution {
+public:
+	int res=INT_MIN;
+    int maxPathSum(TreeNode* root) {
+		dfs(root);
+		return res;
+    }
+	int dfs(TreeNode* root){
+		if(root==nullptr){
+			return 0;
+		}
+		int L=dfs(root->left);
+		int R=dfs(root->right);
+		res=max(res,root->val+max(L,0)+max(R,0));
+		return root->val+max(0,max(L,R));
+	}
+};
+/* 
+给你一棵指定的二叉树的根节点 root ，请你计算其中 最长连续序列路径 的长度。
+
+最长连续序列路径 是依次递增 1 的路径。该路径，可以是从某个初始节点到树中任意节点，通过「父 - 子」关系连接而产生的任意路径。且必须从父节点到子节点，反过来是不可以的。
+298
+ */
+class Solution {
+public:
+    int longestConsecutive(TreeNode* root) {
+
+    }
+	int dfs(TreeNode* root){
+		if(root==nullptr){
+			return 0;
+		}
+		int L=dfs(root->left);
+		int R=dfs(root->right);
+	}
+};
