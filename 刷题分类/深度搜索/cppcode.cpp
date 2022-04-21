@@ -2154,10 +2154,75 @@ public:
 请注意，该路径可以是递增的或者是递减。例如，[1,2,3,4] 和 [4,3,2,1] 都被认为是合法的，而路径 [1,2,4,3] 则不合法。
 另一方面，路径可以是 子-父-子 顺序，并不一定是 父-子 顺序。
 */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 class Solution {
 public:
-	int res=1;
+	int res=0;
     int longestConsecutive(TreeNode* root) {
+		dfs(root);
+		return res;
+    }
+	//递增序列，递减序列
+	pair<int,int> dfs(TreeNode* root){
+		if(root==nullptr){
+			return {0,0};
+		}
+		int L1=1,L2=1,R1=1,R2=1;
+		if(root->left){
+			auto rt=dfs(root->left);
+			L1=rt.first;
+			L2=rt.second;
+			if(root->val==root->left->val+1){
+				L1++;
+			}else{
+                L1=1;
+            }
+			if(root->val==root->left->val-1){
+				L2++;
+			}else{
+                L2=1;
+            }
+		}
+		if(root->right){
+			auto rt=dfs(root->right);
+			R1=rt.first;
+			R2=rt.second;
+			if(root->val==root->right->val+1){
+				R1++;
+			}else{
+                R1=1;
+            }
+			if(root->val==root->right->val-1){
+				R2++;
+			}else{
+                R2=1;
+            }
+		}
+		res=max(res,max(L1+R2,L2+R1)-1);
+        //cout<<max(L1,R1)<<" "<<max(L2,R2)<<endl;
+		return {max(L1,R1),max(L2,R2)};
+	}
+};
+/* 
+给定一个二叉树的 root ，返回 最长的路径的长度 ，这个路径中的 每个节点具有相同值 。 这条路径可以经过也可以不经过根节点。
+
+两个节点之间的路径长度 由它们之间的边数表示。
+687
+ */
+class Solution {
+public:
+	int res=0;
+    int longestUnivaluePath(TreeNode* root) {
 		dfs(root);
 		return res;
     }
@@ -2165,40 +2230,91 @@ public:
 		if(root==nullptr){
 			return 0;
 		}
-		int L=dfs(root->left);
-		int R=dfs(root->right);
-		int M=1,V=root->val;
-		if(L<0){
-			if(V==root->left->val-1){
-				M=max(abs(M),abs(L)+1);
-				M=-abs(M);
+		int L=1,R=1;
+		if(root->left){
+			L=dfs(root->left);
+			if(root->val==root->left->val){
+				L++;
+			}else{
+				L=1;
 			}
 		}
-		if(L>0){
-			if(V==root->left->val+1){
-				M=max(abs(M),abs(L)+1);
-				M=abs(M);
+		if(root->right){
+			R=dfs(root->right);
+			if(root->val==root->right->val){
+				R++;
+			}else{
+				R=1;
 			}
 		}
-		if(R<0){
-			if(V==root->right->val-1){
-				M=max(abs(M),abs(R)+1);
-				M=-abs(M);
-			}
-		}
-		if(R>0){
-			if(V==root->right->val+1){
-				M=max(abs(M),abs(R)+1);
-				M=abs(M);
-			}
-		}
-		if(L*R<0){
-			if(V==root->left->val-1&&V==root->right->val+1||V==root->right->val-1&&V==root->left->val+1){
-				res=max(res,L+R+1);
-			}
-		}else{
-			res=max(res,abs(M));
-		}
-		return M;
+		res=max(res,L+R-2);
+		return max(L,R);
 	}
+};
+/* 
+给定一个根为 root 的二叉树，每个节点的深度是 该节点到根的最短距离 。
+
+返回包含原始树中所有 最深节点 的 最小子树 。
+
+如果一个节点在 整个树 的任意节点之间具有最大的深度，则该节点是 最深的 。
+
+一个节点的 子树 是该节点加上它的所有后代的集合。
+865
+ */
+class Solution {
+public:
+	TreeNode* res=nullptr;
+	int maxdp=0;
+    TreeNode* subtreeWithAllDeepest(TreeNode* root) {
+		dfs(root,0);
+		return res;
+    }
+	int dfs(TreeNode* root,int dep){
+		if(root==nullptr){
+			return dep;
+		}
+		int dl=dfs(root->left,dep+1);
+		int dr=dfs(root->right,dep+1);
+		if(dl==dr&&dl>=maxdp){
+			res=root;
+			maxdp=dl;
+		}
+		return max(dl,dr);
+	}
+};
+/* 
+给你一棵 树（即一个连通、无向、无环图），根节点是节点 0 ，这棵树由编号从 0 到 n - 1 的 n 个节点组成。
+用下标从 0 开始、长度为 n 的数组 parent 来表示这棵树，其中 parent[i] 是节点 i 的父节点，由于节点 0 是根节点，所以 parent[0] == -1 。
+
+另给你一个字符串 s ，长度也是 n ，其中 s[i] 表示分配给节点 i 的字符。
+
+请你找出路径上任意一对相邻节点都没有分配到相同字符的 最长路径 ，并返回该路径的长度。
+2246
+ */
+class Solution {
+public:
+	int res=1;
+    int longestPath(vector<int>& parent, string s) {
+        next.resize(parent.size());
+        for(int i=1;i<parent.size();i++){
+			next[parent[i]].emplace_back(i);
+		}
+        str=s;
+		dfs(0);
+		return res;
+    }
+	int dfs(int root){
+		int maxlen=0;
+		for(auto i:next[root]){
+			int len=dfs(i);
+			if(str[i]!=str[root]){
+				res=max(res,len+maxlen+1);
+				maxlen=max(maxlen,len);
+			}
+		}
+		return maxlen+1;
+	}
+private:
+    string str;
+	vector<vector<int>> next;
 };

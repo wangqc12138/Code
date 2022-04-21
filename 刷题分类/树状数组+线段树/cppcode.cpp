@@ -185,7 +185,32 @@ public:
 private:
 	vector<int> tree,arr;
 };
+//-------------------20220421-----------------------------------
+//线段树
+class STree{
+public:
+	STree(){
 
+	};
+	int update();
+	int query();
+private:
+
+};
+class NumArray {
+public:
+    NumArray(vector<int>& nums) {
+
+    }
+    
+    void update(int index, int val) {
+
+    }
+    
+    int sumRange(int left, int right) {
+
+    }
+};
 /**
  * Your NumArray object will be instantiated and called as such:
  * NumArray* obj = new NumArray(nums);
