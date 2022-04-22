@@ -2,7 +2,7 @@
 #define COMMON_H
 #include <iostream>
 #include <vector>
-#include <string.h>
+#include <string>
 #include <stdio.h>
 //信号
 #include <signal.h>
@@ -13,6 +13,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/un.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 /* According to POSIX.1-2001, POSIX.1-2008 */
@@ -23,6 +24,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+using namespace std;
 typedef struct{
 	string ip;
 	int port;

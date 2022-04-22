@@ -1,12 +1,12 @@
 #include<iostream>
 #include "server.h"
-#include "Readcfg.h"
+//#include "Readcfg.h"
 using namespace std;
 int main()
 {
 
 	C_SERVER ser;
-	ser.init("192.168.154.128",23333);
+	ser.init("./socket.txt");
 	ser.run();
 	ser.stop();
 	return 0;

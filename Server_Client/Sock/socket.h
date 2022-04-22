@@ -10,8 +10,11 @@ public:
 		m_iFamily=AF_INET;
 		m_iHandle=-1;
 	}
-    int Connet(const string strIp,const int iPort);
+	int Connect(const string strFilename);
+    int Connect(const string strIp,const int iPort);
+	int Listen(const string strFilename);
     int Listen(const string strIp,const int iPort);
+	int Accept_Local();
     int Accept();
 public:
 	int m_iHandle;

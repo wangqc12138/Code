@@ -7,7 +7,27 @@ int Close(int fd){
     }
     return 0;
 }
-int Socket::Connet(const string strIp,const int iPort){
+int Socket::Connect(const string strFilename){
+    int family=AF_UNIX;
+    if(m_iHandle!=-1){
+        Close(m_iHandle);
+    }
+    m_iHandle=socket(family,SOCK_STREAM,0);
+    if(-1==m_iHandle){
+        perror("create socket error!");
+        return -1;
+    }
+    sockaddr_un sa;
+    sa.sun_family=family;
+    strcpy(sa.sun_path,strFilename.c_str());
+    int ret=connect(m_iHandle,(const struct sockaddr*)&sa,sizeof(sa));
+    if(ret==-1){
+        perror("connet error!");
+        return -1;
+    }
+    return 0;
+}
+int Socket::Connect(const string strIp,const int iPort){
     int ret,family=AF_INET;
     if(strIp.find(':')!=string::npos){
         family=AF_INET6;
@@ -32,9 +52,36 @@ int Socket::Connet(const string strIp,const int iPort){
     }
     return 0;
 }
+int Socket::Listen(const string strFilename){
+    int ret,family=AF_UNIX;
+    if(m_iHandle!=-1){
+        Close(m_iHandle);
+    }
+    m_iHandle=socket(family,SOCK_STREAM,0);
+    if(-1==m_iHandle){
+        perror("create socket error!");
+        return -1;
+    }
+    sockaddr_un sa;
+    sa.sun_family=family;
+    strcpy(sa.sun_path,strFilename.c_str());
+    ret=bind(m_iHandle,(const struct sockaddr*) &sa,sizeof(sa));
+    if(-1==ret){
+        perror("sock bind error!");
+        return -1;
+    }
+    //int listen(int sockfd, int backlog);
+    ret=listen(m_iHandle,10);
+    if(-1==ret){
+        perror("sock listen error!");
+        return -1;
+    }
+    return m_iHandle;
+}
 int Socket::Listen(const string strIp,const int iPort){
     int ret,family=AF_INET;
     if(strIp.find(':')!=string::npos){
+        m_iFamily=AF_INET6;
         family=AF_INET6;
     }
     //int socket(int domain, int type, int protocol);
@@ -47,7 +94,7 @@ int Socket::Listen(const string strIp,const int iPort){
         return -1;
     }
     int opt =1;
-    setsockopt(m_iHandle,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
+    (m_iHandle,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
     //int bind(int sockfd, const struct sockaddr *addr,socklen_t addrlen);
     sockaddr_in sa;
     sa.sin_family=family;
@@ -66,6 +113,18 @@ int Socket::Listen(const string strIp,const int iPort){
         return -1;
     }
     return m_iHandle;
+}
+int Socket::Accept_Local(){
+    int ret;
+    sockaddr_un c_sa;
+    int iLen=sizeof(c_sa);
+    ret=accept(m_iHandle,(struct sockaddr*) &c_sa,(socklen_t *)&iLen);
+    if(-1==ret){
+        perror("accept error!");
+        return -1;
+    }
+    printf("file path is %s\n",c_sa.sun_path);
+    return ret;
 }
 int Socket::Accept(){
     int ret;

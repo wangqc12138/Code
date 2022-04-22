@@ -5,8 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
 				"${workspaceFolder}/include",
-				"${workspaceFolder}/Server_Client/Server",
-				"${workspaceFolder}/Server_Client/Client",
+				"${workspaceFolder}/Server_Client/Server_Local",
+				"${workspaceFolder}/Server_Client/Client_Local",
 				"${workspaceFolder}/Server_Client/Sock",
 				"${workspaceFolder}/Server_Client/include",
 				"${workspaceFolder}/Server_Client/Cmd",

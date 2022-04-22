@@ -1,9 +1,9 @@
 #设置编译器
 CC=g++
-CFLAGS=-I ../Sock/ -I ../include -I ../Client -I ../Server -pthread
+CFLAGS=-I ../Sock/ -I ../include -I ../Client_Local -I ../Server_Local -pthread
 #debug文件夹里的makefile文件需要最后执行，所以这里需要执行的子目录要排除debug文件夹，这里使用awk排除了debug文件夹，读取剩下的文件夹
 #SUBDIRS=$(shell ls -l | grep ^d | awk '{if($$9 != "test_S" && $$9 != "include" && $$9 != "test_C") print $$9}')
-SUBDIRS= Sock Cmd Thread_queue Client_select Server_thread test_C test_S 
+SUBDIRS= Sock test_C test_S Client_Local Server_Local
 #无需下一行的注释代码，因为我们已经知道debug里的makefile是最后执行的，所以最后直接去debug目录下执行指定的makefile文件就行，具体下面有注释
 #DEBUG=$(shell ls -l | grep ^d | awk '{if($$9 == "debug") print $$9}')
 #记住当前工程的根目录路径

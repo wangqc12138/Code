@@ -1,13 +1,12 @@
 #include "client.h"
-void C_CLIENT::init(string strIp,int iPort){
-    m_strIp=strIp;
-	m_iPort=iPort;
+void C_CLIENT::init(string strFilename){
+    m_strFilename=strFilename;
 }
 
 void C_CLIENT::run(){
 	char buf[BUFSIZ];
-	m_sock.Connect(m_strIp,m_iPort);
-	while (1){
+	m_sock.Connect(m_strFilename);
+/* 	while (1){
 		printf("input some words:\n");
         Read(STDIN_FILENO, buf, sizeof(buf));
         if (!strncmp(buf,"quit",strlen(buf))){
@@ -18,7 +17,7 @@ void C_CLIENT::run(){
 		printf("return data:\n");
         Write(STDOUT_FILENO,buf,strlen(buf));
 		bzero(buf,sizeof(buf));
-    }
+    } */
 }
 
 void C_CLIENT::stop(){
