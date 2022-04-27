@@ -329,6 +329,7 @@ sentence 中每个单词的长度在范围 [1, 1000] 内。
 sentence 中单词之间由一个空格隔开。
 sentence 没有前导或尾随空格。
  */
+#ifdef 648
 class trie{
 public:
 	trie(){
@@ -364,6 +365,7 @@ private:
 	vector<trie*> next;
 	bool isEnd;
 };
+#endif
 class Solution {
 public:
 	int splite(string str,string x,vector<string> &vstr){
@@ -419,65 +421,152 @@ search 中的 word 由 '.' 或小写英文字母组成
 
 211
  */
+class trie{
+public:
+	trie(){
+		next=vector<trie*>(26);
+		isEnd=false;
+	}
+	void add(string str){
+		trie* root=this;
+		for(auto c:str){
+			if(!root->next[c-'a']){
+				root->next[c-'a']=new trie();
+			}
+			root=root->next[c-'a'];
+		}
+		root->isEnd=true;
+	}
+	bool search(string str,trie* root){
+        //cout<<str<<endl;
+		for(int i=0;i<str.size();i++){
+			char c=str[i];
+			if(c=='.'){
+				for(char j='a';j<='z';j++){
+                    if(!root->next[j-'a']){
+                        continue;
+                    }
+					if(search(str.substr(i+1),root->next[j-'a'])){
+						return true;
+					}
+				}
+				return false;
+			}else{
+				if(!root->next[c-'a']){
+					return false;
+				}else{
+					root=root->next[c-'a'];
+				}
+			}
+		}
+		return root->isEnd;
+	}
+private:
+	vector<trie*> next;
+	bool isEnd;
+};
 class WordDictionary {
 public:
     WordDictionary() {
-		next.resize(26);
-		isEnd=false;
+        root=new trie();
     }
     
     void addWord(string word) {
-		WordDictionary* node=this;
-		for(auto c:word){
-			if(node->next[c-'a']==nullptr){
-				node->next[c-'a']=new WordDictionary();
-			}
-			node=node->next[c-'a'];
-		}
-		bool isEnd=true;
+		root->add(word);
     }
     
     bool search(string word) {
-		WordDictionary* node=this;
-		stack<pair<int,int>> sp;
-		for(int i=0;i<word.size();i++){
-			char c=word[i];
-			if(c=='.'){
-				for(int j=0;j<=26;j++){
-					if(node->next[j]!=nullptr){
-						sp.emplace(i,j+1);
-					}
-				}
-				if(sp.empty()){
-					return false;
-				}
-			}else{
-				if(node->next[c-'a']==nullptr){
-					while(!sp.empty()){
-						sp.pop();
-						int j=sp.top().second;
-						int index=sp.top().first;
-						for(;j<=26;j++){
-							if(node->next[j+'a']!=nullptr){
-								sp.emplace(index,j+1);
-							}
-						}
-						if(j<=26){
-							i=index;
-							break;
-						}
-					}
-					if(sp.empty()){
-						return false;
-					}
-				}else{
-					node=node->next[c-'a'];
-				}
-			}
-		}
-		return isEnd;
+		//return root->search(word,root);
     }
 private:
-	vector<WordDictionary*> next;
-	bool isEnd;
+	trie* root;
+};
+/* 
+为搜索引擎设计一个搜索自动补全系统。用户会输入一条语句（最少包含一个字母，以特殊字符 '#' 结尾）。
+
+给定一个字符串数组 sentences 和一个整数数组 times ，长度都为 n ，其中 sentences[i] 是之前输入的句子， times[i] 是该句子输入的相应次数。
+对于除 ‘#’ 以外的每个输入字符，返回前 3 个历史热门句子，这些句子的前缀与已经输入的句子的部分相同。
+
+下面是详细规则：
+
+    一条句子的热度定义为历史上用户输入这个句子的总次数。
+    返回前 3 的句子需要按照热度从高到低排序（第一个是最热门的）。如果有多条热度相同的句子，请按照 ASCII 码的顺序输出（ASCII 码越小排名越前）。
+    如果满足条件的句子个数少于 3 ，将它们全部输出。
+    如果输入了特殊字符，意味着句子结束了，请返回一个空集合。
+
+实现 AutocompleteSystem 类：
+
+    AutocompleteSystem(String[] sentences, int[] times): 使用数组sentences 和 times 对对象进行初始化。
+    List<String> input(char c) 表示用户输入了字符 c 。
+        如果 c == '#' ，则返回空数组 [] ，并将输入的语句存储在系统中。
+        返回前 3 个历史热门句子，这些句子的前缀与已经输入的句子的部分相同。如果少于 3 个匹配项，则全部返回。
+642
+ */
+class trie{
+public:
+	trie(){
+		next.clear();
+		isEnd=0;
+	}
+	void add(string s);
+	void add(string s,int k){
+		trie* root=this;
+		for(auto c:s){
+			if(!root->next.count(c)){
+				root->next[c]=new trie();
+			}
+			root->nums[c][k]++;
+			root=root->next[c];
+		}
+		root->isEnd=k;
+	}
+	string find(string s);
+	trie* search(string s){
+		trie* root=this;
+		for(auto c:s){
+			if(root->next.count(c)){
+				root=root->next[c];
+			}else{
+				return nullptr;
+			}
+		}
+		return root;
+	}
+	vector<string> getHotStr(string pre){
+		trie* root=search(pre);
+		if(root==nullptr){
+			return {};
+		}
+		auto cmp=[](pair<char,int> a,pair<char,int> b){
+			if(a.second>b.second){
+				return true;
+			}else if(a.second==b.second){
+				return a.first<b.first;
+			}
+			return false;
+		};
+		vector<pair<char,int>> temp;
+		for(auto [x,y]:root->nums){
+			for(auto [a,b]:y){
+				temp.emplace_back(x,y);
+			}
+			
+		}
+		sort(temp.begin(),temp.end(),cmp);
+
+	}
+private:
+	map<char,trie*> next;
+	map<char,map<int,int>> nums;
+	int isEnd;
+};
+class AutocompleteSystem {
+public:
+    AutocompleteSystem(vector<string>& sentences, vector<int>& times) {
+
+    }
+    
+    vector<string> input(char c) {
+
+    }
 };

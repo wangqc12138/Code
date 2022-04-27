@@ -6,7 +6,7 @@ int main()
 {
 
 	C_SERVER ser;
-	ser.init("./socket.txt");
+	ser.init("/home/wangqc/socket/11111");
 	ser.run();
 	ser.stop();
 	return 0;

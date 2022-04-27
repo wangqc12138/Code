@@ -53,6 +53,7 @@ int Socket::Connect(const string strIp,const int iPort){
     return 0;
 }
 int Socket::Listen(const string strFilename){
+    unlink(strFilename.c_str());
     int ret,family=AF_UNIX;
     if(m_iHandle!=-1){
         Close(m_iHandle);
@@ -64,8 +65,15 @@ int Socket::Listen(const string strFilename){
     }
     sockaddr_un sa;
     sa.sun_family=family;
-    strcpy(sa.sun_path,strFilename.c_str());
-    ret=bind(m_iHandle,(const struct sockaddr*) &sa,sizeof(sa));
+    //需要文件
+    //strcpy(sa.sun_path,strFilename.c_str());
+    //不需要文件
+    sa.sun_path[0] = '0';
+    //strcpy(sa.sun_path + 1,"/wangqc/home/1111111");
+    memset(&sa, 0, sizeof(struct sockaddr_un));
+    strncpy(sa.sun_path+1, "/wangqc/home/socket/1111111",sizeof(sa.sun_path) - 1);
+    //strlen(strFilename.c_str())  + offsetof(sockaddr_un, sun_path);
+    ret=bind(m_iHandle,(struct sockaddr*) &sa,sizeof(struct sockaddr_un));
     if(-1==ret){
         perror("sock bind error!");
         return -1;
