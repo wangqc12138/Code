@@ -175,6 +175,67 @@ private:
 	vector<Trie*> next;
 	bool isEnd;
 };
+//20220427
+class trie{
+public:
+	trie():one(nullptr),zero(nullptr){};
+	void add(int n){
+		trie* root=this;
+		for(int i=31;i>=0;i--){
+			int k=(n>>i)&1;
+			if(k){
+				if(!root->one){
+					root->one=new trie();
+				}
+				root=root->one;
+			}else{
+				if(!root->zero){
+					root->zero=new trie();
+				}
+				root=root->zero;
+			}
+		}
+	}
+	int find(int n){
+		trie* root=this;
+		int res=0;
+		for(int i=31;i>=0;i--){
+			int k=(n>>i)&1;
+			if(k){
+				if(root->zero){
+					res+=1<<i;
+					root=root->zero;
+				}else{
+					res+=0<<i;
+					root=root->one;
+				}
+			}else{
+				if(root->one){
+					res+=1<<i;
+					root=root->one;
+				}else{
+					res+=0<<i;
+					root=root->zero;
+				}
+			}
+		}
+		return res;
+	}
+private:
+	trie *one,*zero;
+};
+class Solution {
+public:
+    int findMaximumXOR(vector<int>& nums) {
+		trie* root=new trie();
+		int res=0;
+		for(auto i:nums){
+			//root->add(i);
+			//res=max(res,root->find(i));
+		}
+        return res;
+    }	
+};
 /* 
 给你一个由非负整数组成的数组 nums 。另有一个查询数组 queries ，其中 queries[i] = [xi, mi] 。
 
@@ -481,6 +542,7 @@ public:
 private:
 	trie* root;
 };
+
 /* 
 为搜索引擎设计一个搜索自动补全系统。用户会输入一条语句（最少包含一个字母，以特殊字符 '#' 结尾）。
 
@@ -568,5 +630,69 @@ public:
     
     vector<string> input(char c) {
 
+    }
+};
+/* 
+给定一个 m x n 二维字符网格 board 和一个单词（字符串）列表 words， 返回所有二维网格上的单词 。
+
+单词必须按照字母顺序，通过 相邻的单元格 内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母在一个单词中不允许被重复使用。
+212
+ */
+//当然能用dfs来做
+//这里使用字典树来完成
+class trie{
+public:
+	trie(){
+		next.resize(26);
+	}
+	void build(vector<vector<char>>& board,int i,int j,int &m,int &n,trie* root,int len){
+		if(i<0||j<0||i>=m||j>=n||board[i][j]=='#'||len>10){
+			return;
+		}
+        //cout<<i<<" "<<j<<endl;
+        char c=board[i][j];
+        if(root->next[c-'a']==nullptr){
+			root->next[c-'a']=new trie();
+		}
+		board[i][j]='#';
+		for(auto [x,y]:dir){
+			if(i+x<0||i+x>=m||j+y<0||j+y>=n||board[i+x][j+y]=='#'){
+				continue;
+			}
+			build(board,i+x,j+y,m,n,root->next[c-'a'],len+1);
+		}
+        board[i][j]=c;
+	}
+	bool find(string s){
+		trie* root=this;
+		for(auto c:s){
+			if(root->next[c-'a']==nullptr){
+				return false;
+			}
+			root=root->next[c-'a'];
+		}
+		return true;
+	}
+private:
+	vector<pair<int,int>> dir={{0,1},{0,-1},{1,0},{-1,0}};
+	vector<trie*> next;
+};
+class Solution {
+public:
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+		int m=board.size(),n=board[0].size();
+		trie* root=new trie();
+		for(int i=0;i<m;i++){
+			for(int j=0;j<n;j++){
+				root->build(board,i,j,m,n,root,0);
+			}
+		}
+		vector<string> res;
+		for(auto str:words){
+			if(root->find(str)){
+				res.emplace_back(str);
+			}
+		}
+		return res;
     }
 };
