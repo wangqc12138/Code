@@ -115,6 +115,7 @@ private:
 421
 字典树--0、1
 */
+#ifdef 421
 class Solution {
 public:
     int findMaximumXOR(vector<int>& nums) {
@@ -236,6 +237,7 @@ public:
         return res;
     }	
 };
+#endif
 /* 
 给你一个由非负整数组成的数组 nums 。另有一个查询数组 queries ，其中 queries[i] = [xi, mi] 。
 
@@ -245,6 +247,7 @@ public:
 返回一个整数数组 answer 作为查询的答案，其中 answer.length == queries.length 且 answer[i] 是第 i 个查询的答案。
 1707
  */
+#ifdef 1707
 class Trie{
 public:
 	Trie(){
@@ -312,6 +315,7 @@ public:
 		return res;
     }
 };
+#endif
 /* 
 设计一个 map ，满足以下几点:
 
@@ -426,7 +430,6 @@ private:
 	vector<trie*> next;
 	bool isEnd;
 };
-#endif
 class Solution {
 public:
 	int splite(string str,string x,vector<string> &vstr){
@@ -465,6 +468,7 @@ public:
 		return res;
     }
 };
+#endif
 /* 
 请你设计一个数据结构，支持 添加新单词 和 查找字符串是否与任何先前添加的字符串匹配 。
 
@@ -482,6 +486,7 @@ search 中的 word 由 '.' 或小写英文字母组成
 
 211
  */
+#ifdef 211
 class trie{
 public:
 	trie(){
@@ -542,7 +547,7 @@ public:
 private:
 	trie* root;
 };
-
+#endif
 /* 
 为搜索引擎设计一个搜索自动补全系统。用户会输入一条语句（最少包含一个字母，以特殊字符 '#' 结尾）。
 
@@ -639,60 +644,268 @@ public:
 212
  */
 //当然能用dfs来做
-//这里使用字典树来完成
+//这里使用字典树来完成-----word进树
 class trie{
 public:
 	trie(){
+		isEnd=false;
 		next.resize(26);
 	}
-	void build(vector<vector<char>>& board,int i,int j,int &m,int &n,trie* root,int len){
-		if(i<0||j<0||i>=m||j>=n||board[i][j]=='#'||len>10){
-			return;
-		}
-        //cout<<i<<" "<<j<<endl;
-        char c=board[i][j];
-        if(root->next[c-'a']==nullptr){
-			root->next[c-'a']=new trie();
-		}
-		board[i][j]='#';
-		for(auto [x,y]:dir){
-			if(i+x<0||i+x>=m||j+y<0||j+y>=n||board[i+x][j+y]=='#'){
-				continue;
-			}
-			build(board,i+x,j+y,m,n,root->next[c-'a'],len+1);
-		}
-        board[i][j]=c;
-	}
-	bool find(string s){
+	void add(string str){
 		trie* root=this;
-		for(auto c:s){
-			if(root->next[c-'a']==nullptr){
-				return false;
+		for(auto c:str){
+			if(!root->next[c-'a']){
+				root->next[c-'a']=new trie();
 			}
 			root=root->next[c-'a'];
 		}
-		return true;
+		root->isEnd=true;
 	}
-private:
-	vector<pair<int,int>> dir={{0,1},{0,-1},{1,0},{-1,0}};
+	bool isEnd;
 	vector<trie*> next;
 };
 class Solution {
 public:
+	string temp;
+	vector<string> res;
     vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
 		int m=board.size(),n=board[0].size();
 		trie* root=new trie();
+		for(auto str:words){
+			root->add(str);
+		}
 		for(int i=0;i<m;i++){
 			for(int j=0;j<n;j++){
-				root->build(board,i,j,m,n,root,0);
-			}
-		}
-		vector<string> res;
-		for(auto str:words){
-			if(root->find(str)){
-				res.emplace_back(str);
+				dfs(board,i,j,m,n,0,root);
 			}
 		}
 		return res;
+    }
+	vector<pair<int,int>> dir={{0,1},{0,-1},{1,0},{-1,0}};
+	void dfs(vector<vector<char>>& board,int i,int j,int &m,int &n,int len,trie* root){
+        char c=board[i][j];
+		if(!root->next[c-'a']){
+			return;
+		}
+		root=root->next[c-'a'];
+		if(root->isEnd){
+			res.emplace_back(temp+c);
+			root->isEnd=false;
+		}
+		board[i][j]='#';
+		for(auto [x,y]:dir){
+			if(i+x<0||i+x>=m||j+y<0||j+y>=n||board[i+x][j+y]=='#'||len==10){
+				continue;
+			}
+			temp+=c;
+			dfs(board,i+x,j+y,m,n,len+1,root);
+			temp.pop_back();
+		}
+        board[i][j]=c;
+	}
+};
+//425前置：422
+/* 
+给你一个单词序列，判断其是否形成了一个有效的单词方块。
+
+有效的单词方块是指此由单词序列组成的文字方块的 第 k 行 和 第 k 列 (0 ≤ k < max(行数, 列数)) 所显示的字符串完全相同。
+
+注意：
+
+    给定的单词数大于等于 1 且不超过 500。
+    单词长度大于等于 1 且不超过 500。
+    每个单词只包含小写英文字母 a-z。
+考虑不等长
+422
+*/
+class Solution {
+public:
+    bool validWordSquare(vector<string>& words) {
+        int m=words.size(),n=words[0].size();
+		for(int i=0;i<words.size();i++){
+			for(int j=0;j<words[i].size();j++){
+				if(j>=words.size()||i>=words[j].size()||words[i][j]!=words[j][i]){
+					return false;
+				}
+			}
+		}
+		return true;
+    }
+};
+/* 
+给定一个单词集合 words （没有重复），找出并返回其中所有的 单词方块 。 words 中的同一个单词可以被 多次 使用。你可以按 任意顺序 返回答案。
+
+一个单词序列形成了一个有效的 单词方块 的意思是指从第 k 行和第 k 列  0 <= k < max(numRows, numColumns) 来看都是相同的字符串。
+
+    例如，单词序列 ["ball","area","lead","lady"] 形成了一个单词方块，因为每个单词从水平方向看和从竖直方向看都是相同的。
+425
+ */
+//尝试用全排列回溯去做------------TLE
+class Solution {
+public:
+	vector<vector<string>> res;
+	vector<string> temp;
+    vector<vector<string>> wordSquares(vector<string>& words) {
+		vector<int> visit(words.size(),0);
+		dfs(words,visit);
+		return res;
+    }
+	void dfs(vector<string>& words,vector<int>& visit){
+        print(temp);
+		if(temp.size()==words[0].size()){
+			if(check(temp)){
+				res.emplace_back(temp);
+			}
+			return;
+		}
+		for(int i=0;i<words.size();i++){
+			if(words[i][0]!=words[i][temp.size()]&&visit[i]){
+				continue;
+			}
+			visit[i]=1;
+			temp.emplace_back(words[i]);
+			dfs(words,visit);
+			visit[i]=0;
+			temp.pop_back();
+		}
+	}
+	bool check(vector<string>& words) {
+        int m=words.size(),n=words[0].size();
+		for(int i=0;i<words.size();i++){
+			for(int j=0;j<words[i].size();j++){
+				if(j>=words.size()||i>=words[j].size()||words[i][j]!=words[j][i]){
+					return false;
+				}
+			}
+		}
+		return true;
+    }
+    void print(vector<string>& words) {
+        if(words.size()<=2){
+            return;
+        }
+        for(auto str:words){
+            cout<<str<<endl;
+        }
+        cout<<endl;
+    }
+};
+//----------------------------------------------------------------
+class Trie
+{
+public:
+    unordered_map<char, Trie *> child;      //构造时就嵌套，只能用指针
+    bool isWord = false;
+
+    Trie() {} 
+
+    void insert(string word)
+    {
+        Trie * root = this;
+        for (char c : word)
+        {
+            if (root->child[c] == NULL)
+                root->child[c] = new Trie();
+            root = root->child[c];
+        }
+        root->isWord = true;
+    }
+
+    bool starts_with(string prefix)
+    {
+        Trie * root = this;
+        for (char c : prefix)
+        {
+            if (root->child[c] == NULL)
+                return false;
+            root = root->child[c];
+        }
+        return true;
+    }
+
+    bool is_word(string word)
+    {
+        Trie * root = this;
+        for (char c: word)
+        {
+            if (root->child[c] == NULL)
+                return false;
+            root = root->child[c];
+        }
+        return root->isWord == true;
+    }
+
+    vector<string> query(string prefix)
+    {
+        Trie * root = this;
+        vector<string> res;
+        for (char c: prefix)
+        {
+            if (root->child[c] == NULL)
+                return res;
+            root = root->child[c];
+        }
+
+        std::function<void(string ,Trie *)> dfs = [&] (string prefix, Trie * root)
+        {
+            if (root->isWord == true)
+                res.push_back(prefix);
+            for (auto [c, _] : root->child)
+                if (root->child[c] != NULL)
+                    dfs(prefix + c, root->child[c]);
+        };
+
+        dfs(prefix, root);
+        return res;
+    } 
+};
+
+
+class Solution 
+{
+public:
+    vector<vector<string>> wordSquares(vector<string>& words) 
+    {
+        int wordLen = words[0].size();
+
+        //--------------- 先建Trie树
+        Trie * T = new Trie();
+        for (string word : words)
+            T->insert(word);
+
+        vector<vector<string>> res;
+        vector<string> path;
+
+        //--------------- 回溯算法
+        std::function<void(int)> backtrace = [&] (int idx)
+        {
+            if (idx == wordLen)
+            {
+                res.push_back(path);
+                return ;
+            }
+            //----- 新一行的前缀
+            string nxt_prefix = "";
+            for (int i = 0; i < idx; i ++)
+                nxt_prefix += path[i][idx];
+            
+            vector<string> nxt_words_with_prefix = T->query(nxt_prefix);
+            for (string word : nxt_words_with_prefix)
+            {
+                path.push_back(word);
+                backtrace(idx + 1);
+                path.pop_back();
+            }
+        };
+
+        //---------------- 尝试以每个单词为起点，执行回溯算法 
+        for (string word: words)
+        {
+            path.push_back(word);
+            backtrace(1);
+            path.pop_back();
+        }
+        
+        return res;
     }
 };
