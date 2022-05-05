@@ -66,13 +66,7 @@ int Socket::Listen(const string strFilename){
     sockaddr_un sa;
     sa.sun_family=family;
     //需要文件
-    //strcpy(sa.sun_path,strFilename.c_str());
-    //不需要文件
-    sa.sun_path[0] = '0';
-    //strcpy(sa.sun_path + 1,"/wangqc/home/1111111");
-    memset(&sa, 0, sizeof(struct sockaddr_un));
-    strncpy(sa.sun_path+1, "/wangqc/home/socket/1111111",sizeof(sa.sun_path) - 1);
-    //strlen(strFilename.c_str())  + offsetof(sockaddr_un, sun_path);
+    strcpy(sa.sun_path,strFilename.c_str());
     ret=bind(m_iHandle,(struct sockaddr*) &sa,sizeof(struct sockaddr_un));
     if(-1==ret){
         perror("sock bind error!");
@@ -153,6 +147,7 @@ int Socket::Accept(){
 }
 int Read(int fd,char* buf,int len){
 	int ret=read(fd,buf,len);
+    cout<<ret<<endl;
 	if(ret<0){
 		char buf[BUFSIZ];
 		snprintf(buf,BUFSIZ,"read %d error!",fd);

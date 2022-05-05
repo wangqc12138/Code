@@ -28,3 +28,52 @@ public:
         return res;
     }
 };
+//第二种写法:
+class Solution {
+public:
+    int uniqueLetterString(string s) {
+        int index[26];
+        memset(index,-1,sizeof(int)*26);
+        int n=s.size(),res=0,sum=0;
+        for(int i=0;i<n;i++){
+            int k=s[i]-'A';
+            sum+=i-index[k];
+            if(index[k]!=-1){
+                sum-=index[k];
+            }
+            res+=sum;
+            index[k]=i;
+        }
+        return res;
+    }
+};
+/* 
+字符串的 引力 定义为：字符串中 不同 字符的数量。
+
+    例如，"abbca" 的引力为 3 ，因为其中有 3 个不同字符 'a'、'b' 和 'c' 。
+
+给你一个字符串 s ，返回 其所有子字符串的总引力 。
+
+子字符串 定义为：字符串中的一个连续字符序列。
+2262
+ */
+/* 
+以s[i]结尾的字符串：出现过，总的引力+上次出现过的位置以后的子串，没出现，总的引力+前面所有位置的子串
+子串指代以s[i]结尾的
+ */
+class Solution {
+public:
+    long long appealSum(string s) {
+        int index[26];
+        memset(index,-1,sizeof(int)*26);
+        int n=s.size(),sum=0;
+        long long res=0;
+        for(int i=0;i<n;i++){
+            int k=s[i]-'a';
+            sum+=(i-index[k]);
+            res+=sum;
+            index[k]=i;
+        }
+        return res;
+    }
+};
