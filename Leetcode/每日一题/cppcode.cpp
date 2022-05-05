@@ -4582,3 +4582,22 @@ public:
         
     }
 };
+/* 
+给你一个整数数组 nums 和一个整数 k ，请你返回子数组内所有元素的乘积严格小于 k 的连续子数组的数目。 
+713
+ */
+class Solution {
+public:
+    int numSubarrayProductLessThanK(vector<int>& nums, int k) {
+		int left=0,right=0,sum=1,res=0;
+		while(right<nums.size()){
+			sum*=nums[right];
+			while(sum>=k&&left<right){
+				sum/=nums[left++];
+			}
+			res+=sum>=k?0:right-left+1;
+			right++;
+		}
+		return res;
+    }
+};

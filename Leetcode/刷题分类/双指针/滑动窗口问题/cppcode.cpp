@@ -66,6 +66,22 @@ public:
 找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。
 209
 */
+class Solution {
+public:
+    int minSubArrayLen(int target, vector<int>& nums) {
+		int left=0,right=0,sum=0,res=INT_MAX;
+		while(right<nums.size()){
+			while(right<nums.size()&&sum<target){
+				sum+=nums[right++];
+			}
+			while(sum>=target&&left<right){
+                res=min(res,right-left);
+				sum-=nums[left++];
+			}
+		}
+		return res==INT_MAX?0:res;
+    }
+};
 /*
 给你一个字符串 s 、一个字符串 t 。返回 s 中涵盖 t 所有字符的最小子串。如果 s 中不存在涵盖 t 所有字符的子串，则返回空字符串 "" 。
 注意：如果 s 中存在这样的子串，我们保证它是唯一的答案。
@@ -231,6 +247,25 @@ public:
 			}
 		}
         res=max(right-left-1,res);
+		return res;
+    }
+};
+/* 
+给你一个整数数组 nums 和一个整数 k ，请你返回子数组内所有元素的乘积严格小于 k 的连续子数组的数目。 
+713
+ */
+class Solution {
+public:
+    int numSubarrayProductLessThanK(vector<int>& nums, int k) {
+		int left=0,right=0,sum=1,res=0;
+		while(right<nums.size()){
+			sum*=nums[right];
+			while(sum>=k&&left<right){
+				sum/=nums[left++];
+			}
+			res+=sum>=k?0:right-left+1;
+			right++;
+		}
 		return res;
     }
 };
