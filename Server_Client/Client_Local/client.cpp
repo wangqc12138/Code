@@ -6,7 +6,7 @@ void C_CLIENT::init(string strFilename){
 void C_CLIENT::run(){
 	char buf[BUFSIZ];
 	m_sock.Connect(m_strFilename);
-/* 	while (1){
+	while (1){
 		printf("input some words:\n");
         Read(STDIN_FILENO, buf, sizeof(buf));
         if (!strncmp(buf,"quit",strlen(buf))){
@@ -17,7 +17,7 @@ void C_CLIENT::run(){
 		printf("return data:\n");
         Write(STDOUT_FILENO,buf,strlen(buf));
 		bzero(buf,sizeof(buf));
-    } */
+    }
 }
 
 void C_CLIENT::stop(){
