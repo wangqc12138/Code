@@ -1,54 +1,45 @@
 #include <bits/stdc++.h>
 using namespace std;
+using pii=pair<int,int>;
 int main(){
-    freopen("./test.txt","r",stdin);
+    //freopen("./test.txt","r",stdin);
     int M;
     cin>>M;
     while(M--){
         int N;
         cin>>N;
         int a[3][N];
-        int b[3][N];
+        int b[3][N+1];
         for(int i=0;i<3;i++)
         for(int j=0;j<N;j++){
             cin>>a[i][j];
-            b[i][a[i][j]]=j;
         }
-        int visit[N];
-        memset(visit,0,sizeof(visit));
+        set<int> st;
         for(int i=0;i<N;i++){
-            if(a[2][i]!=0&&visit[i]==0){
-                int k=a[2][i];
-                int index=i;
-                while(k>0&&visit[index]==0){
-                    visit[index]=1;
-                    if(a[0][index]==a[1][index]){
-                        break;
-                    }
-                    if(a[1][index]==k){
-                        int t=b[1][k];
-                        a[2][t]=a[1][t];
-                        k=a[1][t];
-                        index=t;
-                    }
-                    if(a[0][index]==k){
-                        int t=b[0][k];
-                        a[2][t]=a[0][t];
-                        k=a[0][t];
-                        index=t;
-                    }
-                }
+            if(st.count(a[1][i])||st.count(a[0][i])||a[2][i]!=0){
+                st.emplace(a[0][i]);
+                st.emplace(a[2][i]);
+            }
+            if(a[1][i]==a[0][i]){
+                st.emplace(a[0][i]);
             }
         }
-        set<pair<int,int>> st;
-        int ans=2;
+        set<pii> sp;
+        int k=0,ans=2;
         for(int i=0;i<N;i++){
-            if(a[2][i]==0){
-                if(st.count(pair<int,int>(a[1][i],a[0][i]))){
+            if(st.count(a[0][i])){
+                continue;
+            }else{
+                k++;
+                if(sp.count(pii(a[0][i],a[1][i]))){
                     ans*=2;
+                    k--;
                 }
-                st.emplace(a[0][i],a[1][i]);
+                sp.emplace(a[1][i],a[0][i]);
             }
+        }
+        if(k==sp.size()/2){
+            ans/=2;
         }
         cout<<ans<<endl;
     }
