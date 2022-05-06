@@ -200,3 +200,62 @@ public:
         return res;
     }
 };
+/* 
+给你一个整数数组 nums ，请你找出数组中乘积最大的非空连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
+
+测试用例的答案是一个 32-位 整数。
+
+子数组 是数组的连续子序列。
+152
+ */
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int minn=nums[0],maxn=nums[0],n=nums.size(),res=nums[0];
+        for(int i=1;i<n;i++){
+            int m1=max(nums[i],max(maxn*nums[i],minn*nums[i]));
+            int m2=min(nums[i],min(maxn*nums[i],minn*nums[i]));
+            maxn=m1,minn=m2;
+            res=max(maxn,res);
+        }
+        return res;
+    }
+};
+/* 
+给你一个整数数组，返回它的某个 非空 子数组（连续元素）在执行一次可选的删除操作后，所能得到的最大元素总和。
+换句话说，你可以从原数组中选出一个子数组，并可以决定要不要从中删除一个元素（只能删一次哦），（删除后）子数组中至少应当有一个元素，
+然后该子数组（剩下）的元素总和是所有子数组之中最大的。
+
+注意，删除一个元素后，子数组 不能为空。
+1186
+ */
+//[11,-10,-11,8,7,-6,9,4,11,6,5,0]
+//假设已经删除过了
+class Solution {
+public:
+    int maximumSum(vector<int>& arr) {
+        int n=arr.size(),del=0,res=arr[0];
+        //M为未删元素的最大值，m为删除一个元素的最大值
+        int M=arr[0],m=arr[0];
+        for(int i=1;i<n;i++){
+            M=max(arr[i],M+arr[i]);
+            m=max(m+del,M);
+            if(arr[i]<del){
+                del=arr[i];
+            }    
+            //cout<<M<<" "<<m<<endl;                                                 
+            res=max(max(M,m),res);
+        }
+        return res;
+    }
+};
+/* 
+给定一个整数数组 arr 和一个整数 k ，通过重复 k 次来修改数组。
+
+例如，如果 arr = [1, 2] ， k = 3 ，那么修改后的数组将是 [1, 2, 1, 2, 1, 2] 。
+
+返回修改后的数组中的最大的子数组之和。注意，子数组长度可以是 0，在这种情况下它的总和也是 0。
+
+由于 结果可能会很大，需要返回的 109 + 7 的 模 。
+1191
+ */
