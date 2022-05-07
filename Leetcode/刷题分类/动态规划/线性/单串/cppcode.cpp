@@ -281,16 +281,31 @@ public:
 子数组 最多只能包含固定缓冲区 nums 中的每个元素一次。形式上，对于子数组 nums[i], nums[i + 1], ..., nums[j] ，不存在 i <= k1, k2 <= j 其中 k1 % n == k2 % n 。
 918
  */
-//拼接后做子数组最大
+//两重循环--超时！
 class Solution {
 public:
     int maxSubarraySumCircular(vector<int>& nums) {
-        nums.insert(nums.end(),nums.begin(),nums.end());
-        int maxn=nums[0],res=0;
-        for(int i=1;i<nums.size();i++){
-            maxn=max(maxn+nums[i],nums[i]);
-            res=max(res,maxn);
+        int res=nums[0];
+        for(int i=0;i<nums.size();i++){
+            int maxn=nums[i];
+            for(int j=1;j<nums.size();j++){
+                maxn=max(nums[(j+i)%nums.size()],maxn+nums[(j+i)%nums.size()]);
+                res=max(res,maxn);
+            }
         }
+        return res;
+    }
+};
+class Solution {
+public:
+    int maxSubarraySumCircular(vector<int>& nums) {
+        int maxn=nums[0],minn=nums[0],M=maxn,m=minn;
+        for(int i=1;i<nums.size();i++){
+            maxn=max(nums[i],maxn+nums[i]);
+            minn=min(nums[i],minn+nums[i]);
+        }
+        for()
+        
         return res;
     }
 };
