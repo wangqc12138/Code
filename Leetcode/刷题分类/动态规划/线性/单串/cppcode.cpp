@@ -238,8 +238,9 @@ public:
         //M为未删元素的最大值，m为删除一个元素的最大值
         int M=arr[0],m=arr[0];
         for(int i=1;i<n;i++){
+            //删除一个元素后最大值可能为：不删除元素的最大值、删除自身的最大值、删除前面元素的最大值
+            m=max(max(arr[i],M+arr[i]),max(M,m+arr[i]));
             M=max(arr[i],M+arr[i]);
-            m=max(m+del,M);
             if(arr[i]<del){
                 del=arr[i];
             }    
@@ -249,6 +250,7 @@ public:
         return res;
     }
 };
+
 /* 
 给定一个整数数组 arr 和一个整数 k ，通过重复 k 次来修改数组。
 
@@ -257,5 +259,38 @@ public:
 返回修改后的数组中的最大的子数组之和。注意，子数组长度可以是 0，在这种情况下它的总和也是 0。
 
 由于 结果可能会很大，需要返回的 109 + 7 的 模 。
-1191
+1191**********************************
  */
+class Solution {
+public:
+    int kConcatenationMaxSum(vector<int>& arr, int k) {
+        int pre=0,res=0;
+        for(int i=0;i<k;i++){
+            for(int i=0;i<arr.size();i++){
+                pre=max(arr[i],pre+arr[i]);
+                res=max(res,pre);
+            }
+        }
+    }
+};
+/* 
+给定一个长度为 n 的环形整数数组 nums ，返回 nums 的非空 子数组 的最大可能和 。
+
+环形数组 意味着数组的末端将会与开头相连呈环状。形式上， nums[i] 的下一个元素是 nums[(i + 1) % n] ， nums[i] 的前一个元素是 nums[(i - 1 + n) % n] 。
+
+子数组 最多只能包含固定缓冲区 nums 中的每个元素一次。形式上，对于子数组 nums[i], nums[i + 1], ..., nums[j] ，不存在 i <= k1, k2 <= j 其中 k1 % n == k2 % n 。
+918
+ */
+//拼接后做子数组最大
+class Solution {
+public:
+    int maxSubarraySumCircular(vector<int>& nums) {
+        nums.insert(nums.end(),nums.begin(),nums.end());
+        int maxn=nums[0],res=0;
+        for(int i=1;i<nums.size();i++){
+            maxn=max(maxn+nums[i],nums[i]);
+            res=max(res,maxn);
+        }
+        return res;
+    }
+};
