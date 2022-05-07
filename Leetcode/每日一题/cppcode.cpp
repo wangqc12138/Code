@@ -4601,3 +4601,51 @@ public:
 		return res;
     }
 };
+/* 
+基因序列可以表示为一条由 8 个字符组成的字符串，其中每个字符都是 'A'、'C'、'G' 和 'T' 之一。
+
+假设我们需要调查从基因序列 start 变为 end 所发生的基因变化。一次基因变化就意味着这个基因序列中的一个字符发生了变化。
+
+    例如，"AACCGGTT" --> "AACCGGTA" 就是一次基因变化。
+
+另有一个基因库 bank 记录了所有有效的基因变化，只有基因库中的基因才是有效的基因序列。
+
+给你两个基因序列 start 和 end ，以及一个基因库 bank ，请你找出并返回能够使 start 变化为 end 所需的最少变化次数。如果无法完成此基因变化，返回 -1 。
+
+注意：起始基因序列 start 默认是有效的，但是它并不一定会出现在基因库中。
+433
+ */
+class Solution {
+public:
+    int minMutation(string start, string end, vector<string>& bank) {
+		char c[4]={'A','C','G','T'};
+		set<string> dir(bank.begin(),bank.end()),visit;
+		queue<string> mq;
+		int res=0;
+		mq.emplace(start);
+		visit.emplace(start);
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				string str=mq.front();
+				mq.pop();
+				if(str==end){
+					return res;
+				}
+				for(auto ch:c){
+					for(int j=0;j<str.size();j++){
+						string temp=str;
+						temp[j]=ch;
+						if(!dir.count(temp)||visit.count(temp)){
+							continue;
+						}
+						mq.emplace(temp);
+						visit.emplace(temp);
+					}
+				}
+			}
+			res++;
+		}
+		return -1;
+    }
+};
