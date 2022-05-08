@@ -13,7 +13,7 @@ int main(){
         for(int i=1;i<len;i++){
             if(str[i]!=str[i-1]&&le%2){
                 ans++;
-                vec.emplace_back(le+1);
+                vec.emplace_back(le);
                 le=0;
                 continue;
             }
@@ -23,16 +23,13 @@ int main(){
         int k=0;
         sort(vec.begin(),vec.end());
         for(auto i:vec){
-            cout<<i<<" ";
             if(i<t){
                 k++;
                 t-=i;
+            }else{
+                break;
             }
-            // else{
-            //     break;
-            // }
         }
-        cout<<endl;
         cout<<ans<<" "<<vec.size()-k<<endl;
     }
     return 0;
