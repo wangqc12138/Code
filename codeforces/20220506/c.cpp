@@ -25,21 +25,21 @@ int main(){
             }
         }
         set<pii> sp;
-        int k=0,ans=2;
+        long long k=0,ans=1;
         for(int i=0;i<N;i++){
             if(st.count(a[0][i])){
                 continue;
             }else{
                 k++;
                 if(sp.count(pii(a[0][i],a[1][i]))){
-                    ans*=2;
+                    ans=ans*2%1000000007;
                     k--;
                 }
                 sp.emplace(a[1][i],a[0][i]);
             }
         }
-        if(k==sp.size()/2){
-            ans/=2;
+        if(k*2>sp.size()){
+            ans=ans*2%1000000007;
         }
         cout<<ans<<endl;
     }

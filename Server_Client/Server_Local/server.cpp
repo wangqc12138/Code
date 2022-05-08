@@ -6,8 +6,12 @@ void C_SERVER::init(string strFilename){
 void C_SERVER::run(){
 	char buf[BUFSIZ];
 	m_sock.Listen(m_strFilename);
-	int c_fd=m_sock.Accept_Local();
-	printf("c_fd is %d\n",c_fd);
+	int c_fd;
+	while(1){
+		c_fd=m_sock.Accept_Local();
+		printf("c_fd is %d\n",c_fd);
+	}
+	
 	while(1){
 		int re = Read(c_fd,buf,sizeof(buf));
 		cout<<re<<endl;
