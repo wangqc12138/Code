@@ -264,13 +264,39 @@ public:
 class Solution {
 public:
     int kConcatenationMaxSum(vector<int>& arr, int k) {
-        int pre=0,res=0;
-        for(int i=0;i<k;i++){
-            for(int i=0;i<arr.size();i++){
-                pre=max(arr[i],pre+arr[i]);
-                res=max(res,pre);
-            }
+        int sum=accumulate(arr.begin(),arr.end(),0);
+        int ans=0;
+        int minn=0,maxn=0,M=0,m;
+        for(int i=0;i<arr.size();i++){
+            M=max(M+arr[i],arr[i]);
+            m=min(m+arr[i],arr[i]);
+            ans=max(ans,m);
         }
+        if(sum>0){
+            if(k>2){
+                ans=(sum*(k-2))%100000007;
+            }
+            int m=0,minn=0;
+            for(int i=0;i<arr.size();i++){
+                m=min(m+arr[i],arr[i]);
+                minn=min(minn,m);
+            }
+            if(minn==0){
+                ans=(sum*k)%1000000007;
+            }else{
+                ans+=(sum-minn)%1000000007;
+                ans%=1000000007;
+            }
+        }else if(sum<0){
+            int m=0;
+            for(int i=0;i<arr.size();i++){
+                m=max(m+arr[i],arr[i]);
+                ans=max(ans,m);
+            }
+        }else{
+
+        }
+        return ans;
     }
 };
 /* 
@@ -303,9 +329,13 @@ public:
         for(int i=1;i<nums.size();i++){
             maxn=max(nums[i],maxn+nums[i]);
             minn=min(nums[i],minn+nums[i]);
+            M=max(maxn,M);
+            m=min(minn,m);
         }
-        for()
-        
-        return res;
+        int sum=accumulate(nums.begin(),nums.end(),0);
+        if(sum==m){
+            return M;
+        }
+        return max(M,sum-m);
     }
 };
