@@ -153,6 +153,13 @@ public:
 给定一个区间的集合 intervals ，其中 intervals[i] = [starti, endi] 。返回 需要移除区间的最小数量，使剩余区间互不重叠 。
 435
  */
+//普通做法
+class Solution {
+public:
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+
+    }
+};
 /* 
 给出 n 个数对。 在每一个数对中，第一个数字总是比第二个数字小。
 
