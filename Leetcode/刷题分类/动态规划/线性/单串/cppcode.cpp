@@ -78,19 +78,23 @@ public:
     }
 };
 //*****
-//尝试用贪心
+//尝试用贪心-----比较麻烦！
 class Solution {
 public:
     int findNumberOfLIS(vector<int>& nums) {
-        int n=nums.size(),len=0;
-        vector<int> help(n),cnt();
-        help[0]=nums[0];
-        for(int i=1;i<n;i++){
-            if(nums[i]>help[len]){
-                help[++len]=nums[i];
-                 
+        int n=nums.size(),len=0,res=0;
+        vector<int> help(n);
+        for(int i=0;i<n;i++){
+            int k=lower_bound(help.begin(),help.begin()+len+1,nums[i])-help.begin();
+            help[k]=nums[i];
+            if(k>len){
+                res=1;
+                len=k;
+            }else if(k==len){
+                res++;
             }
         }
+        return res;
     }
 };
 /* 
@@ -120,6 +124,8 @@ public:
         return res;
     }
 };
+//[1,7],[2,6],[5,9],[6,8],[7,8]
+//[2,3],[5,4],[6,4],[6,7];
 //贪心---引用就不会超时
 class Solution {
 public:
@@ -138,7 +144,8 @@ public:
     }
 };
 /* 
-堆箱子。给你一堆n个箱子，箱子宽 wi、深 di、高 hi。箱子不能翻转，将箱子堆起来时，下面箱子的宽度、高度和深度必须大于上面的箱子。实现一种方法，搭出最高的一堆箱子。箱堆的高度为每个箱子高度的总和。
+堆箱子。给你一堆n个箱子，箱子宽 wi、深 di、高 hi。箱子不能翻转，将箱子堆起来时，下面箱子的宽度、高度和深度必须大于上面的箱子。
+实现一种方法，搭出最高的一堆箱子。箱堆的高度为每个箱子高度的总和。
 
 输入使用数组[wi, di, hi]表示每个箱子。
 面试题 08.13. 堆箱子
@@ -153,11 +160,66 @@ public:
 给定一个区间的集合 intervals ，其中 intervals[i] = [starti, endi] 。返回 需要移除区间的最小数量，使剩余区间互不重叠 。
 435
  */
-//普通做法
+//普通做法--贪心找“瘦”的区间
 class Solution {
 public:
     int eraseOverlapIntervals(vector<vector<int>>& intervals) {
-
+        auto cmp=[](auto &i,auto &j){return i[0]<j[0]||i[0]==j[0]&&i[1]<j[1];};
+        sort(intervals.begin(),intervals.end(),cmp);
+        int R=-100000,ans=0;
+        for(auto vec:intervals){
+            int l=vec[0],r=vec[1];
+            if(l>=R){
+                R=r;
+                continue;
+            }
+            if(r<R){
+                R=r;
+            }
+            ans++;
+        }
+        return ans;
+    }
+};
+//[1,7],[2,6],[5,9],[6,8],[7,8]
+//[1,4],[2,3],[5,6],[5,7],[6,8]
+//dp做法--最长子序列---TLE                                                 
+class Solution {
+public:
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+        auto cmp=[](auto &i,auto &j){return i[0]<j[0]||i[0]==j[0]&&i[1]<j[1];};
+        sort(intervals.begin(),intervals.end(),cmp);
+        int n=intervals.size();
+        vector<int> dp(n,1);
+        for(int i=0;i<n;i++){
+            for(int j=0;j<i;j++){
+                if(intervals[i][0]>=intervals[j][1]){
+                    dp[i]=max(dp[i],dp[j]+1);
+                }
+            }
+        }
+        return n-dp[n-1];
+    }
+};
+//dp做法用贪心二分就可以！
+class Solution {
+public:
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+        //如果边界可以包含则第二元素递增
+        auto cmp=[](auto &i,auto &j){return i[0]<j[0]||i[0]==j[0]&&i[1]<j[1];};
+        sort(intervals.begin(),intervals.end(),cmp);
+        int n=intervals.size(),len=0;
+        vector<int> help(n,-50001);
+        help[0]=intervals[0][1];
+        for(int i=1;i<n;i++){
+            //相邻
+            int k=upper_bound(help.begin(),help.begin()+len+1,intervals[i][0])-help.begin();
+            if(k>len||help[k]>intervals[i][1]){
+                help[k]=intervals[i][1];
+            }
+            len=max(k,len);
+        }
+        return n-1-len;
     }
 };
 /* 
@@ -168,6 +230,64 @@ public:
 给定一个数对集合，找出能够形成的最长数对链的长度。你不需要用到所有的数对，你可以以任何顺序选择其中的一些数对来构造。
 646
  */
+//与上题唯一不同就是不允许相邻
+//贪心
+class Solution {
+public:
+    int findLongestChain(vector<vector<int>>& pairs) {
+        auto cmp=[](auto &i,auto &j){return i[0]<j[0]||i[0]==j[0]&&i[1]<j[1];};
+        sort(pairs.begin(),pairs.end(),cmp);
+        int R=INT_MIN,res=0;
+        for(auto vec:pairs){
+            int l=vec[0],r=vec[1];
+            if(l>R){
+                res++;
+                R=r;
+            }else{
+                R=min(r,R);
+            }
+        }
+        return res;
+    }
+};
+//dp--没超时
+class Solution {
+public:
+    int findLongestChain(vector<vector<int>>& pairs) {
+        auto cmp=[](auto &i,auto &j){return i[0]<j[0]||i[0]==j[0]&&i[1]<j[1];};
+        sort(pairs.begin(),pairs.end(),cmp);
+        int n=pairs.size();
+        vector<int> dp(n,1);
+        for(int i=0;i<n;i++){
+            for(int j=0;j<i;j++){
+                if(pairs[i][0]>pairs[j][1]){
+                    dp[i]=max(dp[i],dp[j]+1);
+                }
+            }
+        }
+        return dp[n-1];
+    }
+};
+//dp做法用贪心二分就可以！
+class Solution {
+public:
+    int findLongestChain(vector<vector<int>>& pairs) {
+        auto cmp=[](auto &i,auto &j){return i[0]<j[0]||i[0]==j[0]&&i[1]<j[1];};
+        sort(pairs.begin(),pairs.end(),cmp);
+        int n=pairs.size(),len=0;
+        vector<int> help(n,-50001);
+        help[0]=pairs[0][1];
+        for(int i=1;i<n;i++){
+            //不相邻
+            int k=lower_bound(help.begin(),help.begin()+len+1,pairs[i][0])-help.begin();
+            if(k>len||help[k]>pairs[i][1]){
+                help[k]=pairs[i][1];
+            }
+            len=max(k,len);
+        }
+        return len+1;
+    }
+};
 /* 
 有一些球形气球贴在一堵用 XY 平面表示的墙面上。墙面上的气球记录在整数数组 points ，其中points[i] = [xstart, xend] 表示水平直径在 xstart 和 xend之间的气球。你不知道气球的确切 y 坐标。
 
@@ -176,6 +296,61 @@ public:
 给你一个数组 points ，返回引爆所有气球所必须射出的 最小 弓箭数 。
 452
  */
+//贪心：只要找出有最多有多少不重叠的气球即可，类似435
+class Solution {
+public:
+    int findMinArrowShots(vector<vector<int>>& points) {
+        auto cmp=[](auto &i,auto &j){return i[0]<j[0]||i[0]==j[0]&&i[1]<j[1];};
+        sort(points.begin(),points.end(),cmp);
+        int R=points[0][1],res=1;
+        for(int i=1;i<points.size();i++){
+            int l=points[i][0],r=points[i][1];
+            if(l>R){
+                res++;
+                R=r;
+            }
+            R=min(r,R);
+        }
+        return res;
+    }
+};
+//dp--------TLE
+class Solution {
+public:
+    int findMinArrowShots(vector<vector<int>>& points) {
+        int n=points.size();
+        auto cmp=[](auto &i,auto &j){return i[0]<j[0]||i[0]==j[0]&&i[1]<j[1];};
+        sort(points.begin(),points.end(),cmp);
+        vector<int> dp(n,1);
+        for(int i=0;i<n;i++){
+            for(int j=0;j<i;j++){
+                if(points[i][0]>points[j][1]){
+                    dp[i]=max(dp[i],dp[j]+1);
+                }
+            }
+        }
+        return dp[n-1];
+    }
+};
+//贪心+二分
+class Solution {
+public:
+    int findMinArrowShots(vector<vector<int>>& points) {
+        int n=points.size(),len=0;
+        auto cmp=[](auto &i,auto &j){return i[0]<j[0]||i[0]==j[0]&&i[1]<j[1];};
+        sort(points.begin(),points.end(),cmp);
+        vector<int> help(n);
+        help[0]=points[0][1];
+        for(int i=1;i<n;i++){
+            int k=lower_bound(help.begin(),help.begin()+len+1,points[i][0])-help.begin();
+            if(k>len||help[k]>points[i][1]){
+                help[k]=points[i][1];
+            }
+            len=max(len,k);
+        }
+        return len+1;
+    }
+};
 /* 
 给定由 n 个小写字母字符串组成的数组 strs ，其中每个字符串长度相等。
 
@@ -188,6 +363,12 @@ public:
 请返回 answer.length 的最小可能值 。
 960
  */
+class Solution {
+public:
+    int minDeletionSize(vector<string>& strs) {
+
+    }
+};
 //最大子数组和-------------------------------------------------------------
 /* 
 给你一个整数数组 nums ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
