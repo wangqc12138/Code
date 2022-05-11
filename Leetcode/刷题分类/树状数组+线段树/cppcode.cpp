@@ -64,10 +64,34 @@ public:
 	}
 };
 //方法2：树状数组/线段树
+/* 
+树状数组：按桶存放，比如4 1 2 3 2 3 5
+1 2 3 4 5
+1 2 2 1 1
+从后往前遍历，遍历过则入桶，然后找这个桶之前的前缀和就是能产生的逆序对，因为都是在此刻之前入的桶
+离散化：只追求相对大小，不然100000000要开的桶太大了
+ */
 class Solution {
 public:
-    vector<int> countSmaller(vector<int>& nums) {
-
+	int tree[200002];
+    int N;
+	int lowbit(int x){
+		return x&(-x);
+	}
+	void add(int x,int val){
+		for(int i=x;i<=N;i+=lowbit(i)){
+			tree[i]+=val;
+		}
+	}
+	int query(int x){
+		for(int)
+	}
+	vector<int> countSmaller(vector<int>& nums) {
+		auto temp=nums;
+		sort(temp.begin(),temp.end());
+		for(int& num:nums){
+			num=lower_bound(temp.begin(),temp.end(),num)-temp.begin()+1;
+		}
     }
 };
 /* 

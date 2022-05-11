@@ -8,7 +8,7 @@ int main(){
         int M;
         cin>>M;
         map<int,vector<int>> next;
-        for(int i=0;i<M;i++){
+        for(int i=0;i<M-1;i++){
             int p;
             cin>>p;
             next[p].emplace_back(i+2);
@@ -16,18 +16,19 @@ int main(){
         string str;
         cin>>str;
         int ans=0;
-        auto dfs=[&](int root) -> pair<int,int>{
-            int w=str[root+1]=='W',b=1-w;
+        function<pair<int,int>(int)> dfs=[&](int root) -> pair<int,int>{
+            int w=str[root-1]=='W',b=1-w;
             for(int i:next[root]){
-                dfs(i);
-                w+=dfs(i).first;
-                b+=dfs(i).second;
+                auto p=dfs(i);
+                w+=p.first;
+                b+=p.second;
             }
             if(w==b){
+                //cout<<root<<":"<<w<<" "<<b<<endl;
                 ans++;
             }
             return {w,b}; 
-        }
+        };
         dfs(1);
         cout<<ans<<endl;
     }
