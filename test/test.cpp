@@ -1,41 +1,38 @@
-#include <bits/stdc++.h>
-using namespace std;
-int N;
-int tree[500001];
-int lowbit(int x){
-    return x&(-x);
-}
-int add(int x,int val){
-    for(int i=x;i<=N;i+=lowbit(i)){
-        tree[i]+=val;
-    }
-    return 0;
-}
-int qurry(int x){
-    int res=0;
-    for(int i=x;i>=1;i-=lowbit(i)){
-        res+=tree[i];
-    }
-    return res;
-}
-int main(){
-    freopen("./test.txt","r",stdin);
-    int n,m;
-    cin>>n>>m;
-    N=n;
-    for(int i=0;i<n;i++){
-        int k;
-        cin>>k;
-        add(i+1,k);
-    }
-    for(int i=0;i<m;i++){
-        int a,b,c;
-        cin>>a>>b>>c;
-        if(a==1){
-            add(b,c);
-        }else{
-            cout<<qurry(c)-qurry(b-1)<<endl;
-        }
-    }
-    return 0;
+#include <bits/stdc++.h> 
+using namespace std; 
+int main() 
+{ 
+  
+    set<int> s; 
+  
+    // Function to insert elements 
+    // in the set container 
+    s.insert(1); 
+    s.insert(4); 
+    s.insert(2); 
+    s.insert(5); 
+    s.insert(-1); 
+    s.insert(6); 
+  
+    cout << "The set elements are: "; 
+    for (auto it = s.begin(); it != s.end(); it++) 
+        cout << *it << " "; 
+    cout<< *s.end() <<endl;
+    // when 2 is present 
+    auto it = s.lower_bound(2); 
+    cout << "\nThe lower bound of key 2 is "; 
+    cout << (*it) << endl; 
+  
+    // when 3 is not present 
+    // points to next greater after 3 
+    it = s.lower_bound(3); 
+    cout << "The lower bound of key 3 is "; 
+    cout << (*it) << endl; 
+  
+    // when 8 exceeds the max element in set 
+    it = s.lower_bound(8); 
+    cout << "The lower bound of key 8 is "; 
+    cout << (*it) << endl; 
+  
+    return 0; 
 }

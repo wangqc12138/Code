@@ -4722,3 +4722,28 @@ public:
 // string tree = ser->serialize(root);
 // TreeNode* ans = deser->deserialize(tree);
 // return ans;
+/* 
+给你由 n 个小写字母字符串组成的数组 strs，其中每个字符串长度相等。
+
+这些字符串可以每个一行，排成一个网格。例如，strs = ["abc", "bce", "cae"] 可以排列为：
+944
+ */
+class Solution {
+public:
+    int minDeletionSize(vector<string>& strs) {
+		int res=0;
+		for(int j=0;j<strs[0].size();j++){
+			bool flag=true;
+			for(int i=1;i<strs.size();i++){
+				if(strs[i][j]<strs[i-1][j]){
+					flag=false;
+					break;
+				}
+			}
+			if(!flag){
+				res++;
+			}
+		}
+		return res;
+    }
+};
