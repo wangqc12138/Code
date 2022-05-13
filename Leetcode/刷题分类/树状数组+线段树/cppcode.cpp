@@ -459,13 +459,13 @@ public:
  */
 class Solution {
 public:
-	int tree[100002];
+	int tree[300006];
 	int N;
 	int lowbit(int x){
 		return x&(-x);
 	}
 	void add(int x,int val){
-		for(int i=x;i<=N;i+=lowbit(i)){
+		for(int i=x;i<=3*(N+1);i+=lowbit(i)){
 			tree[i]+=val;
 		}
 	}
@@ -478,32 +478,30 @@ public:
 	}
     int countRangeSum(vector<int>& nums, int lower, int upper) {
 		N=nums.size();
-		vector<int> presum=nums;
-		for(int i=1;i<N;i++){
+		vector<long long> presum(1,0);
+		presum.insert(presum.end(),nums.begin(),nums.end());
+		for(int i=1;i<=N;i++){
 			presum[i]+=presum[i-1];
 		}
-		//离散化
-		set<int> st(presum.begin(),presum.end());
-		vector<int> temp(st.begin(),st.end());
-        for(int i:temp){
-            cout<<i<<" ";
-        }
-        cout<<endl;
-		auto help=presum;
-		for(int &i:presum){
-			i=lower_bound(temp.begin(),temp.end(),i)-temp.begin()+1;
-            cout<<i<<" ";
+		for(int i=0;i<=N;i++){
+			presum.emplace_back(presum[i]-upper);
+			presum.emplace_back(presum[i]-lower);
 		}
-        cout<<endl;
+		//离散化
+		set<long long> st(presum.begin(),presum.end());
+		vector<long long> temp(st.begin(),st.end());
+		auto help=presum;
+		unordered_map<long long,long long> ump;
+		for(long long &i:presum){
+			ump[i]=lower_bound(temp.begin(),temp.end(),i)-temp.begin()+1;
+		}
 		int res=0;
         memset(tree,0,sizeof(tree));
-		for(int i=0;i<N;i++){
-			int l=lower_bound(temp.begin(),temp.end(),help[i]-upper)-temp.begin();
-			int r=upper_bound(temp.begin(),temp.end(),help[i]-lower)-temp.begin();
-            cout<<help[i]-upper<<" "<<help[i]-lower<<endl;
-            cout<<l<<" "<<r<<endl;
+		for(int i=0;i<=N;i++){
+			int l=ump[help[i]-upper];
+			int r=ump[help[i]-lower];
             res+=query(r)-query(l-1);
-            add(presum[i],1);
+            add(ump[help[i]],1);
 		}
 		return res;
     }

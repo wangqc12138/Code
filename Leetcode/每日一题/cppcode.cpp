@@ -4747,3 +4747,41 @@ public:
 		return res;
     }
 };
+/* 
+字符串有三种编辑操作:插入一个字符、删除一个字符或者替换一个字符。 给定两个字符串，编写一个函数判定它们是否只需要一次(或者零次)编辑。
+面试题 01.05. 一次编辑
+ */
+class Solution {
+public:
+    bool oneEditAway(string first, string second) {
+        int m=first.size(),n=second.size();
+		if(abs(m-n)>1){
+			return false;
+		}
+		if(m==n){
+			int k=0;
+			for(int i=0;i<m;i++){
+				if(first[i]!=second[i]){
+					k++;
+					if(k>1){
+						return false;
+					}
+				}
+			}
+		}else{
+			string s1=m>n?first:second;
+			string s2=m>n?second:first;
+			int k=0;
+			for(int i=0;i<s2.size();i++){
+				if(s1[i+k]!=s2[i]){
+                    i--;
+					k++;
+					if(k>1){
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+    }
+};

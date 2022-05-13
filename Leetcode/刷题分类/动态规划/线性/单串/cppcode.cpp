@@ -453,38 +453,22 @@ class Solution {
 public:
     int kConcatenationMaxSum(vector<int>& arr, int k) {
         int sum=accumulate(arr.begin(),arr.end(),0);
-        int ans=0;
-        int minn=0,maxn=0,M=0,m;
-        for(int i=0;i<arr.size();i++){
-            M=max(M+arr[i],arr[i]);
-            m=min(m+arr[i],arr[i]);
-            ans=max(ans,m);
+        int res=0,n=arr.size();
+        int maxn=0,m=0;
+        for(int i=0;i<n*2;i++){
+            m=max(m+arr[i%n],arr[i%n]);
+            maxn=max(maxn,m);
+            if(i==n-1&&k==1){
+                return maxn;
+            }
         }
-        if(sum>0){
-            if(k>2){
-                ans=(sum*(k-2))%100000007;
-            }
-            int m=0,minn=0;
-            for(int i=0;i<arr.size();i++){
-                m=min(m+arr[i],arr[i]);
-                minn=min(minn,m);
-            }
-            if(minn==0){
-                ans=(sum*k)%1000000007;
-            }else{
-                ans+=(sum-minn)%1000000007;
-                ans%=1000000007;
-            }
-        }else if(sum<0){
-            int m=0;
-            for(int i=0;i<arr.size();i++){
-                m=max(m+arr[i],arr[i]);
-                ans=max(ans,m);
-            }
-        }else{
-
+        if(sum<0){
+            return maxn;
         }
-        return ans;
+        if(maxn==0){
+            return 0;
+        }
+        return ((long long)(k-2)*sum+maxn)%1000000007;
     }
 };
 /* 
@@ -525,5 +509,91 @@ public:
             return M;
         }
         return max(M,sum-m);
+    }
+};
+//以下两题是结合了前缀和的，与其说动态规划，不如说跟前缀和的模板更像
+/* 
+给定一个正整数、负整数和 0 组成的 N × M 矩阵，编写代码找出元素总和最大的子矩阵。
+
+返回一个数组 [r1, c1, r2, c2]，其中 r1, c1 分别代表子矩阵左上角的行号和列号，r2, c2 分别代表右下角的行号和列号。若有多个满足条件的子矩阵，返回任意一个均可。
+
+注意：本题相对书上原题稍作改动
+
+面试题 17.24. 最大子矩阵
+ */
+/* 
+[9,-8,1,3,-2]
+[-3,7,6,-2,4]
+[6,-4,-4,8,-7]
+ */
+class Solution {
+public:
+    vector<int> getMaxMatrix(vector<vector<int>>& matrix) {
+        int m=matrix.size(),n=matrix[0].size(),maxn=INT_MIN;
+        int temp[n];
+        vector<int> res(4);
+        for(int i=0;i<m;i++){
+            memset(temp,0,sizeof(temp));
+            for(int k=i;k<m;k++){
+                int c=0,M=0;
+                for(int j=0;j<n;j++){
+                    temp[j]+=matrix[k][j];
+                    if(M<0){
+                        M=temp[j];
+                        c=j;
+                    }else{
+                        M+=temp[j];
+                    }
+                    if(M>maxn){
+                        res[0]=k,res[1]=c,res[2]=i,res[3]=j;
+                        maxn=M;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
+/* 
+给你一个 m x n 的矩阵 matrix 和一个整数 k ，找出并返回矩阵内部矩形区域的不超过 k 的最大数值和。
+
+题目数据保证总会存在一个数值和不超过 k 的矩形区域。
+363
+ */
+class Solution {
+public:
+    int maxSumSubmatrix(vector<vector<int>>& matrix, int dest) {
+        int m=matrix.size(),n=matrix[0].size();
+        int presum[m][n];
+        memset(presum,0,sizeof(presum));
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(i!=0){
+                    presum[i][j]=presum[i-1][j];
+                }
+                presum[i][j]+=matrix[i][j];
+            }
+        }
+        int ans=INT_MIN;
+        for(int i=0;i<m;i++){
+            for(int k=i;k<m;k++){
+                set<int> st;
+                st.emplace(0);
+                int now=0;
+                for(int j=0;j<n;j++){
+                    now+=presum[k][j]-((i==0)?0:presum[i-1][j]);
+                    //cout<<now<<endl;
+                    auto itr=st.lower_bound(now-dest);
+                    if(now-*itr<=dest){
+                        ans=max(ans,now-*itr);
+                    }
+                    if(ans==dest){
+                        return dest;
+                    }
+                    st.emplace(now);
+                }
+            }
+        }
+        return ans;
     }
 };

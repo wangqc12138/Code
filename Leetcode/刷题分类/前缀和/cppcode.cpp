@@ -194,6 +194,93 @@ public:
     	return res;
    	}
 };
+//----------------------------------20220513
+//以下两题是结合了前缀和的，与其说动态规划，不如说跟前缀和的模板更像
+/* 
+给定一个正整数、负整数和 0 组成的 N × M 矩阵，编写代码找出元素总和最大的子矩阵。
+
+返回一个数组 [r1, c1, r2, c2]，其中 r1, c1 分别代表子矩阵左上角的行号和列号，r2, c2 分别代表右下角的行号和列号。若有多个满足条件的子矩阵，返回任意一个均可。
+
+注意：本题相对书上原题稍作改动
+
+面试题 17.24. 最大子矩阵
+ */
+/* 
+[9,-8,1,3,-2]
+[-3,7,6,-2,4]
+[6,-4,-4,8,-7]
+ */
+class Solution {
+public:
+    vector<int> getMaxMatrix(vector<vector<int>>& matrix) {
+        int m=matrix.size(),n=matrix[0].size(),maxn=INT_MIN;
+        int temp[n];
+        vector<int> res(4);
+        for(int i=0;i<m;i++){
+            memset(temp,0,sizeof(temp));
+            for(int k=i;k<m;k++){
+                int c=0,M=0;
+                for(int j=0;j<n;j++){
+                    temp[j]+=matrix[k][j];
+                    if(M<0){
+                        M=temp[j];
+                        c=j;
+                    }else{
+                        M+=temp[j];
+                    }
+                    if(M>maxn){
+                        res[0]=k,res[1]=c,res[2]=i,res[3]=j;
+                        maxn=M;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
+/* 
+给你一个 m x n 的矩阵 matrix 和一个整数 k ，找出并返回矩阵内部矩形区域的不超过 k 的最大数值和。
+
+题目数据保证总会存在一个数值和不超过 k 的矩形区域。
+363
+ */
+class Solution {
+public:
+    int maxSumSubmatrix(vector<vector<int>>& matrix, int dest) {
+        int m=matrix.size(),n=matrix[0].size();
+        int presum[m][n];
+        memset(presum,0,sizeof(presum));
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(i!=0){
+                    presum[i][j]=presum[i-1][j];
+                }
+                presum[i][j]+=matrix[i][j];
+            }
+        }
+        int ans=INT_MIN;
+        for(int i=0;i<m;i++){
+            for(int k=i;k<m;k++){
+                set<int> st;
+                st.emplace(0);
+                int now=0;
+                for(int j=0;j<n;j++){
+                    now+=presum[k][j]-((i==0)?0:presum[i-1][j]);
+                    //cout<<now<<endl;
+                    auto itr=st.lower_bound(now-dest);
+                    if(now-*itr<=dest){
+                        ans=max(ans,now-*itr);
+                    }
+                    if(ans==dest){
+                        return dest;
+                    }
+                    st.emplace(now);
+                }
+            }
+        }
+        return ans;
+    }
+};
 /*
 给定一个数组 nums 和一个目标值 k，找到和等于 k 的最长子数组长度。如果不存在任意一个符合要求的子数组，则返回 0。
 注意:
@@ -333,6 +420,22 @@ public:
             m[sum]++;
         }
         return res;
+    }
+};
+/* 
+给出矩阵 matrix 和目标值 target，返回元素总和等于目标值的非空子矩阵的数量。
+
+子矩阵 x1, y1, x2, y2 是满足 x1 <= x <= x2 且 y1 <= y <= y2 的所有单元 matrix[x][y] 的集合。
+
+如果 (x1, y1, x2, y2) 和 (x1', y1', x2', y2') 两个子矩阵中部分坐标不同（如：x1 != x1'），那么这两个子矩阵也不同。
+
+1074
+上题的二维版本
+ */
+class Solution {
+public:
+    int numSubmatrixSumTarget(vector<vector<int>>& matrix, int target) {
+
     }
 };
 /* 
@@ -672,5 +775,33 @@ public:
 			}
 		}
 		return res;
+    }
+};
+/* 
+给你一个 m x n 的矩阵 mat 和一个整数 k ，请你返回一个矩阵 answer ，其中每个 answer[i][j] 是所有满足下述条件的元素 mat[r][c] 的和： 
+
+    i - k <= r <= i + k,
+    j - k <= c <= j + k 且
+    (r, c) 在矩阵内。
+1314
+ */
+class Solution {
+public:
+    vector<vector<int>> matrixBlockSum(vector<vector<int>>& mat, int k) {
+
+    }
+};
+/* 
+给出矩阵 matrix 和目标值 target，返回元素总和等于目标值的非空子矩阵的数量。
+
+子矩阵 x1, y1, x2, y2 是满足 x1 <= x <= x2 且 y1 <= y <= y2 的所有单元 matrix[x][y] 的集合。
+
+如果 (x1, y1, x2, y2) 和 (x1', y1', x2', y2') 两个子矩阵中部分坐标不同（如：x1 != x1'），那么这两个子矩阵也不同。
+1074
+ */
+class Solution {
+public:
+    int numSubmatrixSumTarget(vector<vector<int>>& matrix, int target) {
+
     }
 };
