@@ -5,10 +5,14 @@ import os
 import chardet
 import codecs
 row = 0
+wk=xlwt.Workbook()
+sheet1 = wk.add_sheet("数据", cell_overwrite_ok=True)
 def get_cfgName(dir):
+    global wk
     for root,dirs,files in os.walk(dir):
         for file in files:
             get_config(root+'/'+file)
+    wk.save("result.xls")
 
 def get_config(config_file = "xfer.cfg"):
         
@@ -29,9 +33,7 @@ def get_config(config_file = "xfer.cfg"):
     dUser = config.get("Default","User")
     dPasswd = config.get("Default","Passwd")
     r = config.sections()
-    wk=xlwt.Workbook()
-    sheet1 = wk.add_sheet("数据", cell_overwrite_ok=True)
-    global row
+    global row,sheet1
     for a in r:
         if config.has_option(a,"srcdir") == False:
             continue
@@ -68,7 +70,6 @@ def get_config(config_file = "xfer.cfg"):
     r = config.items("Default") 
     r = config.has_option("Common","srcdir")
 
-    wk.save("result.xls")
 get_cfgName("/home/wangqc/wangqichao/cfg/92")
 # get_config("/home/wangqc/wangqichao/cfg/92/xfer_wlw_scp_volte.cfg")
 
