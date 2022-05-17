@@ -597,3 +597,184 @@ public:
         return ans;
     }
 };
+// ------------------打家劫舍------------------------
+/* 
+你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，
+如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+
+给定一个代表每个房屋存放金额的非负整数数组，计算你 不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。
+198
+ */
+//数组
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        vector<int> dp=nums;
+        for(int i=1;i<nums.size();i++){
+            if(i==1){
+                dp[i]=max(dp[0],dp[1]);
+            }else{
+                dp[i]=max(dp[i-1],dp[i-2]+nums[i]);
+            }
+        }
+        return dp[nums.size()-1];
+    }
+};
+//不使用 数组
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int p=nums[0],q=nums[0];
+        for(int i=1;i<nums.size();i++){
+            if(i==1){
+                q=max(nums[0],nums[1]);
+            }else{
+                int m=max(p+nums[i],q);
+                p=q;
+                q=m;
+            }
+        }
+        return q;
+    }
+};
+/* 
+你是一个专业的小偷，计划偷窃沿街的房屋，每间房内都藏有一定的现金。这个地方所有的房屋都 围成一圈 ，这意味着第一个房屋和最后一个房屋是紧挨着的。
+同时，相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警 。
+
+给定一个代表每个房屋存放金额的非负整数数组，计算你 在不触动警报装置的情况下 ，今晚能够偷窃到的最高金额。
+213
+ */
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        vector<int> t1(nums.begin(),nums.end()-1),t2(nums.begin()+1,nums.end());
+        return max(rob_help(t1),rob_help(t2));
+    }
+    int rob_help(vector<int>& nums) {
+        int p=nums[0],q=nums[0];
+        for(int i=1;i<nums.size();i++){
+            if(i==1){
+                q=max(nums[0],nums[1]);
+            }else{
+                int m=max(p+nums[i],q);
+                p=q;
+                q=m;
+            }
+        }
+        return q;
+    }
+};
+/* 
+小偷又发现了一个新的可行窃的地区。这个地区只有一个入口，我们称之为 root 。
+
+除了 root 之外，每栋房子有且只有一个“父“房子与之相连。一番侦察之后，聪明的小偷意识到“这个地方的所有房屋的排列类似于一棵二叉树”。 
+如果 两个直接相连的房子在同一天晚上被打劫 ，房屋将自动报警。
+
+给定二叉树的 root 。返回 在不触动警报的情况下 ，小偷能够盗取的最高金额 。
+337
+ */
+class Solution {
+public:
+    int rob(TreeNode* root) {
+        auto [f,s]=dfs(root);
+        return max(f,s);
+    }
+    //返回值：不偷的最大值，偷的最大值
+    pair<int,int> dfs(TreeNode* root){
+        if(root==NULL){
+            return {0,0};
+        }
+        auto [lf,ls]=dfs(root->left);
+        auto [rf,rs]=dfs(root->right);
+        // 不偷：左、右孩子不偷/偷的最大值之和
+        //  偷：左右孩子不偷加上本身偷的
+        return {max(lf,ls)+max(rf,rs),lf+rf+root->val};
+    }
+};
+/* 
+给你一个整数数组 nums ，你可以对它进行一些操作。
+
+每次操作中，选择任意一个 nums[i] ，删除它并获得 nums[i] 的点数。之后，你必须删除 所有 等于 nums[i] - 1 和 nums[i] + 1 的元素。
+
+开始你拥有 0 个点数。返回你能通过这些操作获得的最大点数。
+740
+ */
+//打家劫舍的换皮
+class Solution {
+public:
+    int deleteAndEarn(vector<int>& nums) {
+        int maxn=*max_element(nums.begin(),nums.end());
+        int n[maxn+1];
+        memset(n,0,sizeof(n));
+        for(int i:nums){
+            n[i]++;
+        }
+        //p不取当前元素，q取当前元素
+        int p=0,q=0;
+        for(int i=1;i<=maxn;i++){
+            int m=q;
+            q=n[i]*i+p;
+            p=max(p,m);
+        }
+        return max(p,q);
+    }
+};
+
+class Solution {
+public:
+    int deleteAndEarn(vector<int>& nums) {
+        map<int,int> mp;
+        for(int i:nums){
+            mp[i]+=i;
+        }
+        //p不取当前元素，q取当前元素
+        int p=0,q=0,pre=-1;
+        for(auto [x,y]:mp){
+            if(x-1!=pre){
+                int m=p,n=q;
+                p=max(p,q);
+                q=max(m,n)+y;
+            }else{
+                int m=q;
+                q=p+y;
+                p=max(p,q);
+            }
+            pre=x;
+        }
+        return max(p,q);
+    }
+};
+/* 
+给你一个披萨，它由 3n 块不同大小的部分组成，现在你和你的朋友们需要按照如下规则来分披萨：
+
+    你挑选 任意 一块披萨。
+    Alice 将会挑选你所选择的披萨逆时针方向的下一块披萨。
+    Bob 将会挑选你所选择的披萨顺时针方向的下一块披萨。
+    重复上述过程直到没有披萨剩下。
+
+每一块披萨的大小按顺时针方向由循环数组 slices 表示。
+
+请你返回你可以获得的披萨大小总和的最大值。
+1388
+ */
+//环形打家劫舍的换皮
+class Solution {
+public:
+    int maxSizeSlices(vector<int>& nums) {
+        vector<int> t1(nums.begin(),nums.end()-1),t2(nums.begin()+1,nums.end());
+        return max(rob_help(t1),rob_help(t2));
+    }
+    int rob_help(vector<int>& nums) {
+        int p=nums[0],q=nums[0];
+        for(int i=1;i<nums.size();i++){
+            if(i==1){
+                q=max(nums[0],nums[1]);
+            }else{
+                int m=max(p+nums[i],q);
+                p=q;
+                q=m;
+            }
+        }
+        return q;
+    }
+};
