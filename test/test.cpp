@@ -20,7 +20,7 @@ public:
     vector<node*> childdir;
     vector<string> childfile;
 };
-map<string,vector<file>> mpfile;
+map<string,file*> mpfile;
 set<string> visit;
 int dfs(node* root,string dir){
     DIR *dDir;
@@ -36,25 +36,37 @@ int dfs(node* root,string dir){
         //文件
 		if(dp->d_type==8){
 			root->childfile.emplace_back(temp);
-            mpfile[temp].emplace_back(new file(dp->d_name,dir));
+            mpfile[temp]=new file(dp->d_name,dir,0);
 		}
 		//目录
 		if(dp->d_type==4){
-            root->childfile.emplace_back(dp->d_name);
             node *chdir=new node(temp);
 			root->childdir.emplace_back(chdir);
+            mpfile[temp]=new file(dp->d_name,dir,0);
             dfs(chdir,temp);
 		}
         
 	}
     return 0;
 }
-int printTree
+void printTree(node* root,int len=1){
+    if(root==NULL){
+        return;
+    }
+    printf("%*sd--%s\n",len,"-",mpfile[root->name]->name.c_str());
+    for(auto chf:root->childfile){
+        printf("%*sf--%s\n",len+2,"-",mpfile[chf]->name.c_str());
+    }
+    for(auto chd:root->childdir){
+        printTree(chd,len+2);
+    }
+}
 int main(){
-    string dir="./test";
+    string dir="/home/wangqc/wangqichao/CppPracticeCode/test";
+    mpfile["/home/wangqc/wangqichao/CppPracticeCode/test"]=new file("test",dir,0);
     node *root=new node(dir);
     if(dfs(root,dir) == 0){
-        bfs(root);
+        printTree(root);
     }
     return 0;
 }
