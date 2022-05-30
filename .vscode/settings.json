@@ -51,6 +51,8 @@
 		"*.ipp": "cpp",
 		"variant": "cpp",
 		"unordered_set": "cpp",
-		"bitset": "cpp"
+		"bitset": "cpp",
+		"any": "cpp",
+		"list": "cpp"
 	}
 }
