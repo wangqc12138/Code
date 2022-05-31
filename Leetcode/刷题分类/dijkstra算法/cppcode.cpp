@@ -126,8 +126,108 @@ public:
 373
 */
 /*
-在一个 N x N 的坐标方格 grid 中，每一个方格的值 grid[i][j] 表示在位置 (i,j) 的平台高度。
-现在开始下雨了。当时间为 t 时，此时雨水导致水池中任意位置的水位为 t 。你可以从一个平台游向四周相邻的任意一个平台，但是前提是此时水位必须同时淹没这两个平台。假定你可以瞬间移动无限距离，也就是默认在方格内部游动是不耗时的。当然，在你游泳的时候你必须待在坐标方格里面。
-你从坐标方格的左上平台 (0，0) 出发。最少耗时多久你才能到达坐标方格的右下平台 (N-1, N-1)？
+在一个 n x n 的整数矩阵 grid 中，每一个方格的值 grid[i][j] 表示位置 (i, j) 的平台高度。
+
+当开始下雨时，在时间为 t 时，水池中的水位为 t 。你可以从一个平台游向四周相邻的任意一个平台，但是前提是此时水位必须同时淹没这两个平台。假定你可以瞬间移动无限距离，也就是默认在方格内部游动是不耗时的。当然，在你游泳的时候你必须待在坐标方格里面。
+
+你从坐标方格的左上平台 (0，0) 出发。返回 你到达坐标方格的右下平台 (n-1, n-1) 所需的最少时间 。
 778
 */
+/* 
+欢迎各位勇者来到力扣城，本次试炼主题为「信物传送」。
+
+本次试炼场地设有若干传送带，matrix[i][j] 表示第 i 行 j 列的传送带运作方向，"^","v","<",">" 这四种符号分别表示 上、下、左、右 四个方向。
+信物会随传送带的方向移动。勇者每一次施法操作，可临时变更一处传送带的方向，在物品经过后传送带恢复原方向。
+
+通关信物初始位于坐标 start处，勇者需要将其移动到坐标 end 处，请返回勇者施法操作的最少次数。
+
+注意：
+
+    start 和 end 的格式均为 [i,j]
+LCP56
+ */
+using pii=pair<int,int>;
+using ppi=pair<pii,int>;
+class Solution {
+public:
+	vector<vector<int>> dir={{-1,0},{1,0},{0,-1},{0,1}};
+	vector<char> vstr={'^','v','<','>'};
+    int conveyorBelt(vector<string>& matrix, vector<int>& start, vector<int>& end) {
+		int m=matrix.size(),n=matrix[0].size();
+		vector<vector<int>> visit(m,vector<int>(n,10001));
+		auto cmp=[](ppi a,ppi b){return a.second>b.second;};
+		priority_queue<ppi,vector<ppi>,decltype(cmp)> mpq(cmp);
+		mpq.emplace(ppi({{start[0],start[1]},0}));
+		visit[start[0]][start[1]]=0;
+		while(!mpq.empty()){
+			int x=mpq.top().first.first,y=mpq.top().first.second,z=mpq.top().second;
+			mpq.pop();
+			if(x==end[0]&&y==end[1]){
+				return z;
+			}
+			for(int k=0;k<4;k++){
+				int p=(vstr[k]==matrix[x][y])?0:1;
+				int i=x+dir[k][0],j=y+dir[k][1];
+				if(i<0||j<0||i>=m||j>=n||visit[i][j]<=visit[x][y]+p){
+					continue;
+				}
+				visit[i][j]=visit[x][y]+p;
+				mpq.emplace(ppi({i,j},visit[i][j]));
+			}
+		}
+		return 0;
+    }
+};
+/* 
+给你一个 m x n 的网格图 grid 。 grid 中每个格子都有一个数字，对应着从该格子出发下一步走的方向。 grid[i][j] 中的数字可能为以下几种情况：
+
+    1 ，下一步往右走，也就是你会从 grid[i][j] 走到 grid[i][j + 1]
+    2 ，下一步往左走，也就是你会从 grid[i][j] 走到 grid[i][j - 1]
+    3 ，下一步往下走，也就是你会从 grid[i][j] 走到 grid[i + 1][j]
+    4 ，下一步往上走，也就是你会从 grid[i][j] 走到 grid[i - 1][j]
+
+注意网格图中可能会有 无效数字 ，因为它们可能指向 grid 以外的区域。
+
+一开始，你会从最左上角的格子 (0,0) 出发。
+我们定义一条 有效路径 为从格子 (0,0) 出发，每一步都顺着数字对应方向走，最终在最右下角的格子 (m - 1, n - 1) 结束的路径。
+有效路径 不需要是最短路径 。
+
+你可以花费 cost = 1 的代价修改一个格子中的数字，但每个格子中的数字 只能修改一次 。
+
+请你返回让网格图至少有一条有效路径的最小代价。
+1368
+ */
+using pii=pair<int,int>;
+using ppi=pair<pii,int>;
+class Solution {
+public:
+	vector<vector<int>> dir={{0,1},{0,-1},{1,0},{-1,0}};
+    int minCost(vector<vector<int>>& grid) {
+		int m=grid.size(),n=grid[0].size();
+		vector<vector<int>> visit(m,vector<int>(n,0));
+		auto cmp=[](ppi a,ppi b){return a.second>b.second;};
+		priority_queue<ppi,vector<ppi>,decltype(cmp)> mpq(cmp);
+		mpq.emplace(ppi({{0,0},0}));
+		while(!mpq.empty()){
+			int x=mpq.top().first.first,y=mpq.top().first.second,z=mpq.top().second;
+            mpq.pop();
+			if(x==m-1&&y==n-1){
+				return z;
+			}
+			if(visit[x][y]){
+				continue;
+			}
+            //cout<<x<<" "<<y<<" "<<z<<endl;
+			visit[x][y]=1;
+			for(int k=0;k<4;k++){
+				int p=grid[x][y]==k+1?0:1;
+				int i=x+dir[k][0],j=y+dir[k][1];
+				if(i<0||j<0||i>=m||j>=n||visit[i][j]){
+					continue;
+				}
+				mpq.emplace(ppi({{i,j},z+p}));
+			}
+		}
+		return 0;
+    }
+};
