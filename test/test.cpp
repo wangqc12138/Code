@@ -49,12 +49,12 @@ int dfs(node* root,string dir){
 	}
     return 0;
 }
-int printTree
+int printTree();
 int main(){
     string dir="./test";
     node *root=new node(dir);
     if(dfs(root,dir) == 0){
-        bfs(root);
+        //bfs(root);
     }
     return 0;
 }
