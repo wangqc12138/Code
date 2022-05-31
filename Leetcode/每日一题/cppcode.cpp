@@ -4798,3 +4798,65 @@ public:
 		
     }
 };
+/* 
+现有一种使用英语字母的外星文语言，这门语言的字母顺序与英语顺序不同。
+
+给定一个字符串列表 words ，作为这门语言的词典，words 中的字符串已经 按这门新语言的字母顺序进行了排序 。
+
+请你根据该词典还原出此语言中已知的字母顺序，并 按字母递增顺序 排列。若不存在合法字母顺序，返回 "" 。若存在多种可能的合法字母顺序，返回其中 任意一种 顺序即可。
+
+字符串 s 字典顺序小于 字符串 t 有两种情况：
+
+    在第一个不同字母处，如果 s 中的字母在这门外星语言的字母顺序中位于 t 中字母之前，那么 s 的字典顺序小于 t 。
+    如果前面 min(s.length, t.length) 字母都相同，那么 s.length < t.length 时，s 的字典顺序也小于 t 。
+
+剑指114
+ */
+/* 
+输入：words = ["wrt","wrf","er","ett","rftt"]
+输出："wertf"
+ */
+class Solution {
+public:
+    string alienOrder(vector<string>& words) {
+		int n=words.size();
+		map<char,set<char>> next;
+		vector<int> vin(26,0);
+		set<char> st(words.back().begin(),words.back().end());
+		for(int i=0;i<n-1;i++){
+			st.insert(words[i].begin(),words[i].end());
+			int j=0;
+			while(j<min(words[i].size(),words[i+1].size())){
+				if(words[i][j]!=words[i+1][j]){
+                    if(!next[words[i][j]].count(words[i+1][j])){
+                        next[words[i][j]].emplace(words[i+1][j]);
+					    vin[words[i+1][j]-'a']++;   
+                    }
+                    break;
+				}
+                j++;
+			}
+            if(words[i].size()>words[i+1].size()&&j==words[i+1].size()){
+                return "";
+            }
+		}
+		queue<char> mq;
+		for(int i=0;i<26;i++){
+			if(st.count(i+'a')&&vin[i]==0){
+				mq.emplace(i+'a');
+			}
+		}
+		string res="";
+		while(!mq.empty()){
+			char c=mq.front();
+            mq.pop();
+			res+=c;
+			for(auto ch:next[c]){
+				if(--vin[ch-'a']==0){
+					mq.emplace(ch);
+				}
+			}
+		}
+		return res.size()==st.size()?res:"";
+    }
+};
