@@ -4,12 +4,13 @@
 #include <sys/stat.h>
 #include <time.h>
 using namespace std;
+using ll=long long;
 class fileinfo{
 public:
-    fileinfo(string name,string dir,time_t time,int size=0,bool isfile=true):name(name),dir(dir),time(time),size(size),isfile(isfile){};
+    fileinfo(string name,string dir,time_t time,ll size=0,bool isfile=true):name(name),dir(dir),time(time),size(size),isfile(isfile){};
     string name;
     string dir;
-    int size;
+    ll size;
     time_t time;
     bool isfile;
 };
@@ -23,8 +24,7 @@ public:
     vector<node*> child;
 };
 map<string,fileinfo*> mpfile;
-set<string> visit;
-int getFileSizeAndTime(string file,int &size,time_t &time){
+int getFileSizeAndTime(string file,ll &size,time_t &time){
     struct stat *s;
     if(-1 == stat(file.c_str(),s)){
         return -1;
@@ -33,33 +33,36 @@ int getFileSizeAndTime(string file,int &size,time_t &time){
     time = s->st_mtim.tv_sec;
     return 0;
 }
-long long dfs(node* root,string dir){
+ll dfs(node* root,string dir){
+    cout<<dir<<endl;
     DIR *dDir;
 	struct dirent *dp;
     if ((dDir = opendir (dir.c_str ())) == NULL) {
 		return -1;
 	}
-    long long sumSize = 0;
+    ll sumSize = 0;
 	while((dp = readdir (dDir))){
 		if (strcmp (dp->d_name, ".") == 0 || strcmp (dp->d_name, "..") == 0 ) {
 			continue;
 		}
 		string temp=dir+"/"+dp->d_name;
+        cout<<"  "<<temp<<endl;
 		if(dp->d_type==8){
             node *chnode=new node(temp);
 			root->child.emplace_back(chnode);
-            int size=0;
+            ll size=0;
             time_t time=0;
             if(-1 == getFileSizeAndTime(temp,size,time)){
                 return -1;
             }
-            mpfile[temp]=new fileinfo(dp->d_name,dir,time,size,true);
+            fileinfo *tf=new fileinfo(dp->d_name,dir,time,size);
+            mpfile[temp]=tf;
             sumSize+=size;
 		}
 		if(dp->d_type==4){
             node *chnode=new node(temp);
 			root->child.emplace_back(chnode);
-            int size=0;
+            ll size=0;
             time_t time=0;
             if(-1 == getFileSizeAndTime(temp,size,time)){
                 return -1;
@@ -70,29 +73,37 @@ long long dfs(node* root,string dir){
 		}
         
 	}
+    cout<<sumSize<<endl;
     return sumSize;
 }
 void printTree(node* root,int len=1){
-
-}
-void getDirandFile(string &dir,string &file){
-    if(dir.back()=='/'){
-        dir.pop_back();
+    for(int i=0;i<len;i++){
+        cout<<"-";
     }
-    file=dir.substr(dir.rfind('/'));
-    dir=dir.substr(0,dir.rfind('/')+1);
+    cout<<mpfile[root->name]->name<<endl;
+    for(auto node:root->child){
+        printTree(node,len+1);
+    }
+}
+void getDirandFile(string dname,string &dir,string &file){
+    if(dname.back()=='/'){
+        dname.pop_back();
+    }
+    file=dname.substr(dname.rfind('/')+1);
+    dir=dname.substr(0,dname.rfind('/')+1);
 }
 int main(){
-    string dir="/home/wangqc/wangqichao/CppPracticeCode/test",file;
-    getDirandFile(dir,file);
-    node *root=new node(dir+file);
-    long long size;
-    time_t time=0; = dfs(root,dir);
-    mpfile[dir]=new fileinfo(file,dir,size,);
-    
-    if(dfs(root,dir) == 0){
-        printTree(root);
-    }
+    string Dname="/home/wangqc/CppPracticeCode/test";
+    string dir,file;
+    getDirandFile(Dname,dir,file);
+    node *root=new node(Dname);
+    ll size;
+    time_t time=0;
+    getFileSizeAndTime(Dname,size,time);
+    size = dfs(root,Dname);
+    cout<<size<<endl;
+    mpfile[Dname]=new fileinfo(file,dir,time,size,false);
+    printTree(root);
     return 0;
 }
 
