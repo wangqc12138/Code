@@ -34,11 +34,11 @@ public:
         this->child.clear();
     }
     string name;
-    vector<treenode *> child;
+    deque<treenode *> child;
 };
 //递归
 ll dfs_lsit(treenode *root, string dir);
-void printTree(treenode *root, int len = 1);
+void printTree(treenode *root, int len = 0);
 //递归排序
 void sortusemerge(vector<psll> &nums);
 void mergesort(vector<psll> &nums, int left, int right);
@@ -46,17 +46,18 @@ void merge(vector<psll> &nums, int left, int right);
 //哈希
 unordered_map<string, fileinfo *> mpFile;
 unordered_map<string, dirinfo *> mpDir;
+unordered_map<string, treenode *> mpTreenode;
 string time2str(time_t time)
 {
     char res[1024];
     struct tm *p;
     p = localtime(&time);
-    sprintf(res, "%04d-%02d-%02d %02d:%02d:%02d\n", p->tm_year + 1900, p->tm_mon + 1, p->tm_mday, p->tm_hour, p->tm_min, p->tm_sec);
+    sprintf(res, "%04d-%02d-%02d %02d:%02d:%02d", p->tm_year + 1900, p->tm_mon + 1, p->tm_mday, p->tm_hour, p->tm_min, p->tm_sec);
     return res;
 }
 string better(int size)
 {
-    vector<string> vec = {"B", "b", "kb", "mb", "gb", "tb"};
+    vector<string> vec = {"B", "K", "M", "G", "T"};
     int index = 0;
     int t = size;
     while (t > 1024)
@@ -103,8 +104,9 @@ ll dfs_lsit(treenode *root, string dir)
         if (dp->d_type == 8)
         {
             treenode *chnode = new treenode(temp);
-            root->child.emplace_back(chnode);
+            root->child.emplace_front(chnode);
             mpFile[temp] = new fileinfo(dp->d_name, dir, time, size);
+            mpTreenode[temp] = chnode;
             sumSize += size;
         }
         if (dp->d_type == 4)
@@ -113,6 +115,7 @@ ll dfs_lsit(treenode *root, string dir)
             root->child.emplace_back(chnode);
             size = dfs_lsit(chnode, temp);
             mpDir[temp] = new dirinfo(dp->d_name, dir, time, size);
+            mpTreenode[temp] = chnode;
             sumSize += size;
         }
     }
@@ -123,16 +126,23 @@ void printTree(treenode *root, int len)
 {
     for (int i = 0; i < len; i++)
     {
-        cout << "--";
+        if (i == len - 1)
+        {
+            cout << "└──";
+        }
+        else
+        {
+            cout << "   ";
+        }
     }
     if (mpFile.count(root->name))
     {
         auto ff = mpFile[root->name];
-        cout << ff->name << " " << better(ff->size) << " " << time2str(ff->time) << endl;
+        printf("f %s %5s %s\n", time2str(ff->time).c_str(), better(ff->size).c_str(), ff->name.c_str());
         return;
     }
     auto df = mpDir[root->name];
-    cout << df->name << " " << better(df->size) << " " << time2str(df->time) << endl;
+    printf("d %s %5s %s\n", time2str(df->time).c_str(), better(df->size).c_str(), df->name.c_str());
     for (auto treenode : root->child)
     {
         printTree(treenode, len + 1);
@@ -185,13 +195,22 @@ void merge(vector<psll> &nums, int left, int right)
     }
 }
 //打印目录，可以按照目录时间，大小排序
-void printDir(treenode *root, int type = 0)
+void printDir(treenode *root, int type = 0, string dir = "")
 {
     vector<psll> temp;
-    for (auto [x, y] : mpDir)
-    {
-        temp.emplace_back(y->name, type == 0 ? y->size : y->time);
+    cout<<"2"<<endl;
+    cout<<dir<<endl;
+    cout<<dir==""<<endl;
+    if(dir != ""){
+        cout<<"3";
+        for (auto [x, y] : mpDir)
+        {
+            cout<<"4";
+            cout<<x<<y<<endl;
+            temp.emplace_back(y->name, type == 0 ? y->size : y->time);
+        }
     }
+    
     sortusemerge(temp);
     for (auto [x, y] : temp)
     {
@@ -206,7 +225,7 @@ void printDir(treenode *root, int type = 0)
     }
 }
 //打印文件，可以按照文件时间大小排序
-void printFile(treenode *root, int type = 0)
+void printFile(treenode *root, int type = 0, string dir = "")
 {
     vector<psll> temp;
     for (auto [x, y] : mpFile)
@@ -235,19 +254,159 @@ void getDirandFile(string dname, string &dir, string &file)
     file = dname.substr(dname.rfind('/') + 1);
     dir = dname.substr(0, dname.rfind('/') + 1);
 }
+int findstr(string haystack, string needle)
+{
+    int m = needle.size(), n = haystack.size(), j = 0, i = 1;
+    vector<int> next(m, 0);
+    //填入next数组
+    for (; i < m; i++)
+    {
+        while (needle[i] != needle[j])
+        {
+            if (j == 0)
+            {
+                next[i] = 0;
+                break;
+            }
+            else
+            {
+                j = next[j - 1];
+            }
+        }
+        if (needle[i] == needle[j])
+        {
+            next[i] = ++j;
+        }
+    }
+    //利用next数组比较
+    i = 0, j = 0;
+    while (i < n && j < m)
+    {
+        if (needle[j] == haystack[i])
+        {
+            i++;
+            j++;
+        }
+        else if (j == 0)
+        {
+            i++;
+        }
+        else
+        {
+            j = next[j - 1];
+        }
+    }
+    return j != m ? -1 : i - m;
+}
+int help(string dest, string filename)
+{
+    std::ifstream fp(filename.c_str());
+    char buf[1024];
+    int line = 1;
+    while (fp.getline(buf, 1024, '\n'))
+    {
+        string src = buf;
+        // if (src.find(dest) != string::npos)
+        if (findstr(src, dest) != -1)
+        {
+            cout << filename << "(" << line << "):" << src << endl;
+        }
+        line++;
+    }
+    fp.close();
+    return 0;
+}
+int grep(string dest, string filename,int type = 0)
+{
+    queue<treenode *> mq;
+    if (!mpTreenode.count(filename))
+    {
+        return -1;
+    }
+    mq.emplace(mpTreenode[filename]);
+    while (!mq.empty())
+    {
+        int len = mq.size();
+        for(int i=0;i<len;i++){
+            auto tn = mq.front();
+            mq.pop();
+            string fname = tn->name;
+            if (mpFile.count(fname))
+            {
+                help(dest, fname);
+            }
+            for (auto chn : tn->child)
+            {
+                mq.emplace(chn);
+            }
+        }
+        if(type==0){
+            break;
+        }
+    }
+    return 0;
+}
 
 int main()
 {
-    string Dname = "/home/wangqc/CppPracticeCode/test";
-    string dir, file;
-    getDirandFile(Dname, dir, file);
-    treenode *root = new treenode(Dname);
-    ll size;
-    time_t time = 0;
-    getFileSizeAndTime(Dname, size, time);
-    size = dfs_lsit(root, Dname);
-    mpDir[Dname] = new dirinfo(file, dir, time, size);
-    printTree(root);
-    printFile(root, 1);
+    while (1)
+    {
+        char buf[1024];
+        printf("input dir:\n");
+        cin >> buf;
+        if (!strncmp(buf, "quit", strlen(buf)))
+        {
+            break;
+        }
+        string Dname = buf;
+        string dir, file;
+        getDirandFile(Dname, dir, file);
+        treenode *root = new treenode(Dname);
+        ll size;
+        time_t time = 0;
+        getFileSizeAndTime(Dname, size, time);
+        if ((size = dfs_lsit(root, Dname)) == -1){
+            cout<<"open dir fail:"<<Dname<<endl;
+            continue;
+        }
+        mpDir[Dname] = new dirinfo(file, dir, time, size);
+        while (1)
+        {
+            printf("input command:\n");
+            cin.getline(buf,1024,'\n');
+            if (0 == strncmp(buf, "clear", 5))
+            {
+                delete root;
+                break;
+            }
+            else if (0==strncmp(buf, "tree", 4))
+            {
+                printTree(root);
+            }
+            else if (0==strncmp(buf, "file", 4))
+            {
+                char command[1024],type[1024],dir[1024];
+                sscanf(buf,"%s %s %s",command,type,dir);
+                printFile(root, type[1]=='t'||type[1]=='T',dir);
+            }
+            else if (0 == strncmp(buf, "dir", 3))
+            {
+                cout<<"1"<<endl;
+                char command[1024],type[1024],dir[1024];
+                sscanf(buf,"%s %s %s",command,type,dir);
+                printDir(root, type[1]=='t'||type[1]=='T',dir);
+            }
+            else if (0 == strncmp(buf, "grep", 4))
+            {
+                char command[1024],type[1024],dest[1024],fname[1024];
+                sscanf(buf,"%s %s %s %s",command,type,dest,fname);
+                if(fname == ""){
+                    grep(dest,Dname,type[1]=='r'||type[1]=='R');
+                }else{
+                    grep(dest,fname,type[1]=='r'||type[1]=='R');
+                }
+            }
+        }
+    }
     return 0;
 }
