@@ -17,6 +17,7 @@
 #include <string.h>
 #include <regex>
 #include <random>
+#include <list>
 using namespace std;
 typedef unsigned long long ull;
 struct TreeNode {
