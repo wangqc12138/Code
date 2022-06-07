@@ -1,11 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
-unordered_map<int,int> ump,used;
+unordered_map<int,int> ump;
+unordered_set<int> ust;
 int sum=0;
 void dfs(vector<int> &nums,int index,int t){
     if(t==0){
         sum++;
-        for(auto [i,j]:used){
+        for(auto i:ust){
             ump[i]++;
         }
         return;
@@ -14,22 +15,22 @@ void dfs(vector<int> &nums,int index,int t){
         return;
     }
     for(int i=index;i<nums.size();i++){
-        used[nums[i]]++;
+        auto temp=ust;
+        ust.emplace(nums[i]);
         dfs(nums,i,t-nums[i]);
-        if(--used[nums[i]]==0){
-            used.erase(nums[i]);
-        }
+        ust=temp;
     }
 }
 int main(){
     int n,t;
-    cin>>n;
-    cin>>t;
+    cin>>n>>t;
     vector<int> nums(n);
     for(int i=0;i<n;i++){
         cin>>nums[i];
     }
-    dfs(nums,0,t);
+    auto temp=nums;
+    sort(temp.begin(),temp.end());
+    dfs(temp,0,t);
     for(int i=0;i<n;i++){
         cout<<sum-ump[nums[i]]<<endl;
     }

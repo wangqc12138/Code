@@ -82,7 +82,8 @@ public:
                 break;
             }
             t--;
-            lc.erase(--index);
+            index--;
+            index=lc.erase(index);
         }
         return k-t;
     }
@@ -95,14 +96,20 @@ public:
                 break;
             }
         }
-        lc.erase(index);
-        lc.insert(itr,'|');
-        index=itr;
+        if(itr!=index){
+            index = lc.erase(index);
+            itr = lc.insert(itr,'|');
+            index=itr;
+            itr--;
+        }
+        if(index==lc.begin()){
+            return "";
+        }
         for(int i=0;i<10;i++,itr--){
+            res+=*itr;
             if(itr==lc.begin()){
                 break;
             }
-            res+=*itr;
         }
         reverse(res.begin(),res.end());
         return res;
@@ -111,19 +118,25 @@ public:
     string cursorRight(int k) {
         string res="";
         auto itr=index;
-        for(int i=0;i<k;i++,itr++){
+        for(int i=0;i<=k;i++,itr++){
             if(itr==lc.end()){
                 break;
             }
         }
-        lc.erase(index);
-        lc.insert(itr,'|');
-        index=itr;
+        if(itr!=index){
+            itr = lc.insert(itr,'|');
+            index = lc.erase(index);
+            index=itr;
+            itr--;
+        }
+        if(index==lc.begin()){
+            return "";
+        }
         for(int i=0;i<10;i++,itr--){
+            res+=*itr;
             if(itr==lc.begin()){
                 break;
             }
-            res+=*itr;
         }
         reverse(res.begin(),res.end());
         return res;
