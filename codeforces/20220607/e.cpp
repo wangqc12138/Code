@@ -16,24 +16,18 @@ int main(){
             ans+=t/k;
         }
         for(auto [x,y]:mp){
-            if(y<=0){
-                continue;
-            }
             for(auto [c,d]:mp){
-                if(d<=0){
-                    continue;
-                }
                 if(c+x>=k){
-                    if(c!=x&&mp[c]>=1&&mp[x]>=1){
-                        mp[c]--;
-                        mp[x]--;
-                        ans++;
-                        break;
-                    }else if(c==x&&mp[c]>=2){
-                        mp[c]-=2;
-                        ans++;
-                        break;
+                    if(c==x&&mp[c]==1){
+                        continue;
                     }
+                    if(--mp[x]==0){
+                            mp.erase(x);
+                        }
+                        if(--mp[c]==0){
+                            mp.erase(c);
+                        }
+                    ans++;
                 }
             }
         }
