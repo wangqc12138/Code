@@ -5,38 +5,39 @@ int main(){
     int T;
     cin>>T;
     while(T--){
-        int n,k;
-        cin>>n>>k;
-        map<int,int> mp;
-        int ans=0;
+        int n;
+        cin>>n;
+        if(n==1){
+            cout<<-1<<endl;
+            continue;
+        }
+        vector<int> a(n);
         for(int i=0;i<n;i++){
-            int t;
-            cin>>t;
-            mp[t%k]++;
-            ans+=t/k;
+            cin>>a[i];
         }
-        for(auto [x,y]:mp){
-            if(y<=0){
-                continue;
-            }
-            for(auto [c,d]:mp){
-                if(d<=0){
-                    continue;
-                }
-                if(c+x>=k){
-                    if(c!=x&&mp[c]>=1&&mp[x]>=1){
-                        mp[c]--;
-                        mp[x]--;
-                        ans++;
-                        break;
-                    }else if(c==x&&mp[c]>=2){
-                        mp[c]-=2;
-                        ans++;
-                        break;
-                    }
-                }
+        auto b=a;
+        sort(a.begin(),a.end());
+        vector<int> ans;
+        int i=0;
+        for(;i<n-1;i++){
+            if(a[i]==b[i]){
+                ans.emplace_back(a[i+1]);
+                ans.emplace_back(a[i]);
+                i++;
+            }else{
+                ans.emplace_back(a[i]);
             }
         }
-        cout<<ans<<endl;
+        ans.emplace_back(a[n-1]);
+        if(b[n-1]==ans[n-1]){
+            int t=ans[n-1];
+            ans[n-1]=ans[n-2];
+            ans[n-2]=t;
+        }
+        for(auto i:ans){
+            cout<<i<<" ";
+        }
+        cout<<endl;
     }
+    return 0;
 }
