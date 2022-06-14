@@ -7,37 +7,38 @@ int main(){
     while(T--){
         int n;
         cin>>n;
-        if(n==1){
-            cout<<-1<<endl;
-            continue;
-        }
-        vector<int> a(n);
+        map<int,vector<int>> mp;
         for(int i=0;i<n;i++){
-            cin>>a[i];
+            int k;
+            cin>>k;
+            mp[k].emplace_back(i);
         }
-        auto b=a;
-        sort(a.begin(),a.end());
-        vector<int> ans;
-        int i=0;
-        for(;i<n-1;i++){
-            if(a[i]==b[i]){
-                ans.emplace_back(a[i+1]);
-                ans.emplace_back(a[i]);
-                i++;
-            }else{
-                ans.emplace_back(a[i]);
+        int ans=1;
+        int maxn=-1,r=-1,p=-1,l=-1;
+        for(auto &[x,y]:mp){
+            int k=1;
+            if(maxn==-1){
+                maxn=x;
+                r=y[0];
+                l=y[0];
+            }
+            p=y[0];
+            for(int i=0;i<y.size();i++){
+                if(i>0){
+                    k=max(1,k-(y[i]-y[i-1]-1)+1);
+                    if(k==1){
+                        p=y[i];
+                    }
+                    if(k>ans){
+                        l=p;
+                        ans=k;
+                        r=y[i];
+                        maxn=x;
+                    }
+                }
             }
         }
-        ans.emplace_back(a[n-1]);
-        if(b[n-1]==ans[n-1]){
-            int t=ans[n-1];
-            ans[n-1]=ans[n-2];
-            ans[n-2]=t;
-        }
-        for(auto i:ans){
-            cout<<i<<" ";
-        }
-        cout<<endl;
+        cout<<maxn<<" "<<l+1<<" "<<r+1<<endl;;
     }
     return 0;
 }
