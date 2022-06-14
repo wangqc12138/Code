@@ -4869,3 +4869,30 @@ public:
     如果找到了，删除它。
 450
  */
+/* 
+给你一个大小为 m x n 的矩阵 mat ，请以对角线遍历的顺序，用一个数组返回这个矩阵中的所有元素。
+498
+ */
+class Solution {
+public:
+    vector<int> findDiagonalOrder(vector<vector<int>>& mat) {
+		vector<int> res;
+		int m=mat.size(),n=mat[0].size();
+		for(int i=0;i<m+n-1;i++){
+			if(i%2==0){
+				int x=i>=m?m-1:i;
+				int y=i>=m?i-m:0;
+				for(;x>=0&&y<n;x--,y++){
+					res.emplace_back(mat[x,y]);
+				}
+			}else{
+				int x=i>=n?i-n:0;
+				int y=i>=n?n-1:i;
+				for(;x<m&&y>=0;x++,y--){
+					res.emplace_back(mat[x,y]);
+				}
+			}
+		}
+		return res;
+    }
+};
