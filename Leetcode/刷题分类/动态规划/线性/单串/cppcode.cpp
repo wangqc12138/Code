@@ -758,23 +758,100 @@ public:
 1388
  */
 //环形打家劫舍的换皮
+//还是有区别的，因为最多拿到n/3块
 class Solution {
 public:
     int maxSizeSlices(vector<int>& nums) {
-        vector<int> t1(nums.begin(),nums.end()-1),t2(nums.begin()+1,nums.end());
-        return max(rob_help(t1),rob_help(t2));
+        vector<int> t1(nums.begin(),nums.end()-1);
+        vector<int> t2(nums.begin()+1,nums.end());
+        return max(help(t1),help(t2));
     }
-    int rob_help(vector<int>& nums) {
-        int p=nums[0],q=nums[0];
-        for(int i=1;i<nums.size();i++){
-            if(i==1){
-                q=max(nums[0],nums[1]);
-            }else{
-                int m=max(p+nums[i],q);
-                p=q;
-                q=m;
+    int help(vector<int>& nums){
+        int n=nums.size(),k=(n+1)/3;
+        //第n个位置拿k个披萨的最大值
+        int dp[n][k+1];
+        memset(dp,0,sizeof(dp));
+        for(int i=0;i<n;i++){
+            for(int j=1;j<=k;j++){
+                if(i==0){
+                    dp[i][j]=nums[i];
+                }else if(i==1){
+                    dp[i][j]=max(nums[i],nums[i-1]);
+                }else{
+                    dp[i][j]=max(dp[i-1][j],dp[i-2][j-1]+nums[i]);
+                }
             }
         }
-        return q;
+        return dp[n-1][k];
+    }
+};
+//-----------变形考虑两个位置
+/* 
+如果序列 X_1, X_2, ..., X_n 满足下列条件，就说它是 斐波那契式 的：
+
+    n >= 3
+    对于所有 i + 2 <= n，都有 X_i + X_{i+1} = X_{i+2}
+
+给定一个严格递增的正整数数组形成序列 arr ，找到 arr 中最长的斐波那契式的子序列的长度。如果一个不存在，返回  0 。
+
+（回想一下，子序列是从原序列 arr 中派生出来的，它从 arr 中删掉任意数量的元素（也可以不删），而不改变其余元素的顺序。例如， [3, 5, 8] 是 [3, 4, 5, 6, 7, 8] 的一个子序列）
+873
+ */
+class Solution {
+public:
+    int lenLongestFibSubseq(vector<int>& arr) {
+        int n=arr.size(),ans=0;
+        int dp[n-1][n];
+        memset(dp,0,sizeof(dp));
+        unordered_map<int,int> ump;
+        for(int i=0;i<n;i++){
+            ump[arr[i]]=i;
+            for(int j=i-1;j>0;j--){
+                int diff=arr[i]-arr[j];
+                if(ump.count(diff)&&diff<arr[j]){
+                    dp[j][i]=max(dp[j][i],dp[ump[diff]][j]+1);
+                    ans=max(ans,dp[j][i]);
+                }
+            }
+        }
+        return ans==0?0:2+ans;
+    }
+};
+/* 
+给你一个整数数组 nums，返回 nums 中最长等差子序列的长度。
+
+回想一下，nums 的子序列是一个列表 nums[i1], nums[i2], ..., nums[ik] ，且 0 <= i1 < i2 < ... < ik <= nums.length - 1。
+并且如果 seq[i+1] - seq[i]( 0 <= i < seq.length - 1) 的值都相同，那么序列 seq 是等差的。
+1027
+ */
+class Solution {
+public:
+    int longestArithSeqLength(vector<int>& nums) {
+        int n=nums.size(),res=0;
+        //以n-1，n结尾的子序列长度
+        int dp[n-1][n];
+        memset(dp,0,sizeof(dp));
+        unordered_map<int,int> ump,index;
+        for(int i=0;i<n;i++){
+            ump[nums[i]]=i;
+            index[nums[i]]++;
+            for(int j=i-1;j>0;j--){
+                int diff=2*nums[j]-nums[i];
+                if(ump.count(diff)&&ump[diff]<j){
+                    dp[j][i]=dp[ump[diff]][j]+1;
+                    res=max(dp[j][i]+2,res);
+                    if(i==30&&nums[j]-diff==-9){
+                        cout<<":"<<ump[diff]<<" "<<j<<" "<<i<<endl;
+                        cout<<diff<<" "<<nums[j]<<" "<<nums[i]<<endl;
+                    }
+                    if(dp[j][i]==3){
+                        cout<<":"<<ump[diff]<<" "<<j<<" "<<i<<endl;
+                        cout<<diff<<" "<<nums[j]<<" "<<nums[i]<<endl;
+                    }
+                }
+            }
+            res=max(res,index[nums[i]]);
+        }
+        return res;
     }
 };
