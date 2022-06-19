@@ -801,18 +801,19 @@ class Solution {
 public:
     int lenLongestFibSubseq(vector<int>& arr) {
         int n=arr.size(),ans=0;
+        //j,k
         int dp[n-1][n];
         memset(dp,0,sizeof(dp));
         unordered_map<int,int> ump;
-        for(int i=0;i<n;i++){
-            ump[arr[i]]=i;
-            for(int j=i-1;j>0;j--){
-                int diff=arr[i]-arr[j];
-                if(ump.count(diff)&&diff<arr[j]){
-                    dp[j][i]=max(dp[j][i],dp[ump[diff]][j]+1);
-                    ans=max(ans,dp[j][i]);
+        for(int j=0;j<n-1;j++){
+            for(int k=j+1;k<n;k++){
+                int diff=arr[k]-arr[j];
+                if(ump.count(diff)){
+                    dp[j][k]=dp[ump[diff]][j]+1;
+                    ans=max(ans,dp[j][k]);
                 }
             }
+            ump[arr[j]]=j;
         }
         return ans==0?0:2+ans;
     }
@@ -823,35 +824,59 @@ public:
 回想一下，nums 的子序列是一个列表 nums[i1], nums[i2], ..., nums[ik] ，且 0 <= i1 < i2 < ... < ik <= nums.length - 1。
 并且如果 seq[i+1] - seq[i]( 0 <= i < seq.length - 1) 的值都相同，那么序列 seq 是等差的。
 1027
+0 <= nums[i] <= 500
  */
 class Solution {
 public:
     int longestArithSeqLength(vector<int>& nums) {
         int n=nums.size(),res=0;
-        //以n-1，n结尾的子序列长度
         int dp[n-1][n];
         memset(dp,0,sizeof(dp));
-        unordered_map<int,int> ump,index;
-        for(int i=0;i<n;i++){
-            ump[nums[i]]=i;
-            index[nums[i]]++;
-            for(int j=i-1;j>0;j--){
-                int diff=2*nums[j]-nums[i];
-                if(ump.count(diff)&&ump[diff]<j){
-                    dp[j][i]=dp[ump[diff]][j]+1;
-                    res=max(dp[j][i]+2,res);
-                    if(i==30&&nums[j]-diff==-9){
-                        cout<<":"<<ump[diff]<<" "<<j<<" "<<i<<endl;
-                        cout<<diff<<" "<<nums[j]<<" "<<nums[i]<<endl;
-                    }
-                    if(dp[j][i]==3){
-                        cout<<":"<<ump[diff]<<" "<<j<<" "<<i<<endl;
-                        cout<<diff<<" "<<nums[j]<<" "<<nums[i]<<endl;
-                    }
+        unordered_map<int,int> ump;
+        for(int j=0;j<n-1;j++){
+            for(int k=j+1;k<n;k++){
+                int p=2*nums[j]-nums[k];
+                if(ump.count(p)){
+                    dp[j][k]=dp[ump[p]][j]+1;
+                    res=max(res,dp[j][k]);
                 }
             }
-            res=max(res,index[nums[i]]);
+            ump[nums[j]]=j;
         }
-        return res;
+        return res+2;
+    }
+};
+//还有一种方法
+//上一种是以位置为维度，dp[i][j]是以i,j位置结尾的等差最长
+//因为是等差数列，所以可以dp[i][j]以i位置结尾j是公差
+class Solution {
+public:
+    int longestArithSeqLength(vector<int>& nums) {
+        int n=nums.size(),res=0;
+        int dp[n][2000];
+        memset(dp,0,sizeof(dp));
+        for(int i=0;i<n;i++){
+            //要从0->i，因为后续可能比前面长，反过来就会被覆盖
+            for(int j=0;j<i;j++){
+                int diff=nums[i]-nums[j]+1000;
+                dp[i][diff]=dp[j][diff]+1;
+                res=max(res,dp[i][diff]);
+            }
+        }
+        return res+1;
+    }
+};
+/* 
+给你一个整数数组 arr 和一个整数 difference，请你找出并返回 arr 中最长等差子序列的长度，该子序列中相邻元素之间的差等于 difference 。
+
+子序列 是指在不改变其余元素顺序的情况下，通过删除一些元素或不删除任何元素而从 arr 派生出来的序列。
+
+1218
+很像，但是会超时！
+ */
+class Solution {
+public:
+    int longestSubsequence(vector<int>& arr, int difference) {
+
     }
 };
