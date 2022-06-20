@@ -32,20 +32,17 @@ int main(){
                         flag=false;
                         break;
                     }
-                    i--;
                 }else{
                     flag=false;
                     break;
                 }
             }
         }
-        cout<<str1<<" "<<str2<<endl;
         if(flag){
             cout<<"YES"<<endl;
         }else{
             cout<<"NO"<<endl;
         }
-        
     }
     return 0;
 }

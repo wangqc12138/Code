@@ -17,17 +17,26 @@ int main(){
         }
         for(auto [x,y]:mp){
             for(auto [c,d]:mp){
-                if(c+x>=k){
-                    if(c==x&&mp[c]==1){
-                        continue;
+                if(c+x>=k&&d>0){
+                    if(c==x){
+                        if(y==1){
+                            continue;
+                        }else{
+                            ans+=y/2;
+                            mp[x]=mp[x]%2;
+                        }
+                    }else{
+                        if(y>=d){
+                            mp[x]=y-d;
+                            mp[c]=0;
+                            ans+=y-d;
+                        }else{
+                            mp[x]=0;
+                            mp[c]=d-y;
+                            ans+=d-y;
+                            break;
+                        }
                     }
-                    if(--mp[x]==0){
-                            mp.erase(x);
-                        }
-                        if(--mp[c]==0){
-                            mp.erase(c);
-                        }
-                    ans++;
                 }
             }
         }
