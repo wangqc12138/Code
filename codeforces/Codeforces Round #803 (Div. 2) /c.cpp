@@ -29,23 +29,7 @@ void solve(){
     cout<<"yes\n";
 }
 int main(){
-    string s1,s2,s3,s4;
-    int i=100;
-    char buf[40]={'2','0','2'};
-    s1="wanggf.wgf_task_10.10.10.183/data03_ktgrp_wanggf3_xferTest";
-    s2="sun01.txt";
-    s3=buf;
-    s4="";
-    char szContent[1024] = {0};
-	printf("m_strPrefixKey====%s\n",s1.c_str());
-	printf("m_strFileName====%s\n",s2.c_str());
-	puts(s3.c_str());
-	printf("fileDupInfo.m_iRedo====%d\n",i);
-	printf("fileDupInfo.m_strExtraInfo=====[%s]\n",s4.c_str());
-	snprintf(szContent,sizeof(szContent),"%s|%s|%s|%d|%s",s1.c_str(),s2.c_str(),s3.c_str(),i,s4.c_str());   
-	puts(szContent);
-    cout<<sizeof(szContent)<<endl;
-    printf("%s\n",szContent);   
-	cout<<szContent<<endl;
+    int tt;cin>>tt;
+    for(int i=0;i<tt;i++){solve();}
     return 0;
 }
