@@ -2,14 +2,6 @@
 using namespace std;
 const int MAX = 200007;
 const int MOD = 1000000007;
-string temp,ans;
-int dfs(int arr[],int index,int goal,int q,int n,string& ans){
-    if(index==n){
-        if()
-        return;
-    }
-    
-}
 void solve(){
     int n,q;
     cin>>n>>q;
@@ -17,8 +9,23 @@ void solve(){
     for(int i=0;i<n;i++){
         cin>>arr[i];
     }
-    string ans="";
-    dfs(arr,0,0,q,n,ans);
+    string ans;
+    for(int i=0;i<n;i++){
+        if(arr[i]>q&&n-i+1<=q){
+            q--;
+            ans+='1';
+        }else if(arr[i]<=q){
+            ans+='1';
+        }else{
+            ans+='0';
+        }
+    }
+    for(int i=n-1;i>=0&&q;i--){
+        if(ans[i]=='0'){
+            ans[i]='1';
+            q--;
+        }
+    }
     cout<<ans<<endl;
 }
 int main(){
