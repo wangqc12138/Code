@@ -2,24 +2,20 @@
 using namespace std;
 const int MAX = 200007;
 const int MOD = 1000000007;
-string temp,ans;
-int dfs(int arr[],int index,int goal,int q,int n,string& ans){
-    if(index==n){
-        if()
-        return;
-    }
-    
-}
 void solve(){
-    int n,q;
-    cin>>n>>q;
-    int arr[n];
-    for(int i=0;i<n;i++){
+    int n,x;
+    cin>>n>>x;
+    int arr[2*n];
+    for(int i=0;i<2*n;i++){
         cin>>arr[i];
     }
-    string ans="";
-    dfs(arr,0,0,q,n,ans);
-    cout<<ans<<endl;
+    sort(arr,arr+2*n);
+    for(int i=0;i<n;i++){
+        if(arr[i]+x>arr[n+i]){
+            cout<<"no\n";
+        }
+    }
+    cout<<"yes\n";
 }
 int main(){
     ios::sync_with_stdio(false);
