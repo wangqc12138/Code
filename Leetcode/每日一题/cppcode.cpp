@@ -5031,3 +5031,125 @@ public:
 private:
 	
 };
+/* 
+给定一个表示分数加减运算的字符串 expression ，你需要返回一个字符串形式的计算结果。 
+
+这个结果应该是不可约分的分数，即最简分数。 如果最终结果是一个整数，例如 2，你需要将它转换成分数形式，其分母为 1。所以在上述例子中, 2 应该被转换为 2/1。
+592
+ */
+class Solution {
+public:
+    string fractionAddition(string expression) {
+		vector<pair<string,string>> vps;
+		pair<string,string> ps;
+		if(expression[0]!='-'){
+			expression="+"+expression;
+		}
+		string str;
+		int k=1;
+		for(auto c:expression){
+			if(c=='/'){
+				ps.first=str;
+				str="";
+			}else if(c=='+'||c=='-'){
+				ps.second=str;
+				k*=stoi(str);
+				vps.emplace_back(ps);
+				if(c=='-'){
+					str="-";
+				}else{
+					str="";
+				}
+			}else{
+				str+=c;
+			}
+		}
+		int t=0;
+		for(auto [x,y]:vps){
+			t+=stoi(x)*(k/stoi(y));
+		}
+		if(t==0){
+			return "0/1";
+		}
+		bool flag=false;
+		if(t<0){
+			t=-t;
+			flag=true;
+		}
+		if(t>k&&t%k==0){
+			
+		}
+    }
+};
+/* 
+给你一个整数数组 arr ，请你将数组中的每个元素替换为它们排序后的序号。
+
+序号代表了一个元素有多大。序号编号的规则如下：
+
+    序号从 1 开始编号。
+    一个元素越大，那么序号越大。如果两个元素相等，那么它们的序号相同。
+    每个数字的序号都应该尽可能地小。
+1331
+ */
+class Solution {
+public:
+    vector<int> arrayRankTransform(vector<int>& arr) {
+		int j=0,n=arr.size();
+		vector<pair<int,int>> vec; 
+		for(int i:arr){
+			vec.emplace_back(i,j++);
+		}
+		sort(vec.begin(),vec.end());
+		vector<int> res;
+		int index=1;
+		for(int i=0;i<n;i++){
+			if(i==0||i>0&&vec[i].first==vec[i-1].first){
+				res[vec[i].second]=index;
+			}else{
+				res[vec[i].second]=++index;
+			}
+		}
+		return res;
+    }
+};
+class Solution {
+public:
+    vector<int> arrayRankTransform(vector<int>& arr) {
+        vector<int> index(arr);
+		iota(index.begin(),index.end(),0);
+		sort(index.begin(),index.end(),[&](int a,int b){return arr[a]<arr[b];});
+		int pre=INT_MAX,k=0;
+		for(auto i:index){
+			if(pre!=arr[i]) k++;
+			arr[i]=k;
+			pre=arr[i];
+		}
+		return arr;
+    }
+};
+/* 
+给定2D空间中四个点的坐标 p1, p2, p3 和 p4，如果这四个点构成一个正方形，则返回 true 。
+
+点的坐标 pi 表示为 [xi, yi] 。输入 不是 按任何顺序给出的。
+
+一个 有效的正方形 有四条等边和四个等角(90度角)。
+593
+ */
+using ll=long long;
+class Solution {
+public:
+	vector<ll> arr;
+	void getLen(int x1,int y1,int x2,int y2){
+		arr.emplace_back(ll(x1-x2)*(x1-x2)+ll(y1-y2)*(y1-y2));
+	}
+    bool validSquare(vector<int>& p1, vector<int>& p2, vector<int>& p3, vector<int>& p4) {
+		getLen(p1[0],p1[1],p2[0],p2[1]);
+		getLen(p1[0],p1[1],p3[0],p3[1]);
+		getLen(p1[0],p1[1],p4[0],p4[1]);
+		getLen(p2[0],p2[1],p3[0],p3[1]);
+		getLen(p2[0],p2[1],p4[0],p4[1]);
+		getLen(p3[0],p3[1],p4[0],p4[1]);
+		sort(arr.begin(),arr.end());
+		return arr[0]==arr[3]&&arr[4]==arr[5]&&arr[3]!=arr[4];
+    }
+};

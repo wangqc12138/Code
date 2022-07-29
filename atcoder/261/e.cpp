@@ -2,24 +2,31 @@
 using namespace std;
 const int MAX = 200007;
 const int MOD = 1000000007;
-void solve(){
+#define bit(x,i)(((x)>>(i))&1)
+using ll=long long;
+using pii=pair<int,int>;
+int solve(){
     int n,c;
     cin>>n>>c;
-    int ans[n+1];
-    ans[0]=c;
-    for(int i=1;i<=n;i++){
-        int k,t;
-        cin>>k>>t;
-        if(k==1){
-            ans[i]=ans[i-1]&t;
-        }else if(k==2){
-            ans[i]=ans[i-1]|t;
-        }else{
-            ans[i]=ans[i-1]^t;
+    vector<pii> vp(n);
+    for(int i=0;i<n;i++){
+        cin>>vp[i].first>>vp[i].second;
+    }
+    for(int i=0;i<32;i++){
+        int k=bit(c,i);
+        for(int j=0;j<n;j++){
+            int x=bit(vp[i].second,i);
+            if(vp[i].first==1){
+                
+            }else if(vp[i].first==2){
+
+            }else{
+
+            }
         }
-        cout<<ans[i]<<endl;
     }
 }
+
 int main(){
     ios::sync_with_stdio(false);
 	cin.tie(nullptr);
