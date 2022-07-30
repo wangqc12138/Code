@@ -1,40 +1,31 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
-const int MAX = 200007;
-const int MOD = 1000000007;
+#define bit(x,i)(((x)>>(i))&1)
 
-    long long zeroFilledSubarray(vector<int>& nums) {
-        int len=0;
-        long long res=0;
-        for(int i=0;i<nums.size();i++){
-            if(nums[i]==0){
-                len++;
-            }else{
-                res+=(long long)len*(len+1)/2;
-                len=0;
-            }
-        }
-        if(len!=0){
-            res+=(long long)len*(len+1)/2;
-        }
-        return res;
-    }
-void solve(){
-    int a;
-    vector<int> nums;
-    for(;cin>>a;){
-        nums.emplace_back(a);
-    }
-    for(int i:nums){
-        cout<<i<<" ";
-    }
-    cout<<endl;
-    cout<<zeroFilledSubarray(nums)<<endl;;
-}
 int main(){
-    ios::sync_with_stdio(false);
-	cin.tie(nullptr);
     freopen("./test.txt","r",stdin);
-    solve();    
-    return 0;
+	int n,c;
+	cin >> n >> c;
+	vector<pair<int,int>>op(n);
+	for(int i=0;i<n;i++)cin >> op[i].first >> op[i].second;
+
+	vector<int>ans(n);
+	for(int k=0;k<30;k++){
+		array<int,2>func={0,1};
+		int crr=bit(c,k);
+		for(int i=0;i<n;i++){
+			array<int,2>f;
+			int x=bit(op[i].second,k);
+			if(op[i].first==1)f={0&x,1&x};
+			if(op[i].first==2)f={0|x,1|x};
+			if(op[i].first==3)f={0^x,1^x};
+			func={f[func[0]],f[func[1]]};
+			crr=func[crr];
+            cout<<crr<<" ";
+			ans[i]|=crr<<k;
+		}
+        cout<<endl;
+	}
+
+	for(int i=0;i<n;i++)cout << ans[i] << endl;
 }

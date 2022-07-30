@@ -45,8 +45,8 @@ def copyLowOneToSever(startLowCol: str, endLowCol:str, copyTime: int):
     wb.close()
 
 #copyLowOneToSever('A2','K104',52)
-wb = openpyxl.load_workbook('./模板(1).xlsx')
-sheet = wb['Sheet3']
+wb = openpyxl.load_workbook('./test.xlsx')
+sheet = wb['Sheet1']
 f = open('./src.txt','r',encoding='utf-8')
 row = 2
 mylist = []
@@ -80,9 +80,13 @@ for line in f:
     sheet.cell(rw,1).value = sheet.cell(2,3).value
     sheet.cell(rw,2).value = sheet.cell(2,2).value.replace('诺西端局M14语音',line.strip())
     sheet.cell(rw,3).value = sheet.cell(2,3).value.replace('诺西端局M14语音',line.strip())
+    sheet.cell(rw+24,3).value = sheet.cell(26,3).value.replace('诺西端局M14语音',line.strip())
+    sheet.cell(rw+81,3).value = sheet.cell(83,3).value.replace('诺西端局M14语音',line.strip())
     if rw > 103 :
         sheet.merge_cells(start_row=rw-103,start_column=1,end_row=rw-1,end_column=1)
         sheet.merge_cells(start_row=rw-103,start_column=2,end_row=rw-1,end_column=2)
-        sheet.merge_cells(start_row=rw-103,start_column=3,end_row=rw-1,end_column=3)
+        sheet.merge_cells(start_row=rw-103,start_column=3,end_row=rw-103+23,end_column=3)
+        sheet.merge_cells(start_row=rw-103+24,start_column=3,end_row=rw-103+80,end_column=3)
+        sheet.merge_cells(start_row=rw-103+81,start_column=3,end_row=rw-1,end_column=3)
     rw+=103
 wb.save('result.xlsx')
