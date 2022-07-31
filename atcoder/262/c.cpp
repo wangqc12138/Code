@@ -6,21 +6,18 @@ const int MOD = 1000000007;
 using ll=long long;
 using pii=pair<int,int>;
 void solve(){
-    int n,k=0;
-    ll ans=0;
-    cin>>n;
-    map<int,set<int>> mp;
+    int n,k=0,ans=0;
+    map<int,int> mp;
     for(int i=1;i<=n;i++){
         int x;
         cin>>x;
         if(x==i){
             k++;
-        }else if(mp.count(x)&&mp[x].count(i)){
+        }else if(mp.count(x)&&mp[x]==i){
             ans++;
         }
-        mp[i].emplace(x);
     }
-    ans+=(ll)k*(k-1)/2;
+    ans+=k*(k-1)/2;
     cout<<ans<<endl;
 }
 int main(){

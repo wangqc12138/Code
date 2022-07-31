@@ -6,22 +6,14 @@ const int MOD = 1000000007;
 using ll=long long;
 using pii=pair<int,int>;
 void solve(){
-    int n,k=0;
-    ll ans=0;
+    int n;
     cin>>n;
-    map<int,set<int>> mp;
-    for(int i=1;i<=n;i++){
-        int x;
-        cin>>x;
-        if(x==i){
-            k++;
-        }else if(mp.count(x)&&mp[x].count(i)){
-            ans++;
+    for(int i=2002;i<=3002;i+=4){
+        if(i>=n){
+            cout<<i<<endl;
+            return;
         }
-        mp[i].emplace(x);
     }
-    ans+=(ll)k*(k-1)/2;
-    cout<<ans<<endl;
 }
 int main(){
     ios::sync_with_stdio(false);
