@@ -6,22 +6,7 @@ const int MOD = 1000000007;
 using ll=long long;
 using pii=pair<int,int>;
 void solve(){
-    int n;
-    cin>>n;
-    string str="";
-    int k=9;
-    while(n){
-        if(n<k){
-            str+=n+'0';
-            n=0;
-        }else{
-            str+=k+'0';
-            n-=k;
-            k--;
-        }
-    }
-    reverse(str.begin(),str.end());
-    cout<<str<<endl;
+
 }
 int main(){
     ios::sync_with_stdio(false);

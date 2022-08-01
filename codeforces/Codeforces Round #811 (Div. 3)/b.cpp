@@ -8,20 +8,19 @@ using pii=pair<int,int>;
 void solve(){
     int n;
     cin>>n;
-    string str="";
-    int k=9;
-    while(n){
-        if(n<k){
-            str+=n+'0';
-            n=0;
-        }else{
-            str+=k+'0';
-            n-=k;
-            k--;
-        }
+    vector<int> vec(n);
+    for(int i=0;i<n;i++){
+        cin>>vec[i];
     }
-    reverse(str.begin(),str.end());
-    cout<<str<<endl;
+    set<int> st;
+    for(int i=n-1;i>=0;i--){
+        if(st.count(vec[i])){
+            cout<<i+1<<endl;
+            return;
+        }
+        st.emplace(i);
+    }
+    cout<<0<<endl;
 }
 int main(){
     ios::sync_with_stdio(false);
