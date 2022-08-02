@@ -6,22 +6,35 @@ const int MOD = 1000000007;
 using ll=long long;
 using pii=pair<int,int>;
 void solve(){
-    int n;
+    int n,index=0;
     cin>>n;
-    string str="";
-    int k=9;
-    while(n){
-        if(n<k){
-            str+=n+'0';
-            n=0;
-        }else{
-            str+=k+'0';
-            n-=k;
-            k--;
+    vector<int> vec(n);
+    for(int i=0;i<n;i++){
+        int x,k;
+        cin>>x;
+        k=x%10;
+        if(k==0||k==5){
+            if(k==5)x+=5;
+            vec[i]=x;
+            index=1;
+            continue;
+        }
+        while(k!=2){
+            x+=k;
+            k=x%10;
+        }
+        vec[i]=x;
+    }
+    if(index==1){
+        for(int i=1;i<n;i++){
+            if(vec[i]!=vec[i-1]){cout<<"no\n";return;}
+        }
+    }else{
+        for(int i=1;i<n;i++){
+            if(abs(vec[i]-vec[i-1])%20!=0){cout<<"no\n";return;}
         }
     }
-    reverse(str.begin(),str.end());
-    cout<<str<<endl;
+    cout<<"yes\n";
 }
 int main(){
     ios::sync_with_stdio(false);
@@ -30,3 +43,15 @@ int main(){
     int tt;cin>>tt;for(int i=0;i<tt;i++){solve();}
     return 0;
 }
+/* 
+0->0
+1->2->4->8->6->2
+2->4->8->6->2
+3->6->2->4->8->6
+4->8->6->2->4
+5->0->0
+6->2->4->8->6
+7->4->8->6->2->4
+8->6->2->4->8
+9->8->6->2->4->8
+ */
