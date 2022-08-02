@@ -13,12 +13,9 @@ void solve(){
     while(n){
         if(n<k){
             str+=n+'0';
-            n=0;
-        }else{
-            str+=k+'0';
-            n-=k;
-            k--;
         }
+        str+=k+'0';
+        k--;
     }
     reverse(str.begin(),str.end());
     cout<<str<<endl;
