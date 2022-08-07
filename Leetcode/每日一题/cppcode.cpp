@@ -5242,7 +5242,19 @@ public:
 		map<int,int> mp;
 		int k=0;
 		for(int i=temp.size()-1;i>=0;i--){
-			
+			k+=temp[i];
+			mp[temp[i]]++;
+			if(k>sum-k){
+				break;
+			}
 		}
+		vector<int> res;
+		for(auto i:nums){
+			if(mp[i]>0){
+				mp[i]--;
+				res.emplace_back(i);
+			}
+		}
+		return res;
     }
 };
