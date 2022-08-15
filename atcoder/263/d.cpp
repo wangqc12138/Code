@@ -23,37 +23,14 @@ void solve(){
     if(ans>(ll)k*n){
         ans=(ll)k*n;
     }
-    if(*min_element(vec.begin(),vec.end())>=max(l,r)){
-        cout<<ans<<endl;return;
-    }
-    if(l>r){
-        reverse(vec.begin(),vec.end());
-    }
-    int L,R;
-    ll t=ans;
-    for(int i=1;i<n;i++){
-        for(int j=i+1;j<n;j++){
-            if(sum[j]-sum[i-1]<=min(l,r)*(j-i+1)){
-                if(sum[j]-sum[i-1]<t){
-                    L=i;
-                    R=j;
-                    t=sum[j]-sum[i-1];
-                }
-            }else{
-                i=j+1;
-                break;
-            }
-        }
-    }
     for(int i=0;i<n-1;i++){
-        for(int j=i+1;j<n;j++){
+        for(int j=1;j<n;j++){
             if(j<=i){
                 continue;
             }
             ll temp=sum[j-1]-sum[i];
             temp+=ll(i+1)*l+ll(n-j)*r;
             if(ans>temp){
-                i=j+1;
                 ans=temp;
             }
         }
