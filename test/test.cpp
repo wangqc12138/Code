@@ -1,57 +1,107 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int MAX = 200007;
-const int MOD = 1000000007;
-#define bit(x,i)(((x)>>(i))&1)
-using ll=long long;
-using pii=pair<int,int>;
-void solve(){
-    int n,index=0;
-    cin>>n;
-    vector<int> vec(n);
-    for(int i=0;i<n;i++){
-        int x,k;
-        cin>>x;
-        k=x%10;
-        if(k==0||k==5){
-            if(k==5)x+=5;
-            vec[i]=x;
-            index=1;
-            continue;
-        }
-        while(k!=2){
-            x+=k;
-            k=x%10;
-        }
-        vec[i]=x;
-    }
-    if(index==1){
-        for(int i=1;i<n;i++){
-            if(vec[i]!=vec[i-1]){cout<<"no\n";return;}
-        }
-    }else{
-        for(int i=1;i<n;i++){
-            if(abs(vec[i]-vec[i-1])%20!=0){cout<<"no\n";return;}
-        }
-    }
-    cout<<"yes\n";
+
+pthread_t thread;
+class node{
+public:
+    int k;
+};
+map<string,node*> mp;
+void *fn(void * arg)
+{
+    node *n= (node*) arg;
+    cout<<n->k<<endl;
+    n->k=3;
+    return nullptr;
 }
-int main(){
-    ios::sync_with_stdio(false);
-	cin.tie(nullptr);
-    freopen("./test.txt","r",stdin);
-    int tt;cin>>tt;for(int i=0;i<tt;i++){solve();}
-    return 0;
+
+int test(char* msg,vector<string>& fileRecord)
+{
+	char szTmp[256] = {0};
+	int  iCount = 0;	
+	fileRecord.clear();	
+	char szMsg[1024] = {0};
+	//最后还有个\n 字符 所以减2
+	if(msg[0] != '{' || msg[strlen(msg) - 2] != '}') //不是一条完整的stat语句
+		return -1;	
+	
+	char* p = strstr(msg, "warn_msg");
+	if(p == NULL)
+		return -2;
+	else
+		strcpy(szMsg,p+10); //10是warnMsg":"的长度
+	//把最后的"}\n 去掉
+	szMsg[strlen(szMsg) - 3] = '\0';
+	
+	p --;
+	*p = '\0';
+	p --;
+	*p = '}';
+	
+  	p = strchr(msg, ':');
+  	if(p == NULL)
+  		return -3;//格式不对
+  	else
+  		p++;
+  	
+  	if(*p == '"')
+  		p++;
+  	
+	char* q = strchr(p, ',');
+	if(q == NULL)
+		return -4;
+	
+	iCount = q - p ;	
+	strncpy(szTmp,p,iCount);
+	szTmp[iCount] = '\0';
+	if(szTmp[iCount -1] == '"')
+		szTmp[iCount -1] = '\0';
+	fileRecord.push_back(szTmp);
+	
+	while(1)
+	{
+		p = strchr(q, ':');
+		if(p == NULL)
+			break;
+		else
+		{
+			p++;
+			if(*p == '"') p++;
+		}
+		q = strchr(p, ',');
+		if(q == NULL)
+		{
+			strcpy(szTmp,p);
+			if(szTmp[strlen(szTmp) - 1] == '}')
+				szTmp[strlen(szTmp) - 1] = '\0';
+			
+			if(szTmp[strlen(szTmp) - 1] == '"')
+				szTmp[strlen(szTmp) - 1] = '\0';
+			
+			fileRecord.push_back(szTmp);
+			break;
+		}
+		else
+		{
+			iCount = q - p ;	
+			strncpy(szTmp,p,iCount);
+			szTmp[iCount] = '\0';
+			if(szTmp[iCount -1] == '"')
+				szTmp[iCount -1] = '\0';
+			fileRecord.push_back(szTmp);
+		}
+	}  
+	fileRecord.push_back(szMsg);
+	for(int i=0;i<fileRecord.size();i++)
+    {
+		printf("wqc fileRecord[%d]: %s\n",i,fileRecord[i].c_str());
+	}
+	return 0;
 }
-/* 
-0->0
-1->2->4->8->6->2
-2->4->8->6->2
-3->6->2->4->8->6
-4->8->6->2->4
-5->0->0
-6->2->4->8->6
-7->4->8->6->2->4
-8->6->2->4->8
-9->8->6->2->4->8
- */
+int main()
+{
+    map<int,int> mp;
+	mp[1]=1;
+	mp.insert(map<int,int>::value_type(1,2));
+	cout<<mp[1]<<endl;
+}
