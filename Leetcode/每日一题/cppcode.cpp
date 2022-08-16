@@ -5258,3 +5258,194 @@ public:
 		return res;
     }
 };
+/* 
+给你一个整数数组 nums 。你可以选定任意的 正数 startValue 作为初始值。
+
+你需要从左到右遍历 nums 数组，并将 startValue 依次累加上 nums 数组中的值。
+
+请你在确保累加和始终大于等于 1 的前提下，选出一个最小的 正数 作为 startValue 。
+1413
+ */
+class Solution {
+public:
+    int minStartValue(vector<int>& nums) {
+		int res=INT_MIN,sum=0;
+		for(auto i:nums){
+			sum+=i;
+			if(sum<=0){
+				res=max(res,1-sum);
+			}
+		}
+		return res;
+    }
+};
+/* 
+给你一个由若干 0 和 1 组成的字符串 s ，请你计算并返回将该字符串分割成两个 非空 子字符串（即 左 子字符串和 右 子字符串）所能获得的最大得分。
+
+「分割字符串的得分」为 左 子字符串中 0 的数量加上 右 子字符串中 1 的数量。
+1422
+ */
+class Solution {
+public:
+    int maxScore(string s) {
+		int n=s.size();
+		vector<vector<int>> temp(n,vector<int>(2));
+		if(s[0]=='0'){
+			temp[0][0]=1;
+		}else{
+			temp[0][1]=1;
+		}
+		for(int i=1;i<n;i++){
+			if(s[i]=='0'){
+				temp[i][0]=temp[i-1][0]+1;
+				temp[i][1]=temp[i-1][1];
+			}else{
+				temp[i][1]=temp[i-1][1]+1;
+				temp[i][0]=temp[i-1][0];
+			}
+		}
+		int sum=temp[n-1][1],res=0;
+		for(int i=1;i<n-1;i++){
+			res=max(res,temp[i][0]+sum-temp[i][1]);
+		}
+		return res;
+	}
+};
+/* 
+设计实现双端队列。
+
+实现 MyCircularDeque 类:
+
+    MyCircularDeque(int k) ：构造函数,双端队列最大为 k 。
+    boolean insertFront()：将一个元素添加到双端队列头部。 如果操作成功返回 true ，否则返回 false 。
+    boolean insertLast() ：将一个元素添加到双端队列尾部。如果操作成功返回 true ，否则返回 false 。
+    boolean deleteFront() ：从双端队列头部删除一个元素。 如果操作成功返回 true ，否则返回 false 。
+    boolean deleteLast() ：从双端队列尾部删除一个元素。如果操作成功返回 true ，否则返回 false 。
+    int getFront() )：从双端队列头部获得一个元素。如果双端队列为空，返回 -1 。
+    int getRear() ：获得双端队列的最后一个元素。 如果双端队列为空，返回 -1 。
+    boolean isEmpty() ：若双端队列为空，则返回 true ，否则返回 false  。
+    boolean isFull() ：若双端队列满了，则返回 true ，否则返回 false 。
+641
+ */
+class MyCircularDeque {
+public:
+    MyCircularDeque(int k) {
+		data=vector<int> (k);
+		len=0;
+		head=1;
+		tail=0;
+    }
+    
+    bool insertFront(int value) {
+		if(isFull()){
+			return false;
+		}
+		head=(head+data.size())%data.size();
+		data[head++]=value;
+		len++;
+		return true;
+    }
+    
+    bool insertLast(int value) {
+		if(isFull()){
+			return false;
+		}
+		tail=(tail+data.size())%data.size();
+		data[tail--]=value;
+		len++;
+		return true;
+    }
+    
+    bool deleteFront() {
+		if(isEmpty()){
+			return false;
+		}
+		head=(head+data.size())%data.size();
+		head--;
+		len--;
+		return true;
+    }
+    
+    bool deleteLast() {
+		if(isEmpty()){
+			return false;
+		}
+		tail=(tail+data.size())%data.size();
+		tail++;
+		len--;
+		return true;
+    }
+    
+    int getFront() {
+		if(isEmpty()){
+			return -1;
+		}
+		int k=(head-1+data.size())%data.size();
+		return data[k];
+    }
+    
+    int getRear() {
+		if(isEmpty()){
+			return -1;
+		}
+		int k=(tail+1+data.size())%data.size();
+		return data[k];
+    }
+    
+    bool isEmpty() {
+		return len==0;
+    }
+    
+    bool isFull() {
+		return len==data.size();
+    }
+private:
+	vector<int> data;
+	int len,head,tail;
+};
+
+/**
+ * Your MyCircularDeque object will be instantiated and called as such:
+ * MyCircularDeque* obj = new MyCircularDeque(k);
+ * bool param_1 = obj->insertFront(value);
+ * bool param_2 = obj->insertLast(value);
+ * bool param_3 = obj->deleteFront();
+ * bool param_4 = obj->deleteLast();
+ * int param_5 = obj->getFront();
+ * int param_6 = obj->getRear();
+ * bool param_7 = obj->isEmpty();
+ * bool param_8 = obj->isFull();
+ */
+/* 
+ 有 n 个 (id, value) 对，其中 id 是 1 到 n 之间的一个整数，value 是一个字符串。不存在 id 相同的两个 (id, value) 对。
+
+设计一个流，以 任意 顺序获取 n 个 (id, value) 对，并在多次调用时 按 id 递增的顺序 返回一些值。
+
+实现 OrderedStream 类：
+
+    OrderedStream(int n) 构造一个能接收 n 个值的流，并将当前指针 ptr 设为 1 。
+    String[] insert(int id, String value) 向流中存储新的 (id, value) 对。存储后：
+        如果流存储有 id = ptr 的 (id, value) 对，则找出从 id = ptr 开始的 最长 id 连续递增序列 ，并 按顺序 返回与这些 id 关联的值的列表。然后，将 ptr 更新为最后那个  id + 1 。
+
+        否则，返回一个空列表。
+1656
+ */
+class OrderedStream {
+public:
+    OrderedStream(int n) {
+		index=1;
+		data.clear(); 
+		this->n=n;
+    }
+    
+    vector<string> insert(int idKey, string value) {
+		data[idKey]=value;
+		vector<string> res;
+		for(;index<=n&&data.count(index);index++){
+			res.emplace_back(data[index]);
+		}
+		return res;
+    }
+	map<int,string> data;
+	int index,n;
+};
