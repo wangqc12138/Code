@@ -5527,3 +5527,59 @@ public:
 		return res;
     }
 };
+/* 
+给你一棵二叉树的根节点 root ，请你构造一个下标从 0 开始、大小为 m x n 的字符串矩阵 res ，用以表示树的 格式化布局 。构造此格式化布局矩阵需要遵循以下规则：
+
+    树的 高度 为 height ，矩阵的行数 m 应该等于 height + 1 。
+    矩阵的列数 n 应该等于 2height+1 - 1 。
+    根节点 需要放置在 顶行 的 正中间 ，对应位置为 res[0][(n-1)/2] 。
+    对于放置在矩阵中的每个节点，设对应位置为 res[r][c] ，将其左子节点放置在 res[r+1][c-2height-r-1] ，右子节点放置在 res[r+1][c+2height-r-1] 。
+    继续这一过程，直到树中的所有节点都妥善放置。
+    任意空单元格都应该包含空字符串 "" 。
+
+返回构造得到的矩阵 res 。
+655
+ */
+class Solution {
+public:
+    vector<vector<string>> printTree(TreeNode* root) {
+		queue<TreeNode*> mq;
+		mq.emplace(root);
+		int h=0;
+		while(!mq.empty()){
+			int len=mq.size();
+			for(int i=0;i<len;i++){
+				auto  node=mq.front();
+				mq.pop();
+				if(node->left){
+					mq.emplace(node->left);
+				}
+				if(node->right){
+					mq.emplace(node->right);
+				}
+			}
+			h++;
+		}
+		vector<vector<string>> res(h,vector<string>(pow(2,h)-1,""));
+		queue<pair<TreeNode*,int>> q;
+		q.emplace(root,(pow(2,h)-2)/2);
+		int k=0;
+		while(!q.empty()){
+			int len=q.size();
+			for(int i=0;i<len;i++){
+				auto node=q.front().first;
+				auto v=q.front().second;
+				q.pop();
+				res[k][v]=to_string(node->val);
+				if(node->left){
+					q.emplace(node->left,v-pow(2,h-k-2));
+				}
+				if(node->right){
+					q.emplace(node->right,v+pow(2,h-k-2));
+				}
+			}
+			k++;
+		}
+		return res;
+    }
+};
