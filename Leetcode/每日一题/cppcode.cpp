@@ -5449,3 +5449,81 @@ public:
 	map<int,string> data;
 	int index,n;
 };
+/* 
+给你一棵二叉树的根节点 root ，请你返回 层数最深的叶子节点的和 。
+1302
+ */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+//bfs
+class Solution {
+public:
+    int deepestLeavesSum(TreeNode* root) {
+		queue<TreeNode*> mq;
+		mq.emplace(root);
+		int res=0;
+		while(!mq.empty()){
+			int len=mq.size();
+			int temp=0;
+			for(int i=0;i<len;i++){
+				auto node=mq.front();
+				mq.pop();
+				temp+=node->val;
+				if(node->left){
+					mq.emplace(node->left);
+				}
+				if(node->right){
+					mq.emplace(node->right);
+				}
+			}
+			if(len){
+				res=temp;
+			}
+		}
+		return res;
+    }
+};
+/* 
+给你一个正整数数组 nums，请你帮忙从该数组中找出能满足下面要求的 最长 前缀，并返回该前缀的长度：
+
+    从前缀中 恰好删除一个 元素后，剩下每个数字的出现次数都相同。
+
+如果删除这个元素后没有剩余元素存在，仍可认为每个数字都具有相同的出现次数（也就是 0 次）。
+1224
+ */
+//[1,1,1,2,2,2,3,3,3,4,4,4,5]
+class Solution {
+public:
+    int maxEqualFreq(vector<int>& nums) {
+		int res=1,maxf;
+		unordered_map<int,int> freq,count;
+		for(int i=0;i<nums.size();i++){
+			int k=nums[i];
+			if(count[k]>0){
+                if(--freq[count[k]]==0){
+                    freq.erase(count[k]);
+                }
+			}
+			count[k]++;
+			maxf=max(maxf,count[k]);
+			freq[count[k]]++;
+			if(maxf==1||freq.size()==2&&freq.count(1)&&freq[1]==1||freq.size()==2&&freq[maxf]==1){
+				res=i+1;
+			}
+            // for(auto [x,y]:freq){
+            //     cout<<x<<" "<<y<<endl;
+            // }
+            // cout<<"=========\n";
+		}
+		return res;
+    }
+};
