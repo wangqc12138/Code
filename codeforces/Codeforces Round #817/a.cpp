@@ -8,21 +8,21 @@ const int MOD = 1000000007;
 using ll=long long;
 using pii=pair<int,int>;
 void solve(){
-    int n;
+    int m,n;
+    cin>>m>>n;
     string str;
-    cin>>n>>str;
-    string ans="";
-    for(int i=n-1;i>=0;i--){
-        if(str[i]=='0'){
-            string temp=str.substr(i-2,2);
-            ans+='a'+stoi(temp)-1;
-            i-=2;
+    cin>>str;
+    sort(str.begin(),str.end());
+    for(int i=0;i<m;i++){
+        string temp;
+        cin>>temp;
+        sort(temp.begin(),temp.end());
+        if(temp==str){
+            cout<<"yes\n";
         }else{
-            ans+='a'+str[i]-'0'-1;
+            cout<<"no\n";
         }
     }
-    reverse(ans.begin(),ans.end());
-    cout<<ans<<endl;
 }
 int main(){
     ios::sync_with_stdio(false);

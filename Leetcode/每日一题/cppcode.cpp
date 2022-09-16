@@ -5583,3 +5583,215 @@ public:
 		return res;
     }
 };
+/* 
+给定 pushed 和 popped 两个序列，每个序列中的 值都不重复，只有当它们可能是在最初空栈上进行的推入 push 和弹出 pop 操作序列的结果时，返回 true；否则，返回 false 。
+946
+ */
+class Solution {
+public:
+    bool validateStackSequences(vector<int>& pushed, vector<int>& popped) {
+        stack<int> sk;
+		int i=0,j=0,n=pushed.size();
+		for(;i<n;i++){
+			while(!sk.empty()&&popped[j]==sk.top()){
+				j++;
+				sk.pop();
+			}
+			sk.emplace(pushed[i]);
+		}
+		while(!sk.empty()&&popped[j]==sk.top()){
+			j++;
+			sk.pop();
+		}
+		return sk.empty();
+    }
+};
+/* 
+给定一个二叉树的 root ，返回 最长的路径的长度 ，这个路径中的 每个节点具有相同值 。 这条路径可以经过也可以不经过根节点。
+
+两个节点之间的路径长度 由它们之间的边数表示。
+687
+ */
+class Solution {
+public:
+	int res=1;
+    int dfs(TreeNode* root){
+       	if(root==nullptr){
+			return 0;
+	   	}	
+		int L=dfs(root->left);
+		int R=dfs(root->right);
+		int len=1,ret=1;
+		if(root->left&&root->left->val==root->val){
+			len+=L;
+			ret+=L;
+		}
+		if(root->right&&root->right->val==root->val){
+			len+=R;
+			ret=max(ret,1+R);
+		}
+		res=max(res,len);
+		return ret;
+
+    }
+    int longestUnivaluePath(TreeNode* root) {
+		dfs(root);
+		return res;
+    }
+};
+/* 
+给出 n 个数对。 在每一个数对中，第一个数字总是比第二个数字小。
+
+现在，我们定义一种跟随关系，当且仅当 b < c 时，数对(c, d) 才可以跟在 (a, b) 后面。我们用这种形式来构造一个数对链。
+
+给定一个数对集合，找出能够形成的最长数对链的长度。你不需要用到所有的数对，你可以以任何顺序选择其中的一些数对来构造。
+646
+除了贪心还可以用dp最长子序列。
+ */
+class Solution {
+public:
+    int findLongestChain(vector<vector<int>>& pairs) {
+		sort(pairs.begin(),pairs.end());
+		int res=1,tail=pairs[0][1];
+		for(auto vec:pairs){
+			int a=vec[0],b=vec[1];
+			if(a>tail){
+				res++;
+				tail=b;
+			}else{
+				tail=min(tail,b);
+			}
+		}
+		return res;
+    }
+};
+/* 
+给你一个大小为 rows x cols 的矩阵 mat，其中 mat[i][j] 是 0 或 1，请返回 矩阵 mat 中特殊位置的数目 。
+
+特殊位置 定义：如果 mat[i][j] == 1 并且第 i 行和第 j 列中的所有其他元素均为 0（行和列的下标均 从 0 开始 ），则位置 (i, j) 被称为特殊位置。
+1582
+ */
+class Solution {
+public:
+    int numSpecial(vector<vector<int>>& mat) {
+		int m=mat.size(),n=mat[0].size(),res=0;
+		vector<int> row(n,0),col(m,0);
+		for(int i=0;i<m;i++){
+			for(int j=0;j<n;j++){
+				col[i]+=mat[i][j];
+				row[j]+=mat[i][j];
+			}
+		}
+		for(int i=0;i<m;i++){
+			for(int j=0;j<n;j++){
+				if(col[i]==1&&row[j]==1&&mat[i][j]==1){
+					res++;
+				}
+			}
+		}
+		return res;
+    }
+};
+/* 
+给定一棵二叉树 root，返回所有重复的子树。
+
+对于同一类的重复子树，你只需要返回其中任意一棵的根结点即可。
+
+如果两棵树具有相同的结构和相同的结点值，则它们是重复的。
+652
+ */
+class Solution {
+public:
+	unordered_map<string,int> ump;
+	vector<TreeNode*> ans;
+	string dfs(TreeNode* root){
+		if(root==nullptr){
+			return "#";
+		}
+		string res=to_string(root->val);
+		res+="("+dfs(root->left)+")("+dfs(root->right)+")";
+		if(++ump[res]==2){
+			ans.emplace_back(root);
+		}
+		return res;
+	}
+    vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
+		dfs(root);
+		return ans;
+    }
+};
+/* 
+给你两个整数 n 和 k ，请你构造一个答案列表 answer ，该列表应当包含从 1 到 n 的 n 个不同正整数，并同时满足下述条件：
+
+    假设该列表是 answer = [a1, a2, a3, ... , an] ，那么列表 [|a1 - a2|, |a2 - a3|, |a3 - a4|, ... , |an-1 - an|] 中应该有且仅有 k 个不同整数。
+
+返回列表 answer 。如果存在多种答案，只需返回其中 任意一种 。
+667
+ */
+class Solution {
+public:
+    vector<int> constructArray(int n, int k) {
+		
+    }
+};
+/* 
+房间中有 n 只已经打开的灯泡，编号从 1 到 n 。墙上挂着 4 个开关 。
+
+这 4 个开关各自都具有不同的功能，其中：
+
+    开关 1 ：反转当前所有灯的状态（即开变为关，关变为开）
+    开关 2 ：反转编号为偶数的灯的状态（即 2, 4, ...）
+    开关 3 ：反转编号为奇数的灯的状态（即 1, 3, ...）
+    开关 4 ：反转编号为 j = 3k + 1 的灯的状态，其中 k = 0, 1, 2, ...（即 1, 4, 7, 10, ...）
+
+你必须 恰好 按压开关 presses 次。每次按压，你都需要从 4 个开关中选出一个来执行按压操作。
+
+给你两个整数 n 和 presses ，执行完所有按压之后，返回 不同可能状态 的数量。
+672
+ */
+class Solution {
+public:
+	map<int,set<int>> mp;
+	void help(int presses,vector<int> res){
+		if(presses){
+			for(int i=0;i<5;i++){
+				mp[i].emplace(res[i]);
+			}
+		}
+		for(int i=0;i<5;i++){
+			res[i]=!res[i];
+		}
+		help(presses-1,res);
+		for(int i=0;i<5;i++){
+			res[i]=!res[i];
+		}
+		res[1]=!res[1];
+		res[3]=!res[3];
+		help(presses-1,res);
+		res[1]=!res[1];
+		res[3]=!res[3];
+		res[1]=!res[1];
+		res[3]=!res[3];
+		help(presses-1,res);
+		res[1]=!res[1];
+		res[3]=!res[3];
+	}
+    int flipLights(int n, int presses) {
+
+    }
+};
+/* 
+我们给出了一个（轴对齐的）二维矩形列表 rectangles 。 
+对于 rectangle[i] = [x1, y1, x2, y2]，其中（x1，y1）是矩形 i 左下角的坐标， (xi1, yi1) 是该矩形 左下角 的坐标， (xi2, yi2) 是该矩形 右上角 的坐标。
+
+计算平面中所有 rectangles 所覆盖的 总面积 。任何被两个或多个矩形覆盖的区域应只计算 一次 。
+
+返回 总面积 。因为答案可能太大，返回 109 + 7 的 模 。
+850
+ */
+class Solution {
+public:
+    int rectangleArea(vector<vector<int>>& rectangles) {
+
+    }
+};
