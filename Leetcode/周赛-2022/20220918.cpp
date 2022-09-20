@@ -47,3 +47,71 @@ public:
         return root;
     }
 };
+/*
+给你一个长度为 n 的数组 words ，该数组由 非空 字符串组成。
+
+定义字符串 word 的 分数 等于以 word 作为 前缀 的 words[i] 的数目。
+
+    例如，如果 words = ["a", "ab", "abc", "cab"] ，那么 "ab" 的分数是 2 ，因为 "ab" 是 "ab" 和 "abc" 的一个前缀。
+
+返回一个长度为 n 的数组 answer ，其中 answer[i] 是 words[i] 的每个非空前缀的分数 总和 。
+
+注意：字符串视作它自身的一个前缀。
+ */
+class Trie
+{
+public:
+    Trie()
+    {
+        next = vector<Trie *>(26);
+        isEnd = false;
+        count = 0;
+    }
+    void add(string str)
+    {
+        Trie *root = this;
+        int index = 1;
+        for (auto c : str)
+        {
+            if (root->next[c - 'a'] == nullptr)
+            {
+                root->next[c - 'a'] = new Trie();
+            }
+            root = root->next[c - 'a'];
+            root->count += index++;
+        }
+        root->isEnd = true;
+    }
+    int getCount(string str)
+    {
+        Trie *root = this;
+        for (auto c : str)
+        {
+            root = root->next[c - 'a'];
+        }
+        return root->count;
+    }
+
+private:
+    vector<Trie *> next;
+    bool isEnd;
+    int count;
+};
+class Solution
+{
+public:
+    vector<int> sumPrefixScores(vector<string> &words)
+    {
+        Trie *root = new Trie();
+        for (auto str : words)
+        {
+            root->add(str);
+        }
+        vector<int> ans;
+        for (auto str : words)
+        {
+            ans.emplace_back(root->getCount(str));
+        }
+        return ans;
+    }
+};

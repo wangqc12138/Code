@@ -1,8 +1,11 @@
+from collections import defaultdict
+from email.policy import default
 from itertools import chain
 import queue
-from turtle import right
+from typing import List
 from typing import Optional
 # Definition for a binary tree node.
+# T3
 # BFS
 
 
@@ -51,3 +54,19 @@ class Solution:
             dfs(L.right, R.left,  is_odd_level + 1)
         dfs(root.left, root.right, 1)
         return root
+
+# T4
+
+
+class Solution:
+    def sumPrefixScores(self, words: List[str]) -> List[int]:
+        res = []
+        # trie = lambda: defaultdict(trie)
+        def trie(): return defaultdict(trie)
+        root = trie()
+        for word in words:
+            cur = root
+            for c in word:
+                cur = cur[c]
+                cur
+        return res
