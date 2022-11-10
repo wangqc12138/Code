@@ -30,4 +30,5 @@ int main(){
     freopen("./test.txt","r",stdin);
     int tt;cin>>tt;for(int i=0;i<tt;i++){solve();}
     return 0;
+	
 }
