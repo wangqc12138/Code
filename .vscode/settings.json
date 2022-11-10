@@ -1,5 +1,5 @@
 {
-    "files.associations": {
+	"files.associations": {
 		"string": "cpp",
 		"numeric": "cpp",
 		"array": "cpp",
@@ -77,5 +77,6 @@
 		"thread": "cpp",
 		"typeindex": "cpp",
 		"valarray": "cpp"
-	}
+	},
+	"editor.formatOnSave": true
 }
