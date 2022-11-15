@@ -48,5 +48,6 @@ int main()
 	{
 		solve();
 	}
+	map<int, int> mp;
 	return 0;
 }

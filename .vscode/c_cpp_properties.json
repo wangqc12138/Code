@@ -1,9 +1,9 @@
 {
-    "configurations": [
-        {
-            "name": "Linux",
-            "includePath": [
-                "${workspaceFolder}/**",
+	"configurations": [
+		{
+			"name": "Linux",
+			"includePath": [
+				"${workspaceFolder}/**",
 				"${workspaceFolder}/include",
 				"${workspaceFolder}/Server_Client/Server_Local",
 				"${workspaceFolder}/Server_Client/Client_Local",
@@ -12,13 +12,12 @@
 				"${workspaceFolder}/Server_Client/Cmd",
 				"${workspaceFolder}/Server_Client/Threadpool",
 				"${workspaceFolder}/Server_Client/Readcfg"
-            ],
-            "defines": [],
-            "compilerPath": "/usr/bin/gcc",
-            "cStandard": "gnu17",
-            "cppStandard": "gnu++17",
-            "intelliSenseMode": "linux-gcc-x64"
-        }
-    ],
-    "version": 4
+			],
+			"defines": [],
+			"compilerPath": "/usr/bin/gcc",
+			"cppStandard": "gnu++20",
+			"intelliSenseMode": "linux-gcc-x64"
+		}
+	],
+	"version": 4
 }
