@@ -7258,3 +7258,498 @@ public:
         return res;
     }
 };
+/*
+一个序列的 宽度 定义为该序列中最大元素和最小元素的差值。
+
+给你一个整数数组 nums ，返回 nums 的所有非空 子序列 的 宽度之和 。由于答案可能非常大，请返回对 109 + 7 取余 后的结果。
+
+子序列 定义为从一个数组里删除一些（或者不删除）元素，但不改变剩下元素的顺序得到的数组。例如，[3,6,2,7] 就是数组 [0,3,1,6,2,2,7] 的一个子序列。
+891
+ */
+class Solution
+{
+public:
+    int sumSubseqWidths(vector<int> &nums)
+    {
+    }
+};
+/*
+有一个自行车手打算进行一场公路骑行，这条路线总共由 n + 1 个不同海拔的点组成。自行车手从海拔为 0 的点 0 开始骑行。
+
+给你一个长度为 n 的整数数组 gain ，其中 gain[i] 是点 i 和点 i + 1 的 净海拔高度差（0 <= i < n）。请你返回 最高点的海拔 。
+1732
+ */
+class Solution
+{
+public:
+    int largestAltitude(vector<int> &gain)
+    {
+        auto sum = gain;
+        int res = max(0, sum[0]);
+        for (int i = 1; i < sum.size(); i++)
+        {
+            sum[i] += sum[i - 1];
+            res = max(res, sum[i]);
+        }
+        return res;
+    }
+};
+/*
+我们把玻璃杯摆成金字塔的形状，其中 第一层 有 1 个玻璃杯， 第二层 有 2 个，依次类推到第 100 层，每个玻璃杯 (250ml) 将盛有香槟。
+
+从顶层的第一个玻璃杯开始倾倒一些香槟，当顶层的杯子满了，任何溢出的香槟都会立刻等流量的流向左右两侧的玻璃杯。
+当左右两边的杯子也满了，就会等流量的流向它们左右两边的杯子，依次类推。（当最底层的玻璃杯满了，香槟会流到地板上）
+
+例如，在倾倒一杯香槟后，最顶层的玻璃杯满了。倾倒了两杯香槟后，第二层的两个玻璃杯各自盛放一半的香槟。
+在倒三杯香槟后，第二层的香槟满了 - 此时总共有三个满的玻璃杯。在倒第四杯后，第三层中间的玻璃杯盛放了一半的香槟，他两边的玻璃杯各自盛放了四分之一的香槟，如下图所示。
+
+现在当倾倒了非负整数杯香槟后，返回第 i 行 j 个玻璃杯所盛放的香槟占玻璃杯容积的比例（ i 和 j 都从0开始）。
+799
+ */
+class Solution
+{
+public:
+    double champagneTower(int poured, int query_row, int query_glass)
+    {
+    }
+};
+/*
+有 A 和 B 两种类型 的汤。一开始每种类型的汤有 n 毫升。有四种分配操作：
+
+    提供 100ml 的 汤A 和 0ml 的 汤B 。
+    提供 75ml 的 汤A 和 25ml 的 汤B 。
+    提供 50ml 的 汤A 和 50ml 的 汤B 。
+    提供 25ml 的 汤A 和 75ml 的 汤B 。
+
+当我们把汤分配给某人之后，汤就没有了。每个回合，我们将从四种概率同为 0.25 的操作中进行分配选择。如果汤的剩余量不足以完成某次操作，我们将尽可能分配。
+当两种类型的汤都分配完时，停止操作。
+
+注意 不存在先分配 100 ml 汤B 的操作。
+
+需要返回的值： 汤A 先分配完的概率 +  汤A和汤B 同时分配完的概率 / 2。返回值在正确答案 10-5 的范围内将被认为是正确的。
+808
+ */
+class Solution
+{
+public:
+    double soupServings(int n)
+    {
+    }
+};
+/*
+一个正整数如果能被 a 或 b 整除，那么它是神奇的。
+
+给定三个整数 n , a , b ，返回第 n 个神奇的数字。因为答案可能很大，所以返回答案 对 109 + 7 取模 后的值。
+878
+ */
+// 思路是能整除a的加上能整除b的减去能整除最小公倍数的。这个就是有多少个数。然后二分去找
+class Solution
+{
+public:
+    int nthMagicalNumber(int n, int a, int b)
+    {
+        long long l = 1, r = (long long)n * a * b;
+        int c = lcm(a, b);
+        while (l < r)
+        {
+            long long t = l + ((r - l) >> 1);
+            long long m = t / a + t / b - t / c;
+            if (m < n)
+            {
+                l = t + 1;
+            }
+            else
+            {
+                r = t;
+            }
+        }
+        return l % 1000000007;
+    }
+};
+// 加餐
+/*
+给你四个整数：n 、a 、b 、c ，请你设计一个算法来找出第 n 个丑数。
+
+丑数是可以被 a 或 b 或 c 整除的 正整数 。
+1201
+ */
+using LL = long long;
+class Solution
+{
+public:
+    LL gcd(LL a, LL b)
+    {
+        return b ? gcd(b, a % b) : a;
+    }
+    LL lcm(LL a, LL b)
+    {
+        return a * b / gcd(a, b);
+    }
+    int nthUglyNumber(int n, int a, int b, int c)
+    {
+        long long l = 1, r = (long long)n * a * b * c;
+        long long d = lcm(a, b), e = lcm(a, c), f = lcm(b, c), g = lcm(d, c);
+        while (l < r)
+        {
+            long long t = (l + r) / 2;
+            long long m = t / a + t / b + t / c - t / d - t / e - t / f + t / g;
+            if (m < n)
+            {
+                l = t + 1;
+            }
+            else
+            {
+                r = t;
+            }
+        }
+        return l;
+    }
+};
+/*
+你在一家生产小球的玩具厂工作，有 n 个小球，编号从 lowLimit 开始，到 highLimit 结束（包括 lowLimit 和 highLimit ，即 n == highLimit - lowLimit + 1）。
+另有无限数量的盒子，编号从 1 到 infinity 。
+
+你的工作是将每个小球放入盒子中，其中盒子的编号应当等于小球编号上每位数字的和。例如，编号 321 的小球应当放入编号 3 + 2 + 1 = 6 的盒子，
+而编号 10 的小球应当放入编号 1 + 0 = 1 的盒子。
+
+给你两个整数 lowLimit 和 highLimit ，返回放有最多小球的盒子中的小球数量。如果有多个盒子都满足放有最多小球，只需返回其中任一盒子的小球数量。
+1742
+ */
+class Solution
+{
+public:
+    int countBalls(int lowLimit, int highLimit)
+    {
+        int n = highLimit - lowLimit;
+        map<int, int> mp;
+        for (int i = lowLimit; i <= highLimit; i++)
+        {
+            string str = to_string(i);
+            int t = 0;
+            for (auto c : str)
+            {
+                t += c - '0';
+            }
+            mp[t]++;
+        }
+        int m = 0;
+        for (auto [x, y] : mp)
+        {
+            if (y > m)
+            {
+                m = y;
+            }
+        }
+        return m;
+    }
+};
+/*
+给你一个整数数组 nums 和两个整数：left 及 right 。找出 nums 中连续、非空且其中最大元素在范围 [left, right] 内的子数组，并返回满足条件的子数组的个数。
+
+生成的测试用例保证结果符合 32-bit 整数范围。
+795
+ */
+// 思路：i1和i2分别是最近的可能合法点和非法点。
+class Solution
+{
+public:
+    int numSubarrayBoundedMax(vector<int> &nums, int left, int right)
+    {
+        int i1 = -1, i2 = -1, res = 0;
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (nums[i] >= left && nums[i] <= right)
+            {
+                i1 = i;
+            }
+            if (nums[i] > right)
+            {
+                i2 = i;
+            }
+            if (i1 > i2)
+            {
+                res += i1 - i2;
+            }
+        }
+        return res;
+    }
+};
+// 加餐
+/*
+给你一个整数数组 nums 和两个整数 minK 以及 maxK 。
+
+nums 的定界子数组是满足下述条件的一个子数组：
+
+    子数组中的 最小值 等于 minK 。
+    子数组中的 最大值 等于 maxK 。
+
+返回定界子数组的数目。
+
+子数组是数组中的一个连续部分。
+2444
+ */
+class Solution
+{
+public:
+    long long countSubarrays(vector<int> &nums, int minK, int maxK)
+    {
+        int n = nums.size(), i1 = -1, m1 = -1, m2 = -1;
+        long long res = 0;
+        for (int i = 0; i < n; i++)
+        {
+
+            if (nums[i] == maxK)
+            {
+                m1 = i;
+            }
+            if (nums[i] == minK)
+            {
+                m2 = i;
+            }
+            if (nums[i] > maxK || nums[i] < minK)
+            {
+                i1 = i;
+            }
+            if (m1 > i1 && m2 > i1)
+            {
+                if (m1 > m2)
+                {
+                    res += (long long)m2 - i1;
+                }
+                else
+                {
+                    res += (long long)m1 - i1;
+                }
+            }
+        }
+        return res;
+    }
+};
+/*
+有时候人们会用重复写一些字母来表示额外的感受，比如 "hello" -> "heeellooo", "hi" -> "hiii"。
+我们将相邻字母都相同的一串字符定义为相同字母组，例如："h", "eee", "ll", "ooo"。
+
+对于一个给定的字符串 S ，如果另一个单词能够通过将一些字母组扩张从而使其和 S 相同，我们将这个单词定义为可扩张的（stretchy）。
+扩张操作定义如下：选择一个字母组（包含字母 c ），然后往其中添加相同的字母 c 使其长度达到 3 或以上。
+
+例如，以 "hello" 为例，我们可以对字母组 "o" 扩张得到 "hellooo"，但是无法以同样的方法得到 "helloo" 因为字母组 "oo" 长度小于 3。
+此外，我们可以进行另一种扩张 "ll" -> "lllll" 以获得 "helllllooo"。
+如果 S = "helllllooo"，那么查询词 "hello" 是可扩张的，因为可以对它执行这两种扩张操作使得 query = "hello" -> "hellooo" -> "helllllooo" = S。
+
+输入一组查询单词，输出其中可扩张的单词数量。
+809
+ */
+using pci = pair<char, int>;
+class Solution
+{
+public:
+    int expressiveWords(string s, vector<string> &words)
+    {
+        vector<pci> src;
+        src.emplace_back(s[0], 1);
+        int res = 0;
+        for (int i = 1; i < s.size(); i++)
+        {
+            if (s[i] == s[i - 1])
+            {
+                src.back().second++;
+            }
+            else
+            {
+                src.emplace_back(s[i], 1);
+            }
+        }
+        for (auto str : words)
+        {
+            vector<pci> temp;
+            bool flag = true;
+            temp.emplace_back(str[0], 1);
+            for (int i = 1; i < str.size(); i++)
+            {
+                if (str[i] == str[i - 1])
+                {
+                    temp.back().second++;
+                }
+                else
+                {
+                    temp.emplace_back(s[i], 1);
+                }
+            }
+            if (src.size() != temp.size())
+            {
+                continue;
+            }
+            for (int i = 0; i < src.size(); i++)
+            {
+                if (src[i].first != temp[i].first || (src[i].second < 3 || src[i].second < temp[i].second) && src[i].second != temp[i].second)
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            res += flag;
+        }
+        return res;
+    }
+};
+// 双指针
+class Solution
+{
+public:
+    int expressiveWords(string s, vector<string> &words)
+    {
+        int res = 0;
+        for (auto str : words)
+        {
+            res += help(s, str);
+        }
+        return res;
+    }
+    bool help(string s, string t)
+    {
+        int m = s.size(), n = t.size();
+        int i = 0, j = 0;
+        while (i < m && j < n)
+        {
+            char a = s[i], b = t[j];
+            if (a != b)
+            {
+                return false;
+            }
+            int inds = 0, indt = 0;
+            while (i < m && s[i] == a)
+            {
+                i++;
+                inds++;
+            }
+            while (j < n && t[j] == b)
+            {
+                j++;
+                indt++;
+            }
+            if (inds != indt && (inds < indt || inds < 3))
+            {
+                return false;
+            }
+        }
+        return i == m && j == n;
+    }
+};
+/*
+var expressiveWords = function(s, words) {
+    let regStr='',lastLetter=s[0],letterCount=1
+    for(let i=1;i<s.length;i++){
+        if(lastLetter!==s[i]){
+            regStr+=`${lastLetter}{${(letterCount>2&&'1,')+letterCount}}`
+            lastLetter=s[i]
+            letterCount=1
+        }else{
+            letterCount++
+        }
+    }
+    regStr+=`${lastLetter}{${(letterCount>2&&'1,')+letterCount}}`
+    let ans=0,reg=new RegExp('^'+regStr+'$')
+    for(let i=0;i<words.length;i++){
+        if(reg.test(words[i])) ans++
+    }
+    return ans
+};
+ */
+/*
+给定数组 nums 和一个整数 k 。我们将给定的数组 nums 分成 最多 k 个相邻的非空子数组 。 分数 由每个子数组内的平均值的总和构成。
+
+注意我们必须使用 nums 数组中的每一个数进行分组，并且分数不一定需要是整数。
+
+返回我们所能得到的最大 分数 是多少。答案误差在 10-6 内被视为是正确的。
+813
+ */
+class Solution
+{
+public:
+    double largestSumOfAverages(vector<int> &nums, int K)
+    {
+        int n = nums.size();
+        vector<double> sum;
+        for (int index = 0; auto i : nums)
+        {
+            sum.emplace_back(index += i);
+        }
+        auto average = [&](int i, int j)
+        {
+            return i == 0 ? sum[j] / (j + 1) : (sum[j] - sum[i - 1]) / (j + 1 - i);
+        };
+        double dp[n][K + 1];
+        memset(dp, 0, sizeof(dp));
+        for (int i = 0; i < n; i++)
+        {
+            dp[i][1] = average(0, i);
+        }
+        for (int k = 2; k <= K; k++)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    dp[i][k] = max(dp[i][k], dp[j][k - 1] + average(j + 1, i));
+                }
+            }
+        }
+        return dp[n - 1][K];
+    }
+};
+// 一维数组
+class Solution
+{
+public:
+    double largestSumOfAverages(vector<int> &nums, int K)
+    {
+        int n = nums.size();
+        vector<double> dp(n);
+        vector<double> sum;
+        for (int t = 0; auto i : nums)
+        {
+            sum.emplace_back(t += i);
+        }
+        auto average = [&](int i, int j)
+        { return i == 0 ? sum[j] / (j + 1) : (sum[j] - sum[i - 1]) / (j + 1 - i); };
+        for (int i = 0; i < n; i++)
+        {
+            dp[i] = average(0, i);
+        }
+        for (int k = 1; k < K; k++)
+        {
+            for (int i = n - 1; i >= 0; i--)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    dp[i] = max(dp[i], dp[j] + average(j + 1, i));
+                }
+            }
+        }
+        return dp[n - 1];
+    }
+};
+/*
+给你一个仅由字符 '0' 和 '1' 组成的字符串 s 。一步操作中，你可以将任一 '0' 变成 '1' ，或者将 '1' 变成 '0' 。
+
+交替字符串 定义为：如果字符串中不存在相邻两个字符相等的情况，那么该字符串就是交替字符串。例如，字符串 "010" 是交替字符串，而字符串 "0100" 不是。
+
+返回使 s 变成 交替字符串 所需的 最少 操作数。
+1758
+ */
+class Solution
+{
+public:
+    int minOperations(string s)
+    {
+        int cnt = 0, n = s.size();
+        for (int i = 0; i < s.size(); i++)
+        {
+            if (s[i] == '0' + i % 2)
+            {
+                cnt++;
+            }
+        }
+        return min(cnt, n - cnt);
+    }
+};
