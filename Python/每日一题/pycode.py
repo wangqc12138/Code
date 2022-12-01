@@ -1,5 +1,8 @@
 import imp
+from heapq import heappush
+from heapq import heappop
 from typing import List
+from collections import defaultdict
 # 给你一个字符串 s，请你返回 两个相同字符之间的最长子字符串的长度 ，计算长度时不含这两个字符。如果不存在这样的子字符串，返回 -1 。
 
 # 子字符串 是字符串中的一个连续字符序列。
@@ -171,3 +174,76 @@ class Solution:
     def minOperations(self, s: str) -> int:
         cnt = sum(int(c) == i % 2 for i, c in enumerate(s))
         return min(cnt, len(s)-cnt)
+
+
+""" 
+设计一个类似堆栈的数据结构，将元素推入堆栈，并从堆栈中弹出出现频率最高的元素。
+
+实现 FreqStack 类:
+
+    FreqStack() 构造一个空的堆栈。
+    void push(int val) 将一个整数 val 压入栈顶。
+    int pop() 删除并返回堆栈中出现频率最高的元素。
+        如果出现频率最高的元素不只一个，则移除并返回最接近栈顶的元素。
+895
+ """
+
+
+class FreqStack:
+
+    def __init__(self):
+        self.h = []
+        self.cnt = defaultdict(int)
+        self.index = 0
+
+    def push(self, val: int) -> None:
+        self.cnt[val] += 1
+        self.index += 1
+        heappush(self.h, (-self.cnt[val], -self.index, val))
+
+    def pop(self) -> int:
+        res = heappop(self.h)[2]
+        self.cnt[res] -= 1
+        return res
+# 不使用优先级队列
+
+
+class FreqStack:
+
+    def __init__(self):
+        self.index = defaultdict(int)
+        self.dic = defaultdict(list)
+        self.m = 0
+
+    def push(self, val: int) -> None:
+        self.index[val] += 1
+        self.m = max(self.index[val], self.m)
+        self.dic[self.index[val]].append(val)
+
+    def pop(self) -> int:
+        res = self.dic[self.m].pop()
+        self.index[res] -= 1
+        if len(self.dic[self.m]) == 0:
+            self.m -= 1
+        return res
+
+
+""" 
+给你两个整数 x 和 y ，表示你在一个笛卡尔坐标系下的 (x, y) 处。同时，在同一个坐标系下给你一个数组 points ，其中 points[i] = [ai, bi] 表示在 (ai, bi) 处有一个点。当一个点与你所在的位置有相同的 x 坐标或者相同的 y 坐标时，我们称这个点是 有效的 。
+
+请返回距离你当前位置 曼哈顿距离 最近的 有效 点的下标（下标从 0 开始）。如果有多个最近的有效点，请返回下标 最小 的一个。如果没有有效点，请返回 -1 。
+
+两个点 (x1, y1) 和 (x2, y2) 之间的 曼哈顿距离 为 abs(x1 - x2) + abs(y1 - y2) 。
+1779
+ """
+
+
+class Solution:
+    def nearestValidPoint(self, x: int, y: int, points: List[List[int]]) -> int:
+        res = -1
+        m = 100000
+        for i, [a, b] in enumerate(points):
+            if (a == x or b == y) and m > abs(a-x)+abs(b-y):
+                res = i
+                m = abs(a-x)+abs(b-y)
+        return res

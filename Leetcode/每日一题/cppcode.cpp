@@ -7753,3 +7753,128 @@ public:
         return min(cnt, n - cnt);
     }
 };
+/*
+设计一个类似堆栈的数据结构，将元素推入堆栈，并从堆栈中弹出出现频率最高的元素。
+
+实现 FreqStack 类:
+
+    FreqStack() 构造一个空的堆栈。
+    void push(int val) 将一个整数 val 压入栈顶。
+    int pop() 删除并返回堆栈中出现频率最高的元素。
+895
+ */
+class Node
+{
+public:
+    Node(int val, int cnt, int index) : val(val), cnt(cnt), index(index){};
+    bool operator<(const Node node) const
+    {
+        return node.cnt > this->cnt || node.cnt == this->cnt && node.index > this->index;
+    }
+    int val, cnt, index;
+};
+class FreqStack
+{
+public:
+    FreqStack()
+    {
+    }
+
+    void push(int val)
+    {
+        mpq.emplace(Node(val, ++mp[val], index++));
+    }
+
+    int pop()
+    {
+        // auto c=mpq;
+        // while(!c.empty()){
+        //     auto d=c.top();
+        //     c.pop();
+        //     cout<<d.val<<" "<<d.cnt<<" "<<d.index<<endl;
+        // }
+        // cout<<"-------------"<<endl;
+        auto node = mpq.top();
+        mpq.pop();
+        mp[node.val]--;
+        return node.val;
+    }
+
+private:
+    priority_queue<Node> mpq;
+    int index = 0;
+    map<int, int> mp;
+};
+// 不使用优先队列
+class FreqStack
+{
+public:
+    FreqStack()
+    {
+        ump.clear();
+        ums.clear();
+        m = 0;
+    }
+
+    void push(int val)
+    {
+        ump[val]++;
+        m = max(m, ump[val]);
+        ums[ump[val]].emplace(val);
+    }
+
+    int pop()
+    {
+        auto res = ums[m].top();
+        ums[m].pop();
+        ump[res]--;
+        if (ums[m].empty())
+        {
+            m--;
+        }
+        return res;
+    }
+
+private:
+    unordered_map<int, int> ump;
+    unordered_map<int, stack<int>> ums;
+    int m;
+};
+
+/**
+ * Your FreqStack object will be instantiated and called as such:
+ * FreqStack* obj = new FreqStack();
+ * obj->push(val);
+ * int param_2 = obj->pop();
+ */
+/*
+给你两个整数 x 和 y ，表示你在一个笛卡尔坐标系下的 (x, y) 处。同时，在同一个坐标系下给你一个数组 points ，
+其中 points[i] = [ai, bi] 表示在 (ai, bi) 处有一个点。当一个点与你所在的位置有相同的 x 坐标或者相同的 y 坐标时，我们称这个点是 有效的 。
+
+请返回距离你当前位置 曼哈顿距离 最近的 有效 点的下标（下标从 0 开始）。如果有多个最近的有效点，请返回下标 最小 的一个。如果没有有效点，请返回 -1 。
+
+两个点 (x1, y1) 和 (x2, y2) 之间的 曼哈顿距离 为 abs(x1 - x2) + abs(y1 - y2) 。
+1779
+ */
+class Solution
+{
+public:
+    int nearestValidPoint(int x, int y, vector<vector<int>> &points)
+    {
+        int len = INT_MAX;
+        int res = -1;
+        for (int index = 0; auto vec : points)
+        {
+            if (vec[0] == x || vec[1] == y)
+            {
+                if (len > abs(x - vec[0]) + abs(y - vec[1]))
+                {
+                    res = index;
+                    len = abs(x - vec[0]) + abs(y - vec[1]);
+                }
+            }
+            index++;
+        }
+        return res;
+    }
+};
