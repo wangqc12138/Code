@@ -87,18 +87,18 @@ func help(s string, t string) bool {
 
 返回使 s 变成 交替字符串 所需的 最少 操作数。
 */
-func minOperations(s string) int {
-	cnt := 0
-	for i, c := range s {
-		if int(c-'0') == i%2 {
-			cnt++
-		}
-	}
-	if cnt < len(s)-cnt {
-		return cnt
-	}
-	return len(s) - cnt
-}
+// func minOperations(s string) int {
+// 	cnt := 0
+// 	for i, c := range s {
+// 		if int(c-'0') == i%2 {
+// 			cnt++
+// 		}
+// 	}
+// 	if cnt < len(s)-cnt {
+// 		return cnt
+// 	}
+// 	return len(s) - cnt
+// }
 
 /*
 设计一个类似堆栈的数据结构，将元素推入堆栈，并从堆栈中弹出出现频率最高的元素。
@@ -208,4 +208,38 @@ func abs(x int) int {
 		return -x
 	}
 	return x
+}
+
+/*
+
+有 n 个盒子。给你一个长度为 n 的二进制字符串 boxes ，其中 boxes[i] 的值为 '0' 表示第 i 个盒子是 空 的，而 boxes[i] 的值为 '1' 表示盒子里有 一个 小球。
+
+在一步操作中，你可以将 一个 小球从某个盒子移动到一个与之相邻的盒子中。第 i 个盒子和第 j 个盒子相邻需满足 abs(i - j) == 1 。
+注意，操作执行后，某些盒子中可能会存在不止一个小球。
+
+返回一个长度为 n 的数组 answer ，其中 answer[i] 是将所有小球移动到第 i 个盒子所需的 最小 操作数。
+
+每个 answer[i] 都需要根据盒子的 初始状态 进行计算。
+1769
+*/
+func minOperations(boxes string) []int {
+	n, t, p := len(boxes), 0, 0
+	sum := make([]int, n)
+	if boxes[0] == '1' {
+		sum[0] = 1
+	}
+	for i := 1; i < n; i++ {
+		sum[i] = sum[i-1]
+		if boxes[i] == '1' {
+			sum[i]++
+			t += i
+		}
+	}
+	res := make([]int, n)
+	for i := 0; i < n; i++ {
+		res[i] = p + t
+		p += sum[i]
+		t -= sum[n-1] - sum[i]
+	}
+	return res
 }
