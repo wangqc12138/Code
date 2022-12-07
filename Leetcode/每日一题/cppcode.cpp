@@ -7915,3 +7915,177 @@ public:
         return res;
     }
 };
+/*
+给你一个混合字符串 s ，请你返回 s 中 第二大 的数字，如果不存在第二大的数字，请你返回 -1 。
+
+混合字符串 由小写英文字母和数字组成。
+ */
+/*
+你有一辆货运卡车，你需要用这一辆车把一些箱子从仓库运送到码头。这辆卡车每次运输有 箱子数目的限制 和 总重量的限制 。
+
+给你一个箱子数组 boxes 和三个整数 portsCount, maxBoxes 和 maxWeight ，其中 boxes[i] = [ports​​i​, weighti] 。
+
+    ports​​i 表示第 i 个箱子需要送达的码头， weightsi 是第 i 个箱子的重量。
+    portsCount 是码头的数目。
+    maxBoxes 和 maxWeight 分别是卡车每趟运输箱子数目和重量的限制。
+
+箱子需要按照 数组顺序 运输，同时每次运输需要遵循以下步骤：
+
+    卡车从 boxes 队列中按顺序取出若干个箱子，但不能违反 maxBoxes 和 maxWeight 限制。
+    对于在卡车上的箱子，我们需要 按顺序 处理它们，卡车会通过 一趟行程 将最前面的箱子送到目的地码头并卸货。
+    如果卡车已经在对应的码头，那么不需要 额外行程 ，箱子也会立马被卸货。
+    卡车上所有箱子都被卸货后，卡车需要 一趟行程 回到仓库，从箱子队列里再取出一些箱子。
+
+卡车在将所有箱子运输并卸货后，最后必须回到仓库。
+
+请你返回将所有箱子送到相应码头的 最少行程 次数。
+ */
+class Solution
+{
+public:
+    int boxDelivering(vector<vector<int>> &boxes, int portsCount, int maxBoxes, int maxWeight)
+    {
+        vector<vector<int>> temp;
+        temp.emplace_back(boxes[0]);
+        temp[0].emplace_back(1);
+        for (int i = 1; i < boxes.size(); i++)
+        {
+            auto e = temp.back();
+            if (boxes[i][0] == e[0] && boxes[i][1] + e[1] <= maxWeight && e[2] + 1 <= maxBoxes)
+            {
+                temp.back()[1] += boxes[i][1];
+                temp.back()[2]++;
+            }
+            else
+            {
+                temp.emplace_back(boxes[i]);
+                temp.back().emplace_back(1);
+            }
+        }
+        int b = 0, w = 0, now = 0;
+        int res = 0;
+        for (auto vec : temp)
+        {
+            cout << vec[0] << " " << vec[1] << " " << vec[2] << endl;
+            b += vec[2], w += vec[1];
+            if (b > maxBoxes || w > maxWeight)
+            {
+                b = vec[2];
+                w = vec[1];
+                res++;
+
+                now = 0;
+            }
+            if (vec[0] != now)
+            {
+                now = vec[0];
+                res++;
+            }
+        }
+        return now != 0 ? res + 1 : res;
+    }
+};
+/*
+给你一个字符串 word ，该字符串由数字和小写英文字母组成。
+
+请你用空格替换每个不是数字的字符。例如，"a123bc34d8ef34" 将会变成 " 123  34 8  34" 。
+注意，剩下的这些整数为（相邻彼此至少有一个空格隔开）："123"、"34"、"8" 和 "34" 。
+
+返回对 word 完成替换后形成的 不同 整数的数目。
+
+只有当两个整数的 不含前导零 的十进制表示不同， 才认为这两个整数也不同。
+1805
+ */
+class Solution
+{
+public:
+    int numDifferentIntegers(string word)
+    {
+        word += 'a';
+        string n;
+        set<string> st;
+        bool flag = false;
+        for (auto c : word)
+        {
+            if (c >= '0' && c <= '9')
+            {
+                if (!flag)
+                    flag = true;
+                n += c;
+            }
+            else
+            {
+                if (flag)
+                {
+                    while (n.size() >= 2 && n[0] == '0')
+                    {
+                        n = n.substr(1);
+                    }
+                    st.emplace(n);
+                    flag = false;
+                    n = "";
+                }
+            }
+        }
+        return st.size();
+    }
+};
+/*
+给你两个长度可能不等的整数数组 nums1 和 nums2 。两个数组中的所有值都在 1 到 6 之间（包含 1 和 6）。
+
+每次操作中，你可以选择 任意 数组中的任意一个整数，将它变成 1 到 6 之间 任意 的值（包含 1 和 6）。
+
+请你返回使 nums1 中所有数的和与 nums2 中所有数的和相等的最少操作次数。如果无法使两个数组的和相等，请返回 -1 。
+1775
+ */
+class Solution
+{
+public:
+    int help(vector<int> &v1, vector<int> &v2, int diff)
+    {
+        vector<int> vec(7, 0);
+        for (int i = 1; i <= 6; i++)
+        {
+            vec[i] = v1[i] + v2[7 - i];
+        }
+        int res = 0;
+        for (int i = 1; i <= 6; i++)
+        {
+            if (diff <= (6 - i) * vec[i])
+            {
+                res += (diff + 5 - i) / (6 - i);
+                break;
+            }
+            else
+            {
+                res += vec[i];
+                diff -= vec[i] * (6 - i);
+            }
+        }
+        return res;
+    }
+    int minOperations(vector<int> &nums1, vector<int> &nums2)
+    {
+        int m = nums1.size(), n = nums2.size();
+        if (min(m, n) * 6 < max(m, n) * 1)
+        {
+            return -1;
+        }
+        int s1 = accumulate(nums1.begin(), nums1.end(), 0);
+        int s2 = accumulate(nums2.begin(), nums2.end(), 0);
+        vector<int> v1(7, 0), v2(7, 0);
+        for (int i : nums1)
+        {
+            v1[i]++;
+        }
+        for (int i : nums2)
+        {
+            v2[i]++;
+        }
+        if (s1 > s2)
+        {
+            return help(v2, v1, s1 - s2);
+        }
+        return help(v1, v2, s2 - s1);
+    }
+};

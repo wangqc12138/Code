@@ -222,24 +222,68 @@ func abs(x int) int {
 每个 answer[i] 都需要根据盒子的 初始状态 进行计算。
 1769
 */
-func minOperations(boxes string) []int {
-	n, t, p := len(boxes), 0, 0
-	sum := make([]int, n)
-	if boxes[0] == '1' {
-		sum[0] = 1
+// func minOperations(boxes string) []int {
+// 	n, t, p := len(boxes), 0, 0
+// 	sum := make([]int, n)
+// 	if boxes[0] == '1' {
+// 		sum[0] = 1
+// 	}
+// 	for i := 1; i < n; i++ {
+// 		sum[i] = sum[i-1]
+// 		if boxes[i] == '1' {
+// 			sum[i]++
+// 			t += i
+// 		}
+// 	}
+// 	res := make([]int, n)
+// 	for i := 0; i < n; i++ {
+// 		res[i] = p + t
+// 		p += sum[i]
+// 		t -= sum[n-1] - sum[i]
+// 	}
+// 	return res
+// }
+/*
+给你两个长度可能不等的整数数组 nums1 和 nums2 。两个数组中的所有值都在 1 到 6 之间（包含 1 和 6）。
+
+每次操作中，你可以选择 任意 数组中的任意一个整数，将它变成 1 到 6 之间 任意 的值（包含 1 和 6）。
+
+请你返回使 nums1 中所有数的和与 nums2 中所有数的和相等的最少操作次数。如果无法使两个数组的和相等，请返回 -1 。
+1775
+*/
+func minOperations_help(v1, v2 []int, diff int) int {
+	vec := make([]int, 7)
+	for i := 1; i <= 6; i++ {
+		vec[i] = v1[i] + v2[7-i]
 	}
-	for i := 1; i < n; i++ {
-		sum[i] = sum[i-1]
-		if boxes[i] == '1' {
-			sum[i]++
-			t += i
+	res := 0
+	for i := 1; i <= 6; i++ {
+		if diff <= vec[i]*(6-i) {
+			res += (diff + 5 - i) / (6 - i)
+			diff = 0
+			break
+		} else {
+			res += vec[i]
+			diff -= vec[i] * (6 - i)
 		}
 	}
-	res := make([]int, n)
-	for i := 0; i < n; i++ {
-		res[i] = p + t
-		p += sum[i]
-		t -= sum[n-1] - sum[i]
+	if diff > 0 {
+		res = -1
 	}
 	return res
+}
+func minOperations(nums1, nums2 []int) int {
+	v1, v2, s1, s2 := make([]int, 7), make([]int, 7), 0, 0
+	for _, i := range nums1 {
+		v1[i]++
+		s1 += i
+	}
+	for _, i := range nums2 {
+		v2[i]++
+		s2 += i
+	}
+	if s1 < s2 {
+		return minOperations_help(v1, v2, s2-s1)
+	}
+	return minOperations_help(v2, v1, s1-s2)
 }

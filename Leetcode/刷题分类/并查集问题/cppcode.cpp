@@ -1,5 +1,5 @@
 #include "head.h"
-//并查集问题
+// 并查集问题
 /*
 n 块石头放置在二维平面中的一些整数坐标点上。每个坐标点上最多只能有一块石头。
 如果一块石头的 同行或者同列 上有其他石头存在，那么就可以移除这块石头。
@@ -8,76 +8,97 @@ n 块石头放置在二维平面中的一些整数坐标点上。每个坐标点
 0 <= xi, yi <= 104
 947
 */
-//将行列坐标视为个体，每个石头的行列则视为同一个集合，最后返回共有多少集合，再用总数减去即为所求
-class Solution {
+// 将行列坐标视为个体，每个石头的行列则视为同一个集合，最后返回共有多少集合，再用总数减去即为所求
+class Solution
+{
 public:
-    int removeStones(vector<vector<int>>& stones) {
-    	UnionFindSet uset;
-    	uset.makeSet(stones);
-    	for(auto stone:stones){
-    		if(!uset.isSameSet(stone[0],stone[1]+10000)){
-    			uset.unionSet(stone[0],stone[1]+10000);
-    		}
-    	}
-    	return stones.size()-uset.getCount();
+    int removeStones(vector<vector<int>> &stones)
+    {
+        UnionFindSet uset;
+        uset.makeSet(stones);
+        for (auto stone : stones)
+        {
+            if (!uset.isSameSet(stone[0], stone[1] + 10000))
+            {
+                uset.unionSet(stone[0], stone[1] + 10000);
+            }
+        }
+        return stones.size() - uset.getCount();
     }
+
 public:
-	class UnionFindSet{
-	public:
-		UnionFindSet(){
-			head.clear();
-			size.clear();
-			count=0;
-		}
-		void makeSet(vector<vector<int>>& stones){
-			for(auto stone:stones){
-				if(!head.count(stone[0])){
-					head[stone[0]]=stone[0];
-					size[stone[0]]=1;
-					count++;
-				}
-				if(!head.count(stone[1]+10000)){
-					head[stone[1]+10000]=stone[1]+10000;
-					size[stone[1]+10000]=1;
-					count++;
-				}
-			}
-		}
-		int findHead(int i){
-			int f=head[i];
-			if(i!=f){
-				f=findHead(f);
-			}
-			head[i]=f;
-			return f;
-		}
-		bool isSameSet(int i,int j){
-			return findHead(i)==findHead(j);
-		}
-		void unionSet(int i,int j){
-			int ihead=findHead(i);
-			int jhead=findHead(j);
-			if(ihead!=jhead){
-				int isize=size[ihead];
-				int jsize=size[jhead];
-				if(isize>jsize){
-					head[jhead]=ihead;
-					size[ihead]=isize+jsize;
-				}else{
-					head[ihead]=jhead;
-					size[jhead]=isize+jsize;
-				}
-				count--;
-			}
-		}
-		int getCount(){
-			return count;
-		}
-	private:
-		map<int,int> head;
-		map<int,int> size;
-		int count;
-	};
+    class UnionFindSet
+    {
+    public:
+        UnionFindSet()
+        {
+            head.clear();
+            size.clear();
+            count = 0;
+        }
+        void makeSet(vector<vector<int>> &stones)
+        {
+            for (auto stone : stones)
+            {
+                if (!head.count(stone[0]))
+                {
+                    head[stone[0]] = stone[0];
+                    size[stone[0]] = 1;
+                    count++;
+                }
+                if (!head.count(stone[1] + 10000))
+                {
+                    head[stone[1] + 10000] = stone[1] + 10000;
+                    size[stone[1] + 10000] = 1;
+                    count++;
+                }
+            }
+        }
+        int findHead(int i)
+        {
+            int f = head[i];
+            if (i != f)
+            {
+                f = findHead(f);
+            }
+            head[i] = f;
+            return f;
+        }
+        bool isSameSet(int i, int j)
+        {
+            return findHead(i) == findHead(j);
+        }
+        void unionSet(int i, int j)
+        {
+            int ihead = findHead(i);
+            int jhead = findHead(j);
+            if (ihead != jhead)
+            {
+                int isize = size[ihead];
+                int jsize = size[jhead];
+                if (isize > jsize)
+                {
+                    head[jhead] = ihead;
+                    size[ihead] = isize + jsize;
+                }
+                else
+                {
+                    head[ihead] = jhead;
+                    size[jhead] = isize + jsize;
+                }
+                count--;
+            }
+        }
+        int getCount()
+        {
+            return count;
+        }
+
+    private:
+        map<int, int> head;
+        map<int, int> size;
+        int count;
+    };
 };
 /*
 给定一个列表 accounts，每个元素 accounts[i] 是一个字符串列表，其中第一个元素 accounts[i][0] 是 名称 (name)，其余元素是 emails 表示该账户的邮箱地址。
@@ -113,7 +134,7 @@ public:
 
 用以太网线缆将 n 台计算机连接成一个网络，计算机的编号从 0 到 n-1。线缆用 connections 表示，其中 connections[i] = [a, b] 连接了计算机 a 和 b。
 网络中的任何一台计算机都可以通过网络直接或者间接访问同一个网络中其他任意一台计算机。
-给你这个计算机网络的初始布线 connections，你可以拔开任意两台直连计算机之间的线缆，并用它连接一对未直连的计算机。请你计算并返回使所有计算机都连通所需的最少操作次数。如果不可能，则返回 -1 。 
+给你这个计算机网络的初始布线 connections，你可以拔开任意两台直连计算机之间的线缆，并用它连接一对未直连的计算机。请你计算并返回使所有计算机都连通所需的最少操作次数。如果不可能，则返回 -1 。
 1319
 */
 /*
@@ -155,6 +176,103 @@ Alice 和 Bob 共有一个无向图，其中包含 n 个节点和 3  种类型�
 注意：输入总是有效的。你可以假设除法运算中不会出现除数为 0 的情况，且不存在任何矛盾的结果。
 399
 */
-/* 
+/*
 684
  */
+// 二分图检测
+/*
+存在一个 无向图 ，图中有 n 个节点。其中每个节点都有一个介于 0 到 n - 1 之间的唯一编号。
+给你一个二维数组 graph ，其中 graph[u] 是一个节点数组，由节点 u 的邻接节点组成。
+形式上，对于 graph[u] 中的每个 v ，都存在一条位于节点 u 和节点 v 之间的无向边。该无向图同时具有以下属性：
+
+    不存在自环（graph[u] 不包含 u）。
+    不存在平行边（graph[u] 不包含重复值）。
+    如果 v 在 graph[u] 内，那么 u 也应该在 graph[v] 内（该图是无向图）
+    这个图可能不是连通图，也就是说两个节点 u 和 v 之间可能不存在一条连通彼此的路径。
+
+二分图 定义：如果能将一个图的节点集合分割成两个独立的子集 A 和 B ，
+并使图中的每一条边的两个节点一个来自 A 集合，一个来自 B 集合，就将这个图称为 二分图 。
+
+如果图是二分图，返回 true ；否则，返回 false 。
+785
+ */
+class UnionFindSet
+{
+public:
+    UnionFindSet()
+    {
+        head.clear();
+        size.clear();
+    }
+    void makeSet(int n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            head[i] = i;
+            size[i] = 1;
+        }
+    }
+    int findHead(int i)
+    {
+        int f = head[i];
+        if (f != i)
+        {
+            f = findHead(f);
+        }
+        head[i] = f;
+        return f;
+    }
+    bool isSameSet(int i, int j)
+    {
+        return findHead(i) == findHead(j);
+    }
+    void unionSet(int i, int j)
+    {
+        int headi = findHead(i);
+        int headj = findHead(j);
+        if (headi != headj)
+        {
+            int sizei = size[headi];
+            int sizej = size[headj];
+            if (sizei > sizej)
+            {
+                head[headj] = headi;
+                size[headi] += sizej;
+            }
+            else
+            {
+                head[headi] = headj;
+                size[headj] += sizei;
+            }
+        }
+    }
+
+private:
+    map<int, int> head, size;
+};
+class Solution
+{
+public:
+    bool isBipartite(vector<vector<int>> &graph)
+    {
+        int n = graph.size();
+        UnionFindSet ufs = UnionFindSet();
+        ufs.makeSet(n);
+        for (int i = 0; i < n; i++)
+        {
+            if (graph[i].empty())
+            {
+                continue;
+            }
+            for (int j = 1; j < graph[i].size(); j++)
+            {
+                ufs.unionSet(graph[i][0], graph[i][j]);
+            }
+            if (ufs.isSameSet(i, graph[i][0]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+};

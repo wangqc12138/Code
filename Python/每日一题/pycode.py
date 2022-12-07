@@ -275,3 +275,42 @@ class Solution:
             p += pre[i]
             t -= pre[n-1]-pre[i]
         return res
+
+
+""" 
+给你两个长度可能不等的整数数组 nums1 和 nums2 。两个数组中的所有值都在 1 到 6 之间（包含 1 和 6）。
+
+每次操作中，你可以选择 任意 数组中的任意一个整数，将它变成 1 到 6 之间 任意 的值（包含 1 和 6）。
+
+请你返回使 nums1 中所有数的和与 nums2 中所有数的和相等的最少操作次数。如果无法使两个数组的和相等，请返回 -1 。
+1775
+ """
+
+
+class Solution:
+    def minOperations(self, nums1: List[int], nums2: List[int]) -> int:
+        s1, s2, v1, v2, l1, l2 = sum(nums1), sum(
+            nums2), [0]*7, [0]*7, len(nums1), len(nums2)
+        if min(l1, l2)*6 < max(l1, l2)*1:
+            return -1
+        for i in nums1:
+            v1[i] += 1
+        for i in nums2:
+            v2[i] += 1
+        if s1 > s2:
+            return help(v2, v1, s1-s2)
+        return help(v1, v2, s2-s1)
+
+    def help(self, v1: List[int], v2: List[int], diff: int) -> int:
+        v = [0]*7
+        for i in range(1, 7):
+            v[i] = v1[i]+v2[7-i]
+        res = 0
+        for i in range(1, 7):
+            if diff <= v[i]*(6-i):
+                res += (diff+5-i)//(6-i)
+                break
+            else:
+                res += v[i]
+                diff -= v[i]*(6-i)
+        return res
