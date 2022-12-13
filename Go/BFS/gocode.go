@@ -1,5 +1,6 @@
-from typing import List
-""" 
+package main
+
+/*
 存在一个 无向图 ，图中有 n 个节点。其中每个节点都有一个介于 0 到 n - 1 之间的唯一编号。
 给你一个二维数组 graph ，其中 graph[u] 是一个节点数组，由节点 u 的邻接节点组成。
 形式上，对于 graph[u] 中的每个 v ，都存在一条位于节点 u 和节点 v 之间的无向边。该无向图同时具有以下属性：
@@ -14,34 +15,35 @@ from typing import List
 
 如果图是二分图，返回 true ；否则，返回 false 。
 785
- """
-
-
-class Solution:
-    def isBipartite(self, graph: List[List[int]]) -> bool:
-        n = len(graph)
-        visit = [-1]*n
-
-        def bfs(k: int) -> bool:
-            mq = []
-            mq.append(k)
-            while len(mq) > 0:
-                n = mq[0]
-                mq.pop(0)
-                for i in graph[n]:
-                    if visit[i] == visit[n]:
-                        return False
-                    if visit[i] == -1:
-                        visit[i] = (visit[n]+1) % 2
-                        mq.append(i)
-
-        for i in range(0, len(graph)):
-            if visit[i] == -1:
-                visit[i] = 0
-                if bfs(i) == False:
-                    for i, j in enumerate(visit):
-                        print(i, j)
-                    return False
-        for i, j in enumerate(visit):
-            print(i, j)
-        return True
+*/
+func isBipartite(graph [][]int) bool {
+	n := len(graph)
+	visit := make([]int, n)
+	for i := 0; i < n; i++ {
+		if visit[i] == 0 {
+			visit[i] = 1
+			if bfs(graph, i, &visit) == false {
+				return false
+			}
+		}
+	}
+	return true
+}
+func bfs(graph [][]int, index int, visit *[]int) bool {
+	mq := []int{}
+	mq = append(mq, index)
+	for len(mq) > 0 {
+		n := mq[0]
+		mq = mq[1:]
+		for _, i := range graph[n] {
+			if (*visit)[i] == (*visit)[n] {
+				return false
+			}
+			if (*visit)[i] == 0 {
+				(*visit)[i] = 2 - ((*visit)[n]+1)%2
+				mq = append(mq, i)
+			}
+		}
+	}
+	return true
+}

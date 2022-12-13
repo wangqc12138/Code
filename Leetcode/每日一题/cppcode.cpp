@@ -8089,3 +8089,37 @@ public:
         return help(v1, v2, s2 - s1);
     }
 };
+/*
+一个字符串的 美丽值 定义为：出现频率最高字符与出现频率最低字符的出现次数之差。
+
+    比方说，"abaacc" 的美丽值为 3 - 1 = 2 。
+
+给你一个字符串 s ，请你返回它所有子字符串的 美丽值 之和。
+1781
+ */
+class Solution
+{
+public:
+    int beautySum(string s)
+    {
+        int n = s.size(), res = 0;
+        for (int i = 0; i < n; i++)
+        {
+            vector<int> vec(26, 0);
+            int maxn = 0, minn = n;
+            for (int j = i; j < n; j++)
+            {
+                maxn = max(maxn, ++vec[s[j] - 'a']);
+                for (int k : vec)
+                {
+                    if (k != 0 && k < minn)
+                    {
+                        minn = k;
+                    }
+                }
+                res += maxn - minn;
+            }
+        }
+        return res;
+    }
+};

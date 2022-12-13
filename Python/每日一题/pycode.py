@@ -3,6 +3,7 @@ from heapq import heappush
 from heapq import heappop
 from typing import List
 from collections import defaultdict
+from collections import Counter
 # 给你一个字符串 s，请你返回 两个相同字符之间的最长子字符串的长度 ，计算长度时不含这两个字符。如果不存在这样的子字符串，返回 -1 。
 
 # 子字符串 是字符串中的一个连续字符序列。
@@ -313,4 +314,42 @@ class Solution:
             else:
                 res += v[i]
                 diff -= v[i]*(6-i)
+        return res
+
+
+""" 
+一个字符串的 美丽值 定义为：出现频率最高字符与出现频率最低字符的出现次数之差。
+
+    比方说，"abaacc" 的美丽值为 3 - 1 = 2 。
+
+给你一个字符串 s ，请你返回它所有子字符串的 美丽值 之和。
+1781
+ """
+
+
+class Solution:
+    def beautySum(self, s: str) -> int:
+        res, n = 0, len(s)
+        for i in range(0, n):
+            v = [0]*26
+            for j in range(i, n):
+                v[ord(s[j])-ord('a')] += 1
+                maxn, minn = 0, n
+                for k in v:
+                    if k > 0:
+                        maxn = max(maxn, k)
+                        minn = min(minn, k)
+                res += maxn-minn
+        return res
+
+
+class Solution:
+    def beautySum(self, s: str) -> int:
+        res = 0
+        for i in range(0, len(s)):
+            cnt = defaultdict(int)
+            # cnt = Counter()
+            for j in range(i, len(s)):
+                cnt[s[j]] += 1
+                res += max(cnt.values())-min(cnt.values())
         return res

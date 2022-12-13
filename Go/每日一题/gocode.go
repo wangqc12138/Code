@@ -287,3 +287,32 @@ func minOperations(nums1, nums2 []int) int {
 	}
 	return minOperations_help(v2, v1, s1-s2)
 }
+
+/*
+一个字符串的 美丽值 定义为：出现频率最高字符与出现频率最低字符的出现次数之差。
+
+    比方说，"abaacc" 的美丽值为 3 - 1 = 2 。
+
+给你一个字符串 s ，请你返回它所有子字符串的 美丽值 之和。
+1781
+*/
+func beautySum(s string) int {
+	res := 0
+	for i := 0; i < len(s); i++ {
+		cnt := make(map[byte]int)
+		for j := i; j < len(s); j++ {
+			cnt[s[j]]++
+			maxn, minn := 0, len(s)
+			for _, y := range cnt {
+				if y > maxn {
+					maxn = y
+				}
+				if y < minn {
+					minn = y
+				}
+			}
+			res += maxn - minn
+		}
+	}
+	return res
+}
