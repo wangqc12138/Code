@@ -8123,3 +8123,92 @@ public:
         return res;
     }
 };
+/*
+给你一个 n 个点组成的无向图边集 edgeList ，其中 edgeList[i] = [ui, vi, disi] 表示点 ui 和点 vi 之间有一条长度为 disi 的边。请注意，两个点之间可能有 超过一条边 。
+
+给你一个查询数组queries ，其中 queries[j] = [pj, qj, limitj] ，
+你的任务是对于每个查询 queries[j] ，判断是否存在从 pj 到 qj 的路径，且这条路径上的每一条边都 严格小于 limitj 。
+
+请你返回一个 布尔数组 answer ，其中 answer.length == queries.length ，当 queries[j] 的查询结果为 true 时， answer 第 j 个值为 true ，否则为 false 。
+1697
+ */
+class UnionFindSet
+{
+public:
+    UnionFindSet(int n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            head[i] = i;
+            size[i] = 1;
+        }
+    }
+    int findHead(int i)
+    {
+        int f = head[i];
+        if (f != i)
+        {
+            f = findHead(f);
+        }
+        head[i] = f;
+        return f;
+    }
+    bool isSameSet(int i, int j)
+    {
+        return findHead(i) == findHead(j);
+    }
+    void unionSet(int i, int j)
+    {
+        int hi = findHead(i);
+        int hj = findHead(j);
+        if (hi != hj)
+        {
+            int si = size[hi];
+            int sj = size[hj];
+            if (si > sj)
+            {
+                head[hj] = hi;
+                size[hi] += size[hj];
+            }
+            else
+            {
+                head[hi] = hj;
+                size[hj] += size[hi];
+            }
+        }
+    }
+
+private:
+    map<int, int> head, size;
+};
+class Solution
+{
+public:
+    vector<bool> distanceLimitedPathsExist(int n, vector<vector<int>> &edgeList, vector<vector<int>> &queries)
+    {
+        for (int i = 0; auto &vec : queries)
+        {
+            vec.emplace_back(i++);
+        }
+        sort(queries.begin(), queries.end(), [](vector<int> &i, vector<int> &j)
+             { return i[2] < j[2]; });
+        sort(edgeList.begin(), edgeList.end(), [](vector<int> &i, vector<int> &j)
+             { return i[2] < j[2]; });
+        UnionFindSet ufs = UnionFindSet(n);
+        int i = 0;
+        vector<bool> res(queries.size(), false);
+        for (auto &vec : queries)
+        {
+            int t = vec[2];
+            for (; i < edgeList.size() && edgeList[i][2] < t; i++)
+            {
+                ufs.unionSet(edgeList[i][0], edgeList[i][1]);
+            }
+            if (ufs.isSameSet(vec[0], vec[1]))
+            {
+                res[vec[3]] = true;
+            }
+        }
+        return res;
+    }
+};

@@ -353,3 +353,57 @@ class Solution:
                 cnt[s[j]] += 1
                 res += max(cnt.values())-min(cnt.values())
         return res
+
+
+""" 
+给你一个 n 个点组成的无向图边集 edgeList ，其中 edgeList[i] = [ui, vi, disi] 表示点 ui 和点 vi 之间有一条长度为 disi 的边。请注意，两个点之间可能有 超过一条边 。
+
+给你一个查询数组queries ，其中 queries[j] = [pj, qj, limitj] ，你的任务是对于每个查询 queries[j] ，判断是否存在从 pj 到 qj 的路径，且这条路径上的每一条边都 严格小于 limitj 。
+
+请你返回一个 布尔数组 answer ，其中 answer.length == queries.length ，当 queries[j] 的查询结果为 true 时， answer 第 j 个值为 true ，否则为 false 。
+1697
+
+ """
+
+
+class Solution:
+    def distanceLimitedPathsExist(self, n: int, edgeList: List[List[int]], queries: List[List[int]]) -> List[bool]:
+        head, size = [i for i in range(0, n)], [1]*n
+
+        def findHead(i: int) -> int:
+            if head[i] != i:
+                head[i] = findHead(head[i])
+            return head[i]
+
+        def isSameSet(i, j: int) -> bool:
+            return findHead(i) == findHead(j)
+
+        def unionSet(i, j: int):
+            hi, hj = findHead(i), findHead(j)
+            if hi != hj:
+                if size[hi] > size[hj]:
+                    head[hj] = hi
+                    size[hi] += size[hj]
+                else:
+                    head[hi] = hj
+                    size[hj] += size[hi]
+
+        edgeList.sort(key=lambda e: e[2])
+        # 正常
+        # for i, vec in enumerate(queries):
+        #     vec.append(i)
+        # queries.sort(key=lambda e: e[2])
+        k = 0
+        res = [False]*len(queries)
+        # for vec in queries:
+        #     while k < len(edgeList) and edgeList[k][2] < vec[2]:
+        #         unionSet(edgeList[k][0], edgeList[k][1])
+        #         k += 1
+        #     res[vec[3]] = isSameSet(vec[0], vec[1])
+        # 抄
+        for i, (p, q, limit) in sorted(enumerate(queries), key=lambda e: e[1][2]):
+            while k < len(edgeList) and edgeList[k][2] < limit:
+                unionSet(edgeList[k][0], edgeList[k][1])
+                k += 1
+            res[i] = isSameSet(p, q)
+        return res

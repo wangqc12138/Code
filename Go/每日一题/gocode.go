@@ -1,5 +1,7 @@
 package main
 
+import "sort"
+
 /*
 有时候人们会用重复写一些字母来表示额外的感受，比如 "hello" -> "heeellooo", "hi" -> "hiii"。我们将相邻字母都相同的一串字符定义为相同字母组，例如："h", "eee", "ll", "ooo"。
 
@@ -313,6 +315,61 @@ func beautySum(s string) int {
 			}
 			res += maxn - minn
 		}
+	}
+	return res
+}
+
+/*
+给你一个 n 个点组成的无向图边集 edgeList ，其中 edgeList[i] = [ui, vi, disi] 表示点 ui 和点 vi 之间有一条长度为 disi 的边。请注意，两个点之间可能有 超过一条边 。
+
+给你一个查询数组queries ，其中 queries[j] = [pj, qj, limitj] ，
+你的任务是对于每个查询 queries[j] ，判断是否存在从 pj 到 qj 的路径，且这条路径上的每一条边都 严格小于 limitj 。
+
+请你返回一个 布尔数组 answer ，其中 answer.length == queries.length ，当 queries[j] 的查询结果为 true 时， answer 第 j 个值为 true ，否则为 false 。
+1697
+*/
+func distanceLimitedPathsExist(n int, edgeList [][]int, queries [][]int) []bool {
+	head, size := make(map[int]int), make((map[int]int))
+	for i := 0; i < n; i++ {
+		head[i] = i
+		size[i] = 1
+	}
+	var findHead func(i int) int
+	findHead = func(x int) int {
+		if head[x] != x {
+			head[x] = findHead(head[x])
+		}
+		return head[x]
+	}
+	isSameSet := func(i, j int) bool {
+		return findHead(i) == findHead(j)
+	}
+	unionSet := func(i, j int) {
+		hi, hj := findHead(i), findHead(j)
+		if hi != hj {
+			if size[hi] > size[hj] {
+				head[hj] = hi
+				size[hi] += size[hj]
+			} else {
+				head[hi] = hj
+				size[hj] += size[hi]
+			}
+		}
+	}
+	res := make([]bool, len(queries))
+	sort.Slice(edgeList, func(i, j int) bool { return edgeList[i][2] < edgeList[j][2] })
+	for i := range queries {
+		queries[i] = append(queries[i], i)
+	}
+	sort.Slice(queries, func(i, j int) bool { return queries[i][2] < queries[j][2] })
+	i := 0
+
+	for _, vec := range queries {
+		t := vec[2]
+		for ; i < len(edgeList) && edgeList[i][2] < t; i++ {
+			unionSet(edgeList[i][0], edgeList[i][1])
+		}
+		res[vec[3]] = isSameSet(vec[0], vec[1])
 	}
 	return res
 }
