@@ -1,48 +1,57 @@
 #include "head.h"
 /*
 有 n 个城市通过 m 个航班连接。每个航班都从城市 u 开始，以价格 w 抵达 v。
-现在给定所有的城市和航班，以及出发城市 src 和目的地 dst，你的任务是找到从 src 到 dst 最多经过 k 站中转的最便宜的价格。 
+现在给定所有的城市和航班，以及出发城市 src 和目的地 dst，你的任务是找到从 src 到 dst 最多经过 k 站中转的最便宜的价格。
 如果没有这样的路线，则输出 -1。
 787
 */
-class Solution {
+class Solution
+{
 public:
-class Node{
-public:
-	Node(int c,int s,int w):city(c),step(s),weight(w){};
-	bool operator>(const Node &n)const{
-		return weight>n.weight;
-	}
-	int city;
-	int step;
-	int weight;
-};
-    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
-		unordered_map<int,unordered_map<int,int>> ump;
-		for(auto flight:flights){
-			ump[flight[0]].emplace(flight[1],flight[2]);
-		}
-		vector<vector<int>> price(n,vector<int>(k+2,INT_MAX));//每个城市经过a次航班的最小花费
-		priority_queue<Node,vector<Node>,greater<Node>> mpq;
-		mpq.emplace(Node(src,0,0));
-		while(!mpq.empty()){
-			Node node=mpq.top();
+    class Node
+    {
+    public:
+        Node(int c, int s, int w) : city(c), step(s), weight(w){};
+        bool operator>(const Node &n) const
+        {
+            return weight > n.weight;
+        }
+        int city;
+        int step;
+        int weight;
+    };
+    int findCheapestPrice(int n, vector<vector<int>> &flights, int src, int dst, int k)
+    {
+        unordered_map<int, unordered_map<int, int>> ump;
+        for (auto flight : flights)
+        {
+            ump[flight[0]].emplace(flight[1], flight[2]);
+        }
+        vector<vector<int>> price(n, vector<int>(k + 2, INT_MAX)); // 每个城市经过a次航班的最小花费
+        priority_queue<Node, vector<Node>, greater<Node>> mpq;
+        mpq.emplace(Node(src, 0, 0));
+        while (!mpq.empty())
+        {
+            Node node = mpq.top();
             mpq.pop();
-			if(node.city==dst){
-				return node.weight;
-			}
-			if(node.step>k){
-				continue;
-			}
-			for(auto [next,cost]:ump[node.city]){
-				if(price[next][node.step+1]>node.weight+cost){//不加会超时！
-                    price[next][node.step+1]=node.weight+cost;
-				    mpq.emplace(Node(next,node.step+1,node.weight+cost));
+            if (node.city == dst)
+            {
+                return node.weight;
+            }
+            if (node.step > k)
+            {
+                continue;
+            }
+            for (auto [next, cost] : ump[node.city])
+            {
+                if (price[next][node.step + 1] > node.weight + cost)
+                { // 不加会超时！
+                    price[next][node.step + 1] = node.weight + cost;
+                    mpq.emplace(Node(next, node.step + 1, node.weight + cost));
                 }
-			}
-			
-		}
-		return -1;
+            }
+        }
+        return -1;
     }
 };
 
@@ -53,42 +62,51 @@ public:
 743
 把k到每个节点的最短路径算出来，答案=max(l1,l2,l3,...);
 */
-class Solution {
+class Solution
+{
 public:
-class Node{
-public:
-	int cost;
-	int node;
-	Node(int c,int n):cost(c),node(n){};
-	bool operator>(const Node& n)const{
-		return cost>n.cost;
-	}
-};
-    int networkDelayTime(vector<vector<int>>& times, int n, int k) {
-		unordered_map<int,unordered_map<int,int>> graph;
-		vector<int> price(n+1,INT_MAX);
-		for(auto vec:times){
-			graph[vec[0]][vec[1]]=vec[2];
-		}
-		priority_queue<Node,vector<Node>,greater<Node>> mpq;
-		mpq.emplace(Node(0,k));
-        price[k]=0;
-		while(!mpq.empty()){
-			Node i=mpq.top();
-			mpq.pop();
-			for(auto [next,cost]:graph[i.node]){
-				if(price[next]<=cost+i.cost){
-					continue;
-				}
-				price[next]=cost+i.cost;
-				mpq.emplace(Node(cost+i.cost,next));
-			}
-		}
-        for(int i:price){
-            cout<<i<<" ";
+    class Node
+    {
+    public:
+        int cost;
+        int node;
+        Node(int c, int n) : cost(c), node(n){};
+        bool operator>(const Node &n) const
+        {
+            return cost > n.cost;
         }
-		int res=*max_element(price.begin()+1,price.end());
-		return res==INT_MAX?-1:res;
+    };
+    int networkDelayTime(vector<vector<int>> &times, int n, int k)
+    {
+        unordered_map<int, unordered_map<int, int>> graph;
+        vector<int> price(n + 1, INT_MAX);
+        for (auto vec : times)
+        {
+            graph[vec[0]][vec[1]] = vec[2];
+        }
+        priority_queue<Node, vector<Node>, greater<Node>> mpq;
+        mpq.emplace(Node(0, k));
+        price[k] = 0;
+        while (!mpq.empty())
+        {
+            Node i = mpq.top();
+            mpq.pop();
+            for (auto [next, cost] : graph[i.node])
+            {
+                if (price[next] <= cost + i.cost)
+                {
+                    continue;
+                }
+                price[next] = cost + i.cost;
+                mpq.emplace(Node(cost + i.cost, next));
+            }
+        }
+        for (int i : price)
+        {
+            cout << i << " ";
+        }
+        int res = *max_element(price.begin() + 1, price.end());
+        return res == INT_MAX ? -1 : res;
     }
 };
 /*
@@ -133,7 +151,7 @@ public:
 你从坐标方格的左上平台 (0，0) 出发。返回 你到达坐标方格的右下平台 (n-1, n-1) 所需的最少时间 。
 778
 */
-/* 
+/*
 欢迎各位勇者来到力扣城，本次试炼主题为「信物传送」。
 
 本次试炼场地设有若干传送带，matrix[i][j] 表示第 i 行 j 列的传送带运作方向，"^","v","<",">" 这四种符号分别表示 上、下、左、右 四个方向。
@@ -146,39 +164,46 @@ public:
     start 和 end 的格式均为 [i,j]
 LCP56
  */
-using pii=pair<int,int>;
-using ppi=pair<pii,int>;
-class Solution {
+using pii = pair<int, int>;
+using ppi = pair<pii, int>;
+class Solution
+{
 public:
-	vector<vector<int>> dir={{-1,0},{1,0},{0,-1},{0,1}};
-	vector<char> vstr={'^','v','<','>'};
-    int conveyorBelt(vector<string>& matrix, vector<int>& start, vector<int>& end) {
-		int m=matrix.size(),n=matrix[0].size();
-		vector<vector<int>> visit(m,vector<int>(n,10001));
-		auto cmp=[](ppi a,ppi b){return a.second>b.second;};
-		priority_queue<ppi,vector<ppi>,decltype(cmp)> mpq(cmp);
-		mpq.emplace(ppi({{start[0],start[1]},0}));
-		visit[start[0]][start[1]]=0;
-		while(!mpq.empty()){
-			int x=mpq.top().first.first,y=mpq.top().first.second,z=mpq.top().second;
-			mpq.pop();
-			if(x==end[0]&&y==end[1]){
-				return z;
-			}
-			for(int k=0;k<4;k++){
-				int p=(vstr[k]==matrix[x][y])?0:1;
-				int i=x+dir[k][0],j=y+dir[k][1];
-				if(i<0||j<0||i>=m||j>=n||visit[i][j]<=visit[x][y]+p){
-					continue;
-				}
-				visit[i][j]=visit[x][y]+p;
-				mpq.emplace(ppi({i,j},visit[i][j]));
-			}
-		}
-		return 0;
+    vector<vector<int>> dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    vector<char> vstr = {'^', 'v', '<', '>'};
+    int conveyorBelt(vector<string> &matrix, vector<int> &start, vector<int> &end)
+    {
+        int m = matrix.size(), n = matrix[0].size();
+        vector<vector<int>> visit(m, vector<int>(n, 10001));
+        auto cmp = [](ppi a, ppi b)
+        { return a.second > b.second; };
+        priority_queue<ppi, vector<ppi>, decltype(cmp)> mpq(cmp);
+        mpq.emplace(ppi({{start[0], start[1]}, 0}));
+        visit[start[0]][start[1]] = 0;
+        while (!mpq.empty())
+        {
+            int x = mpq.top().first.first, y = mpq.top().first.second, z = mpq.top().second;
+            mpq.pop();
+            if (x == end[0] && y == end[1])
+            {
+                return z;
+            }
+            for (int k = 0; k < 4; k++)
+            {
+                int p = (vstr[k] == matrix[x][y]) ? 0 : 1;
+                int i = x + dir[k][0], j = y + dir[k][1];
+                if (i < 0 || j < 0 || i >= m || j >= n || visit[i][j] <= visit[x][y] + p)
+                {
+                    continue;
+                }
+                visit[i][j] = visit[x][y] + p;
+                mpq.emplace(ppi({i, j}, visit[i][j]));
+            }
+        }
+        return 0;
     }
 };
-/* 
+/*
 给你一个 m x n 的网格图 grid 。 grid 中每个格子都有一个数字，对应着从该格子出发下一步走的方向。 grid[i][j] 中的数字可能为以下几种情况：
 
     1 ，下一步往右走，也就是你会从 grid[i][j] 走到 grid[i][j + 1]
@@ -197,38 +222,46 @@ public:
 请你返回让网格图至少有一条有效路径的最小代价。
 1368
  */
-using pii=pair<int,int>;
-using ppi=pair<pii,int>;
-class Solution {
+using pii = pair<int, int>;
+using ppi = pair<pii, int>;
+class Solution
+{
 public:
-	vector<vector<int>> dir={{0,1},{0,-1},{1,0},{-1,0}};
-    int minCost(vector<vector<int>>& grid) {
-		int m=grid.size(),n=grid[0].size();
-		vector<vector<int>> visit(m,vector<int>(n,0));
-		auto cmp=[](ppi a,ppi b){return a.second>b.second;};
-		priority_queue<ppi,vector<ppi>,decltype(cmp)> mpq(cmp);
-		mpq.emplace(ppi({{0,0},0}));
-		while(!mpq.empty()){
-			int x=mpq.top().first.first,y=mpq.top().first.second,z=mpq.top().second;
+    vector<vector<int>> dir = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    int minCost(vector<vector<int>> &grid)
+    {
+        int m = grid.size(), n = grid[0].size();
+        vector<vector<int>> visit(m, vector<int>(n, 0));
+        auto cmp = [](ppi a, ppi b)
+        { return a.second > b.second; };
+        priority_queue<ppi, vector<ppi>, decltype(cmp)> mpq(cmp);
+        mpq.emplace(ppi({{0, 0}, 0}));
+        while (!mpq.empty())
+        {
+            int x = mpq.top().first.first, y = mpq.top().first.second, z = mpq.top().second;
             mpq.pop();
-			if(x==m-1&&y==n-1){
-				return z;
-			}
-			if(visit[x][y]){
-				continue;
-			}
-            //cout<<x<<" "<<y<<" "<<z<<endl;
-			visit[x][y]=1;
-			for(int k=0;k<4;k++){
-				int p=grid[x][y]==k+1?0:1;
-				int i=x+dir[k][0],j=y+dir[k][1];
-				if(i<0||j<0||i>=m||j>=n||visit[i][j]){
-					continue;
-				}
-				mpq.emplace(ppi({{i,j},z+p}));
-			}
-		}
-		return 0;
+            if (x == m - 1 && y == n - 1)
+            {
+                return z;
+            }
+            if (visit[x][y])
+            {
+                continue;
+            }
+            // cout<<x<<" "<<y<<" "<<z<<endl;
+            visit[x][y] = 1;
+            for (int k = 0; k < 4; k++)
+            {
+                int p = grid[x][y] == k + 1 ? 0 : 1;
+                int i = x + dir[k][0], j = y + dir[k][1];
+                if (i < 0 || j < 0 || i >= m || j >= n || visit[i][j])
+                {
+                    continue;
+                }
+                mpq.emplace(ppi({{i, j}, z + p}));
+            }
+        }
+        return 0;
     }
 };
 /*
@@ -242,33 +275,94 @@ public:
 现在你需要从左上角 (0, 0) 移动到右下角 (m - 1, n - 1) ，返回需要移除的障碍物的 最小 数目。
 2290
  */
-using pii=pair<int,int>;
-using ppi=pair<pii,int>;
-class Solution {
+using pii = pair<int, int>;
+using ppi = pair<pii, int>;
+class Solution
+{
 public:
-    int minimumObstacles(vector<vector<int>>& grid) {
-        int m=grid.size(),n=grid[0].size();
-        vector<vector<int>> p(m,vector<int>(n,100001));
-        vector<pii> dir={{0,1},{0,-1},{1,0},{-1,0}};
-        auto cmp=[](auto i,auto j){return i.second>j.second;};
-        priority_queue<ppi,vector<ppi>,decltype(cmp)> mpq(cmp);
-        p[0][0]=0;
-        mpq.emplace(ppi({{0,0},0}));
-        while(!mpq.empty()){
-            ppi t=mpq.top();
-            int x=t.first.first,y=t.first.second,z=t.second;
+    int minimumObstacles(vector<vector<int>> &grid)
+    {
+        int m = grid.size(), n = grid[0].size();
+        vector<vector<int>> p(m, vector<int>(n, 100001));
+        vector<pii> dir = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        auto cmp = [](auto i, auto j)
+        { return i.second > j.second; };
+        priority_queue<ppi, vector<ppi>, decltype(cmp)> mpq(cmp);
+        p[0][0] = 0;
+        mpq.emplace(ppi({{0, 0}, 0}));
+        while (!mpq.empty())
+        {
+            ppi t = mpq.top();
+            int x = t.first.first, y = t.first.second, z = t.second;
             mpq.pop();
-            if(x==m-1&&y==n-1){
+            if (x == m - 1 && y == n - 1)
+            {
                 return z;
             }
-            for(auto [i,j]:dir){
-                if(x+i<0||x+i>=m||y+j<0||y+j>=n||z+grid[x+i][y+j]>=p[x+i][y+j]){
+            for (auto [i, j] : dir)
+            {
+                if (x + i < 0 || x + i >= m || y + j < 0 || y + j >= n || z + grid[x + i][y + j] >= p[x + i][y + j])
+                {
                     continue;
                 }
-                p[x+i][y+j]=z+grid[x+i][y+j];
-                mpq.emplace(ppi({x+i,y+j},z+grid[x+i][y+j]));
+                p[x + i][y + j] = z + grid[x + i][y + j];
+                mpq.emplace(ppi({x + i, y + j}, z + grid[x + i][y + j]));
             }
         }
         return 0;
+    }
+};
+/*
+给你一个大小为 m x n 的整数矩阵 grid 和一个大小为 k 的数组 queries 。
+
+找出一个大小为 k 的数组 answer ，且满足对于每个整数 queres[i] ，你从矩阵 左上角 单元格开始，重复以下过程：
+
+    如果 queries[i] 严格 大于你当前所处位置单元格，如果该单元格是第一次访问，则获得 1 分，并且你可以移动到所有 4 个方向（上、下、左、右）上任一 相邻 单元格。
+    否则，你不能获得任何分，并且结束这一过程。
+
+在过程结束后，answer[i] 是你可以获得的最大分数。注意，对于每个查询，你可以访问同一个单元格 多次 。
+
+返回结果数组 answer 。
+2503
+ */
+using ppi = pair<pair<int, int>, int>;
+class Solution
+{
+public:
+    vector<int> maxPoints(vector<vector<int>> &grid, vector<int> &queries)
+    {
+        auto cmp = [](auto i, auto j)
+        { return i.second < j.second; };
+        priority_queue<ppi, vector<ppi>, decltype(cmp)> mpq(cmp);
+        mpq.emplace(ppi({0, 0}, grid[0][0]));
+        int n = queries.size();
+        vector<int> index(n), res(n);
+        iota(index.begin(), index.end(), 0);
+        sort(index.begin(), index.end(), [&](int i, int j)
+             { return queries[i] < queries[j]; });
+        sort(queries.begin(), queries.end());
+        int sum = 0;
+        vector<pair<int, int>> dir = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
+        for (int i = 0; i < n; i++)
+        {
+            int t = queries[i];
+            while (!mpq.empty() && t > mpq.top().second)
+            {
+                auto [x, y] = mpq.top().first;
+                mpq.pop();
+                for (auto [a, b] : dir)
+                {
+                    if (x + a < 0 || x + a >= grid.size() || y + b < 0 || y + b >= grid[0].size() || grid[x + a][y + b] == 0)
+                    {
+                        continue;
+                    }
+                    mpq.emplace(ppi({x + a, y + b}, grid[x + a][y + b]));
+                    grid[x + a][y + b] = 0;
+                    sum++;
+                }
+            }
+            res[index[i]] = sum;
+        }
+        return res;
     }
 };
