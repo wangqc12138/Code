@@ -366,3 +366,95 @@ public:
         return res;
     }
 };
+/*
+给你一个大小为 m x n 的整数矩阵 grid 和一个大小为 k 的数组 queries 。
+
+找出一个大小为 k 的数组 answer ，且满足对于每个整数 queres[i] ，你从矩阵 左上角 单元格开始，重复以下过程：
+
+    如果 queries[i] 严格 大于你当前所处位置单元格，如果该单元格是第一次访问，则获得 1 分，并且你可以移动到所有 4 个方向（上、下、左、右）上任一 相邻 单元格。
+    否则，你不能获得任何分，并且结束这一过程。
+
+在过程结束后，answer[i] 是你可以获得的最大分数。注意，对于每个查询，你可以访问同一个单元格 多次 。
+
+返回结果数组 answer 。
+2503
+ */
+class Solution
+{
+public:
+    vector<int> maxPoints(vector<vector<int>> &grid, vector<int> &queries)
+    {
+        int m = grid.size(), n = grid[0].size();
+        map<int, int> head, size;
+        vector<pair<int, int>> v1(m * n), v2(queries.size());
+        for (int i = 0; i < m * n; i++)
+        {
+            head[i] = i;
+            size[i] = 1;
+            v1[i] = {grid[i / n][i % n], i};
+        }
+        for (int i = 0; i < queries.size(); i++)
+        {
+            v2[i] = {queries[i], i};
+        }
+        sort(v1.begin(), v1.end());
+        sort(v2.begin(), v2.end());
+        function<int(int)> findHead = [&](int x) -> int
+        {
+            if (head[x] != x)
+            {
+                head[x] = findHead(head[x]);
+            }
+            return head[x];
+        };
+        auto isSameHead = [&](int i, int j)
+        {
+            return findHead(i) == findHead(j);
+        };
+        auto unionSet = [&](int i, int j)
+        {
+            int hi = findHead(i);
+            int hj = findHead(j);
+            if (hi != hj)
+            {
+                if (size[hi] > size[hj])
+                {
+                    head[hj] = hi;
+                    size[hi] += size[hj];
+                }
+                else
+                {
+                    head[hi] = hj;
+                    size[hj] += size[hi];
+                }
+            }
+        };
+        auto getNum = [&]()
+        {
+            return size[findHead(0)];
+        };
+        int i = 0;
+        vector<int> res(v2.size());
+        vector<pair<int, int>> dir = {{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
+        for (auto [a, b] : v2)
+        {
+            for (; i < m * n && v1[i].first < a; i++)
+            {
+                int t = v1[i].second;
+                for (auto [x, y] : dir)
+                {
+                    if (t / n + x < 0 || t / n + x >= m || t % n + y < 0 || t % n + y >= n || grid[t / n + x][t % n + y] >= a)
+                    {
+                        continue;
+                    }
+                    unionSet(t, (t / n + x) * n + t % n + y);
+                }
+            }
+            if (grid[0][0] < a)
+            {
+                res[b] = getNum();
+            }
+        }
+        return res;
+    }
+};

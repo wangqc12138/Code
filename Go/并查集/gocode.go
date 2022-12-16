@@ -1,5 +1,7 @@
 package main
 
+import "sort"
+
 /*
 存在一个 无向图 ，图中有 n 个节点。其中每个节点都有一个介于 0 到 n - 1 之间的唯一编号。
 给你一个二维数组 graph ，其中 graph[u] 是一个节点数组，由节点 u 的邻接节点组成。
@@ -64,4 +66,56 @@ func isBipartite(graph [][]int) bool {
 		}
 	}
 	return true
+}
+
+/*
+给你一个大小为 m x n 的整数矩阵 grid 和一个大小为 k 的数组 queries 。
+
+找出一个大小为 k 的数组 answer ，且满足对于每个整数 queres[i] ，你从矩阵 左上角 单元格开始，重复以下过程：
+
+    如果 queries[i] 严格 大于你当前所处位置单元格，如果该单元格是第一次访问，则获得 1 分，并且你可以移动到所有 4 个方向（上、下、左、右）上任一 相邻 单元格。
+    否则，你不能获得任何分，并且结束这一过程。
+
+在过程结束后，answer[i] 是你可以获得的最大分数。注意，对于每个查询，你可以访问同一个单元格 多次 。
+
+返回结果数组 answer 。
+2503
+*/
+func maxPoints(grid [][]int, queries []int) []int {
+	m, n := len(grid), len(grid[0])
+	mn := m * n
+	head, size, g := make([]int, mn), make([]int, mn), make([][]int, mn)
+	for i := 0; i < mn; i++ {
+		head[i] = i
+		size[i] = 1
+		g[i] = []int{grid[i/n][i%n], i / n, i % n}
+	}
+	var find func(x int) int
+	find = func(x int) int {
+		if head[x] != x {
+			head[x] = find(head[x])
+		}
+		return head[x]
+	}
+	res := make([]int, len(queries))
+	id := res
+	for i := 0; i < len(queries); i++ {
+		id[i] = i
+	}
+	sort.Slice(id, func(i, j int) bool {
+		return queries[i] < queries[j]
+	})
+	sort.Slice(g, func(i, j int) bool {
+		return g[i][0] < g[j][0]
+	})
+	k := 0
+
+	for _, i := range id {
+		q := queries[i]
+		for ; k < mn && q > grid[g[k][1]][g[k][2]]; k++ {
+
+		}
+		res[i] = size[find(0)]
+	}
+	return res
 }
