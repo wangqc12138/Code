@@ -431,3 +431,84 @@ func minElements(nums []int, limit int, goal int) int {
 	}
 	return (abs(t-goal) + limit - 1) / limit
 }
+
+/*
+有一个具有 n 个顶点的 双向 图，其中每个顶点标记从 0 到 n - 1（包含 0 和 n - 1）。图中的边用一个二维整数数组 edges 表示，其中 edges[i] = [ui, vi] 表示顶点 ui 和顶点 vi 之间的双向边。 每个顶点对由 最多一条 边连接，并且没有顶点存在与自身相连的边。
+
+请你确定是否存在从顶点 source 开始，到顶点 destination 结束的 有效路径 。
+
+给你数组 edges 和整数 n、source 和 destination，如果从 source 到 destination 存在 有效路径 ，则返回 true，否则返回 false 。
+1971
+*/
+//bfs
+// func validPath(n int, edges [][]int, source int, destination int) bool {
+// 	queue, visit := []int{}, make([]int, n)
+// 	queue = append(queue, source)
+// 	visit[source] = 1
+// 	next := make(map[int][]int)
+// 	for _, vec := range edges {
+// 		next[vec[0]] = append(next[vec[0]], vec[1])
+// 		next[vec[1]] = append(next[vec[1]], vec[1])
+// 	}
+// 	for len(queue) > 0 {
+// 		now := queue[0]
+// 		queue = queue[1:]
+// 		if now == destination {
+// 			return true
+// 		}
+// 		for _, i := range next[now] {
+// 			if visit[i] == 0 {
+// 				visit[i] = 1
+// 				queue = append(queue, i)
+// 			}
+// 		}
+// 	}
+// 	return false
+// }
+
+//dfs
+// func validPath(n int, edges [][]int, source int, destination int) bool {
+// 	next, visit := make([][]int, n), make([]int, n)
+// 	for _, e := range edges {
+// 		x, y := e[0], e[1]
+// 		next[x] = append(next[x], y)
+// 		next[y] = append(next[y], x)
+// 	}
+// 	var dfs func(int) bool
+// 	dfs = func(i int) bool {
+// 		if i == destination {
+// 			return true
+// 		}
+// 		visit[i] = 1
+// 		for _, t := range next[i] {
+// 			if visit[t] == 0 && dfs(t) {
+// 				return true
+// 			}
+// 		}
+// 		return false
+// 	}
+// 	return dfs(source)
+// }
+
+//ufs
+func validPath(n int, edges [][]int, source int, destination int) bool {
+	head := make([]int, n)
+	for i := 0; i < n; i++ {
+		head[i] = i
+	}
+	var find func(int) int
+	find = func(i int) int {
+		if i != head[i] {
+			head[i] = find(head[i])
+		}
+		return head[i]
+	}
+	connect := func(i, j int) {
+		head[find(i)] = find(j)
+	}
+	for _, e := range edges {
+		x, y := e[0], e[1]
+		connect(x, y)
+	}
+	return find(source) == find(destination)
+}

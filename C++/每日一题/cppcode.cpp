@@ -8273,3 +8273,117 @@ public:
         return (abs(sum - goal) + limit - 1) / limit;
     }
 };
+/*
+有一个具有 n 个顶点的 双向 图，其中每个顶点标记从 0 到 n - 1（包含 0 和 n - 1）。图中的边用一个二维整数数组 edges 表示，其中 edges[i] = [ui, vi] 表示顶点 ui 和顶点 vi 之间的双向边。 每个顶点对由 最多一条 边连接，并且没有顶点存在与自身相连的边。
+
+请你确定是否存在从顶点 source 开始，到顶点 destination 结束的 有效路径 。
+
+给你数组 edges 和整数 n、source 和 destination，如果从 source 到 destination 存在 有效路径 ，则返回 true，否则返回 false 。
+1971
+ */
+// dfs
+class Solution
+{
+public:
+    bool validPath(int n, vector<vector<int>> &edges, int source, int destination)
+    {
+        map<int, vector<int>> next;
+        for (auto vec : edges)
+        {
+            next[vec[0]].emplace_back(vec[1]);
+            next[vec[1]].emplace_back(vec[0]);
+        }
+        vector<int> visit(n, 0);
+        return dfs(next, source, destination, visit);
+    }
+    bool dfs(map<int, vector<int>> &next, int src, int dest, vector<int> &visit)
+    {
+        if (src == dest)
+        {
+            return true;
+        }
+        for (auto i : next[src])
+        {
+            if (visit[i])
+            {
+                continue;
+            }
+            visit[i] = 1;
+            if (dfs(next, i, dest, visit))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+};
+// bfs
+class Solution
+{
+public:
+    bool validPath(int n, vector<vector<int>> &edges, int source, int destination)
+    {
+        queue<int> mq;
+        vector<int> visit(n, 0);
+        mq.emplace(source);
+        visit[source] = 1;
+        map<int, vector<int>> next;
+        for (auto vec : edges)
+        {
+            next[vec[0]].emplace_back(vec[1]);
+            next[vec[1]].emplace_back(vec[0]);
+        }
+        while (!mq.empty())
+        {
+            int now = mq.front();
+            mq.pop();
+            if (now == destination)
+            {
+                return true;
+            }
+            for (auto i : next[now])
+            {
+                if (visit[i] == 0)
+                {
+                    visit[i] = 1;
+                    mq.emplace(i);
+                }
+            }
+        }
+        return false;
+    }
+};
+// ufs
+class Solution
+{
+public:
+    map<int, int> head;
+    int find(int x)
+    {
+        if (head[x] != x)
+        {
+            head[x] = find(head[x]);
+        }
+        return head[x];
+    }
+    void connect(int i, int j)
+    {
+        int hi = find(i), hj = find(j);
+        if (hi != hj)
+        {
+            head[hi] = hj;
+        }
+    }
+    bool validPath(int n, vector<vector<int>> &edges, int source, int destination)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            head[i] = i;
+        }
+        for (auto vec : edges)
+        {
+            connect(vec[0], vec[1]);
+        }
+        return find(source) == find(destination);
+    }
+};
