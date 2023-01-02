@@ -8387,3 +8387,93 @@ public:
         return find(source) == find(destination);
     }
 };
+/*
+给你一个整数数组 nums ，其中 nums[i] 表示第 i 个袋子里球的数目。同时给你一个整数 maxOperations 。
+
+你可以进行如下操作至多 maxOperations 次：
+
+    选择任意一个袋子，并将袋子里的球分到 2 个新的袋子中，每个袋子里都有 正整数 个球。
+        比方说，一个袋子里有 5 个球，你可以把它们分到两个新袋子里，分别有 1 个和 4 个球，或者分别有 2 个和 3 个球。
+
+你的开销是单个袋子里球数目的 最大值 ，你想要 最小化 开销。
+
+请你返回进行上述操作后的最小开销。
+1760
+ */
+class Solution
+{
+public:
+    int minimumSize(vector<int> &nums, int maxOperations)
+    {
+        int left = 1, right = *max_element(nums.begin(), nums.end());
+        while (left < right)
+        {
+            int mid = (right + left) / 2;
+            int k = 0;
+            for (int i = 0; i < nums.size(); i++)
+            {
+                if (nums[i] > mid)
+                {
+                    k++;
+                    nums[i] -= mid;
+                    i--;
+                }
+            }
+            if (k < maxOperations)
+            {
+                right = mid - 1;
+            }
+            else
+            {
+                left = mid;
+            }
+        }
+        return left;
+    }
+};
+/*
+你正在玩一个单人游戏，面前放置着大小分别为 a​​​​​​、b 和 c​​​​​​ 的 三堆 石子。
+
+每回合你都要从两个 不同的非空堆 中取出一颗石子，并在得分上加 1 分。当存在 两个或更多 的空堆时，游戏停止。
+
+给你三个整数 a 、b 和 c ，返回可以得到的 最大分数 。
+1753
+ */
+class Solution
+{
+public:
+    int maximumScore(int a, int b, int c)
+    {
+        priority_queue<int> mq;
+        mq.emplace(a);
+        mq.emplace(b);
+        mq.emplace(c);
+        int res = 0;
+        while (!mq.empty())
+        {
+            auto f = mq.top();
+            mq.pop();
+            auto s = mq.top();
+            mq.pop();
+            res++;
+            if (s - 1 == 0)
+            {
+                if (f - 1 == 0 || mq.top() == 0)
+                {
+                    break;
+                }
+            }
+            mq.emplace(f - 1);
+            mq.emplace(s - 1);
+        }
+        return res;
+    }
+};
+// 数学
+class Solution
+{
+public:
+    int maximumScore(int a, int b, int c)
+    {
+    }
+};
