@@ -8516,3 +8516,59 @@ public:
         return true;
     }
 };
+/*
+给你三个正整数 n、index 和 maxSum 。你需要构造一个同时满足下述所有条件的数组 nums（下标 从 0 开始 计数）：
+
+    nums.length == n
+    nums[i] 是 正整数 ，其中 0 <= i < n
+    abs(nums[i] - nums[i+1]) <= 1 ，其中 0 <= i < n-1
+    nums 中所有元素之和不超过 maxSum
+    nums[index] 的值被 最大化
+
+返回你所构造的数组中的 nums[index] 。
+
+注意：abs(x) 等于 x 的前提是 x >= 0 ；否则，abs(x) 等于 -x 。
+1802
+ */
+class Solution
+{
+public:
+    int maxValue(int n, int index, int maxSum)
+    {
+        int len1 = index, len2 = n - 1 - index;
+        // cout<<len1<<" "<<len2<<endl;
+        int left = 1, right = maxSum;
+        while (left < right)
+        {
+            int mid = (left + right + 1) / 2;
+            long long sum = -mid;
+            if (mid <= len1)
+            {
+                sum += (long long)(mid + 1) * mid / 2 + len1 - mid + 1;
+            }
+            else
+            {
+                sum += (long long)(mid + mid - len1) * (len1 + 1) / 2;
+            }
+            if (mid <= len2)
+            {
+                sum += (long long)(mid + 1) * mid / 2 + len2 - mid + 1;
+            }
+            else
+            {
+                sum += (long long)(mid + mid - len2) * (len2 + 1) / 2;
+            }
+            // cout<<left<<" "<<mid<<" "<<right<<endl;
+            // cout<<sum<<endl;
+            if (sum > maxSum)
+            {
+                right = mid - 1;
+            }
+            else
+            {
+                left = mid;
+            }
+        }
+        return left;
+    }
+};
