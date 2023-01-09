@@ -548,3 +548,35 @@ class Solution:
                     return False
                 pre = int(ele)
         return True
+
+
+""" 
+给你一个整数数组 nums （下标 从 0 开始 计数）以及两个整数：low 和 high ，请返回 漂亮数对 的数目。
+
+漂亮数对 是一个形如 (i, j) 的数对，其中 0 <= i < j < nums.length 且 low <= (nums[i] XOR nums[j]) <= high 。
+1803
+ """
+
+
+class Solution:
+    def countPairs(self, nums: List[int], low: int, high: int) -> int:
+
+
+""" 
+给你一个正整数 num ，请你统计并返回 小于或等于 num 且各位数字之和为 偶数 的正整数的数目。
+
+正整数的 各位数字之和 是其所有位上的对应数字相加的结果。
+2180
+ """
+
+
+class Solution:
+    def countEven(self, num: int) -> int:
+        ans = 0
+        for x in range(1, num+1):
+            k = 0
+            while x:
+                k += x % 10
+                x = x//10
+            ans += (k % 2 == 0)
+        return ans

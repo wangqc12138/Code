@@ -8572,3 +8572,148 @@ public:
         return left;
     }
 };
+/*
+给你一个整数数组 nums （下标 从 0 开始 计数）以及两个整数：low 和 high ，请返回 漂亮数对 的数目。
+
+漂亮数对 是一个形如 (i, j) 的数对，其中 0 <= i < j < nums.length 且 low <= (nums[i] XOR nums[j]) <= high 。
+1803
+ */
+class trie
+{
+public:
+    void insert(int n)
+    {
+        trie *root = this;
+        for (int i = 15; i >= 0; i--)
+        {
+            int k = (n >> i) & 1;
+            if (!root->next[k])
+            {
+                root->next[k] = new trie();
+            }
+            root = root->next[k];
+            root->num++;
+        }
+        trie *root = this;
+        for (int i = 15; i >= 0; i--)
+        {
+            int k = (n >> i) & 1;
+            if (!root->next[k])
+            {
+                root->next[k] = new trie();
+            }
+            root = root->next[k];
+            cout << root->num << " ";
+        }
+        cout << endl;
+    }
+    int find(int n, int k)
+    {
+        trie *root = this;
+        int res = 0;
+        for (int i = 15; i >= 0; i--)
+        {
+            int b1 = (n >> i) & 1;
+            int b2 = (k >> i) & 1;
+            if (b2 == 0)
+            {
+                if (!root->next[b1])
+                {
+                    return res;
+                }
+                root = root->next[b1];
+            }
+            else
+            {
+                if (root->next[b1])
+                {
+                    res += root->next[b1]->num;
+                }
+                if (!root->next[!b1])
+                {
+                    return res;
+                }
+                root = root->next[!b1];
+            }
+        }
+        return res + root->num;
+    }
+
+private:
+    trie *next[2];
+    int num = 0;
+};
+class Solution
+{
+public:
+    int countPairs(vector<int> &nums, int low, int high)
+    {
+        trie *root = new trie();
+        int res = 0;
+        for (auto i : nums)
+        {
+            root->insert(i);
+            res += root->find(i, high) - root->find(i, low - 1);
+        }
+        return res;
+    }
+};
+/*
+给你一个正整数 num ，请你统计并返回 小于或等于 num 且各位数字之和为 偶数 的正整数的数目。
+
+正整数的 各位数字之和 是其所有位上的对应数字相加的结果。
+2180
+ */
+class Solution
+{
+public:
+    int countEven(int num)
+    {
+        vector<int> ans(1001, 0);
+        for (int i = 1; i <= 1000; i++)
+        {
+            int t = 0;
+            for (auto c : to_string(i))
+            {
+                t += c - '0';
+            }
+            ans[i] = ans[i - 1] + t % 2 == 0;
+        }
+        return ans[num];
+    }
+};
+/*
+给你一个偶数 n​​​​​​ ，已知存在一个长度为 n 的排列 perm ，其中 perm[i] == i​（下标 从 0 开始 计数）。
+
+一步操作中，你将创建一个新数组 arr ，对于每个 i ：
+
+    如果 i % 2 == 0 ，那么 arr[i] = perm[i / 2]
+    如果 i % 2 == 1 ，那么 arr[i] = perm[n / 2 + (i - 1) / 2]
+
+然后将 arr​​ 赋值​​给 perm 。
+
+要想使 perm 回到排列初始值，至少需要执行多少步操作？返回最小的 非零 操作步数。、
+1806
+ */
+class Solution
+{
+public:
+    int reinitializePermutation(int n)
+    {
+        // 01234567-04152637-02461357
+        int t = n / 2, res = 1;
+        while (t != 1)
+        {
+            if (t % 2)
+            {
+                t = n / 2 + (t - 1) / 2;
+            }
+            else
+            {
+                t /= 2;
+            }
+            res++;
+        }
+        return res;
+    }
+};
