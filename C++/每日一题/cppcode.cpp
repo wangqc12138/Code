@@ -8717,3 +8717,108 @@ public:
         return res;
     }
 };
+/*
+有一个需要密码才能打开的保险箱。密码是 n 位数, 密码的每一位是 k 位序列 0, 1, ..., k-1 中的一个 。
+
+你可以随意输入密码，保险箱会自动记住最后 n 位输入，如果匹配，则能够打开保险箱。
+
+举个例子，假设密码是 "345"，你可以输入 "012345" 来打开它，只是你输入了 6 个字符.
+
+请返回一个能打开保险箱的最短字符串。
+753
+ */
+class Solution
+{
+public:
+    string crackSafe(int n, int k)
+    {
+    }
+};
+/*
+给你一个下标从 0 开始长度为 n 的字符串 num ，它只包含数字。
+
+如果对于 每个 0 <= i < n 的下标 i ，都满足数位 i 在 num 中出现了 num[i]次，那么请你返回 true ，否则返回 false 。
+2283
+ */
+class Solution
+{
+public:
+    bool digitCount(string num)
+    {
+        map<int, int> mp;
+        for (auto c : num)
+        {
+            mp[c - '0']++;
+        }
+        for (int i = 0; i < num.size(); i++)
+        {
+            if (num[i] - '0' != mp[i])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+/*
+给你一个字符串 s ，它包含一些括号对，每个括号中包含一个 非空 的键。
+
+    比方说，字符串 "(name)is(age)yearsold" 中，有 两个 括号对，分别包含键 "name" 和 "age" 。
+
+你知道许多键对应的值，这些关系由二维字符串数组 knowledge 表示，其中 knowledge[i] = [keyi, valuei] ，表示键 keyi 对应的值为 valuei 。
+
+你需要替换 所有 的括号对。当你替换一个括号对，且它包含的键为 keyi 时，你需要：
+
+    将 keyi 和括号用对应的值 valuei 替换。
+    如果从 knowledge 中无法得知某个键对应的值，你需要将 keyi 和括号用问号 "?" 替换（不需要引号）。
+
+knowledge 中每个键最多只会出现一次。s 中不会有嵌套的括号。
+
+请你返回替换 所有 括号对后的结果字符串。
+1807
+ */
+class Solution
+{
+public:
+    string evaluate(string s, vector<vector<string>> &knowledge)
+    {
+        map<string, string> mp;
+        for (auto vec : knowledge)
+        {
+            mp[vec[0]] = vec[1];
+        }
+        bool flag = false;
+        string temp = "", res = "";
+        for (auto c : s)
+        {
+            if (c == '(')
+            {
+                flag = true;
+                continue;
+            }
+            if (c == ')')
+            {
+                flag = false;
+                if (mp.count(temp))
+                {
+                    res += mp[temp];
+                }
+                else
+                {
+                    res += "?";
+                }
+                temp = "";
+                continue;
+            }
+            if (flag)
+            {
+                temp += c;
+            }
+            else
+            {
+                res += c;
+            }
+        }
+        return res;
+    }
+};

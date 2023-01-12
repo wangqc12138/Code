@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <sys/stat.h>
+#include <regex>
 using namespace std;
 int minimumSize(vector<int> &nums, int maxOperations)
 {
@@ -28,6 +29,22 @@ int minimumSize(vector<int> &nums, int maxOperations)
 
 int main()
 {
+    regex re("data.*");
+    cout << regex_match("data1", re) << endl;
+
+    return 0;
+    string str = "data.*$@$son.*";
+    string::size_type begin = str.find("$@$");
+    cout << begin << endl;
+    if (begin != str.npos)
+    {
+        string strTemp1 = str.substr(begin + 3);
+        cout << strTemp1 << endl;
+        string strTemp2 = str.substr(0, begin);
+        cout << strTemp2 << endl;
+    }
+
+    return 0;
     char s1[256];
     strcpy(s1, "/data01/gxcj/ob_run/var/stat/wqc_group.wqc_task.stat_10.19.14.34_20220509");
     char s2[256];
