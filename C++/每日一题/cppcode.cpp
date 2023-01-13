@@ -8822,3 +8822,28 @@ public:
         return res;
     }
 };
+
+/* 
+给你两个下标从 0 开始的字符串 s 和 target 。你可以从 s 取出一些字符并将其重排，得到若干新的字符串。
+
+从 s 中取出字符并重新排列，返回可以形成 target 的 最大 副本数。
+ */
+class Solution {
+public:
+    int rearrangeCharacters(string s, string target) {
+        int a[26],b[26];
+        for(auto i:s){
+            a[i-'a']++;
+        }
+        int res=0;
+        for(auto i:target){
+            b[i-'a']++;
+        }
+        for(int i=0;i<26;i++){
+            if(b[i]){
+                res=min(res,a[i]/b[i]);
+            }
+        }
+        return res;
+    }
+};
