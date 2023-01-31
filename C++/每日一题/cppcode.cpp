@@ -8823,27 +8823,273 @@ public:
     }
 };
 
-/* 
+/*
 给你两个下标从 0 开始的字符串 s 和 target 。你可以从 s 取出一些字符并将其重排，得到若干新的字符串。
 
 从 s 中取出字符并重新排列，返回可以形成 target 的 最大 副本数。
  */
-class Solution {
+class Solution
+{
 public:
-    int rearrangeCharacters(string s, string target) {
-        int a[26],b[26];
-        for(auto i:s){
-            a[i-'a']++;
+    int rearrangeCharacters(string s, string target)
+    {
+        int a[26], b[26];
+        for (auto i : s)
+        {
+            a[i - 'a']++;
         }
-        int res=0;
-        for(auto i:target){
-            b[i-'a']++;
+        int res = 0;
+        for (auto i : target)
+        {
+            b[i - 'a']++;
         }
-        for(int i=0;i<26;i++){
-            if(b[i]){
-                res=min(res,a[i]/b[i]);
+        for (int i = 0; i < 26; i++)
+        {
+            if (b[i])
+            {
+                res = min(res, a[i] / b[i]);
             }
         }
         return res;
+    }
+};
+/*
+给你一个由正整数组成的数组 nums 。
+
+数字序列的 最大公约数 定义为序列中所有整数的共有约数中的最大整数。
+
+    例如，序列 [4,6,16] 的最大公约数是 2 。
+
+数组的一个 子序列 本质是一个序列，可以通过删除数组中的某些元素（或者不删除）得到。
+
+    例如，[2,5,10] 是 [1,2,1,2,4,1,5,10] 的一个子序列。
+
+计算并返回 nums 的所有 非空 子序列中 不同 最大公约数的 数目 。
+1819
+ */
+class Solution
+{
+public:
+    int countDifferentSubsequenceGCDs(vector<int> &nums)
+    {
+    }
+};
+/*
+小写字符 的 数值 是它在字母表中的位置（从 1 开始），因此 a 的数值为 1 ，b 的数值为 2 ，c 的数值为 3 ，以此类推。
+
+字符串由若干小写字符组成，字符串的数值 为各字符的数值之和。例如，字符串 "abe" 的数值等于 1 + 2 + 5 = 8 。
+
+给你两个整数 n 和 k 。返回 长度 等于 n 且 数值 等于 k 的 字典序最小 的字符串。
+
+注意，如果字符串 x 在字典排序中位于 y 之前，就认为 x 字典序比 y 小，有以下两种情况：
+
+    x 是 y 的一个前缀；
+    如果 i 是 x[i] != y[i] 的第一个位置，且 x[i] 在字母表中的位置比 y[i] 靠前。
+1663
+ */
+class Solution
+{
+public:
+    string getSmallestString(int n, int k)
+    {
+        k -= n;
+        string res;
+        for (int i = 0; i < n; i++)
+        {
+            if (k > 25)
+            {
+                res += 'z';
+                k -= 25;
+            }
+            else
+            {
+                res += 'a' + k;
+                k = 0;
+            }
+        }
+        reverse(res.begin(), res.end());
+        return res;
+    }
+};
+/*
+给你一个由英文字母组成的字符串 s ，请你找出并返回 s 中的 最好 英文字母。返回的字母必须为大写形式。如果不存在满足条件的字母，则返回一个空字符串。
+
+最好 英文字母的大写和小写形式必须 都 在 s 中出现。
+
+英文字母 b 比另一个英文字母 a 更好 的前提是：英文字母表中，b 在 a 之 后 出现
+2309
+ */
+class Solution
+{
+public:
+    string greatestLetter(string s)
+    {
+        set<int> st(s.begin(), s.end());
+        string res = "";
+        for (auto c = 'a'; c <= 'z'; c++)
+        {
+            if (st.count(c) && st.count(c + 'A' - 'a'))
+            {
+                res = c + 'A' - 'a';
+            }
+        }
+        return res;
+    }
+};
+/*
+You are given an integer array nums. You can choose exactly one index (0-indexed) and remove the element. Notice that the index of the elements may change after the removal.
+
+For example, if nums = [6,1,7,4,1]:
+
+    Choosing to remove index 1 results in nums = [6,7,4,1].
+    Choosing to remove index 2 results in nums = [6,1,4,1].
+    Choosing to remove index 4 results in nums = [6,1,7,4].
+
+An array is fair if the sum of the odd-indexed values equals the sum of the even-indexed values.
+
+Return the number of indices that you could choose such that after the removal, nums is fair.
+1664
+ */
+class Solution
+{
+public:
+    int waysToMakeFair(vector<int> &nums)
+    {
+        int left1 = 0, right = 0, res = 0;
+        long long sum = accumulate(nums.begin(), nums.end(), 0);
+        for (int i = 0; i < nums.size(); i += 2)
+        {
+            right += nums[i];
+        }
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (i % 2 == 0)
+            {
+                right -= nums[i];
+            }
+            if ((left1 + right) * 2 == sum - nums[i])
+            {
+                res++;
+            }
+            if (i % 2)
+            {
+                left1 += nums[i];
+            }
+        }
+        return res;
+    }
+};
+/*
+给你一个字符串 s ，每 两个 连续竖线 '|' 为 一对 。换言之，第一个和第二个 '|' 为一对，第三个和第四个 '|' 为一对，以此类推。
+
+请你返回 不在 竖线对之间，s 中 '*' 的数目。
+
+注意，每个竖线 '|' 都会 恰好 属于一个对。
+2315
+ */
+class Solution
+{
+public:
+    int countAsterisks(string s)
+    {
+        bool flag = true;
+        int res = 0;
+        for (auto c : s)
+        {
+            if (c == '|')
+            {
+                flag = !flag;
+            }
+            if (c == '*')
+            {
+                res += flag;
+            }
+        }
+        return res;
+    }
+};
+/*
+给你两个链表 list1 和 list2 ，它们包含的元素分别为 n 个和 m 个。
+
+请你将 list1 中下标从 a 到 b 的全部节点都删除，并将list2 接在被删除节点的位置。
+
+下图中蓝色边和节点展示了操作后的结果：
+
+请你返回结果链表的头指针。
+1669
+ */
+
+// Definition for singly-linked list.
+struct ListNode
+{
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution
+{
+public:
+    ListNode *mergeInBetween(ListNode *list1, int a, int b, ListNode *list2)
+    {
+        ListNode *temp = new ListNode();
+        temp->next = list1;
+        auto pa = list1, pb = pa;
+        for (int i = 0; i <= b; i++)
+        {
+            if (i < a)
+            {
+                pa = pa->next;
+            }
+            pb = pb->next;
+        }
+        auto pc = list2;
+        while (pc->next)
+        {
+            pc = pc->next;
+        }
+        pa->next = list2;
+        pc->next = pb;
+        return temp->next;
+    }
+};
+/*
+如果一个正方形矩阵满足下述 全部 条件，则称之为一个 X 矩阵 ：
+
+    矩阵对角线上的所有元素都 不是 0
+    矩阵中所有其他元素都是 0
+
+给你一个大小为 n x n 的二维整数数组 grid ，表示一个正方形矩阵。如果 grid 是一个 X 矩阵 ，返回 true ；否则，返回 false 。
+2319
+ */
+class Solution
+{
+public:
+    bool checkXMatrix(vector<vector<int>> &grid)
+    {
+        int n = grid.size();
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                if (i == j || n - 1 - i == j)
+                {
+                    if (grid[i][j] == 0)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (grid[i][j] != 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 };
