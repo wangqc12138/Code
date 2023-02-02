@@ -560,6 +560,8 @@ class Solution:
 
 class Solution:
     def countPairs(self, nums: List[int], low: int, high: int) -> int:
+        return 0
+
 
 """ 
 给你一个正整数 num ，请你统计并返回 小于或等于 num 且各位数字之和为 偶数 的正整数的数目。
@@ -603,4 +605,25 @@ api
 
 class Solution:
     def evaluate(self, s: str, knowledge: List[List[str]]) -> str:
-        mp = ['{'+k+'}' for k in ]
+        return ""
+
+
+class Solution:
+    def areSentencesSimilar(self, sentence1: str, sentence2: str) -> bool:
+        s1, s2 = sentence1.split(' '), sentence2.split(' ')
+        if len(s1) == len(s2):
+            return s1 == s2
+        if len(s1) < len(s2):
+            s1, s2 = s2, s1
+        t = 0
+        for i in range(0, len(s2)):
+            if s1[i] == s2[i]:
+                t += 1
+            else:
+                break
+        for i in range(0, len(s2)):
+            if s1[len(s1)-1-i] == s2[len(s2)-1-i]:
+                t += 1
+            else:
+                break
+        return t >= len(s2)

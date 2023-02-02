@@ -8875,6 +8875,160 @@ public:
     }
 };
 /*
+给你一个下标从 0 开始的整数数组 nums ，其长度是 2 的幂。
+
+对 nums 执行下述算法：
+
+    设 n 等于 nums 的长度，如果 n == 1 ，终止 算法过程。否则，创建 一个新的整数数组 newNums ，新数组长度为 n / 2 ，下标从 0 开始。
+    对于满足 0 <= i < n / 2 的每个 偶数 下标 i ，将 newNums[i] 赋值 为 min(nums[2 * i], nums[2 * i + 1]) 。
+    对于满足 0 <= i < n / 2 的每个 奇数 下标 i ，将 newNums[i] 赋值 为 max(nums[2 * i], nums[2 * i + 1]) 。
+    用 newNums 替换 nums 。
+    从步骤 1 开始 重复 整个过程。
+
+执行算法后，返回 nums 中剩下的那个数字。
+2293
+ */
+class Solution
+{
+public:
+    int minMaxGame(vector<int> &nums)
+    {
+        while (nums.size() > 1)
+        {
+            vector<int> temp;
+            for (int i = 0; i < nums.size(); i += 2)
+            {
+                if ((i / 2) % 2)
+                {
+                    temp.emplace_back(max(nums[i], nums[i + 1]));
+                }
+                else
+                {
+                    temp.emplace_back(min(nums[i], nums[i + 1]));
+                }
+            }
+            nums = temp;
+        }
+        return nums[0];
+    }
+};
+/*
+一个句子是由一些单词与它们之间的单个空格组成，且句子的开头和结尾没有多余空格。比方说，"Hello World" ，"HELLO" ，"hello world hello world" 都是句子。
+每个单词都 只 包含大写和小写英文字母。
+
+如果两个句子 sentence1 和 sentence2 ，可以通过往其中一个句子插入一个任意的句子（可以是空句子）而得到另一个句子，那么我们称这两个句子是 相似的 。
+比方说，sentence1 = "Hello my name is Jane" 且 sentence2 = "Hello Jane" ，我们可以往 sentence2 中 "Hello" 和 "Jane" 之间插入 "my name is" 得到 sentence1 。
+
+给你两个句子 sentence1 和 sentence2 ，如果 sentence1 和 sentence2 是相似的，请你返回 true ，否则返回 false
+1813
+ */
+/*
+给你一个数组 nums ，数组中只包含非负整数。定义 rev(x) 的值为将整数 x 各个数字位反转得到的结果。比方说 rev(123) = 321 ， rev(120) = 21 。
+我们称满足下面条件的下标对 (i, j) 是 好的 ：
+
+    0 <= i < j < nums.length
+    nums[i] + rev(nums[j]) == nums[j] + rev(nums[i])
+
+请你返回好下标对的数目。由于结果可能会很大，请将结果对 109 + 7 取余 后返回。
+1814
+ */
+class Solution
+{
+public:
+    int countNicePairs(vector<int> &nums)
+    {
+        map<int, int> mp;
+        for (auto i : nums)
+        {
+            auto s = to_string(i);
+            reverse(s.begin(), s.end());
+            mp[i - stoi(s)]++;
+        }
+        long long res = 0;
+        for (auto [x, y] : mp)
+        {
+            res += (long long)(y - 1) * y / 2;
+            res %= 1000000007;
+        }
+        return res;
+    }
+};
+/*
+给你两个整数 m 和 k ，以及数据流形式的若干整数。你需要实现一个数据结构，计算这个数据流的 MK 平均值 。
+
+MK 平均值 按照如下步骤计算：
+
+    如果数据流中的整数少于 m 个，MK 平均值 为 -1 ，否则将数据流中最后 m 个元素拷贝到一个独立的容器中。
+    从这个容器中删除最小的 k 个数和最大的 k 个数。
+    计算剩余元素的平均值，并 向下取整到最近的整数 。
+
+请你实现 MKAverage 类：
+
+    MKAverage(int m, int k) 用一个空的数据流和两个整数 m 和 k 初始化 MKAverage 对象。
+    void addElement(int num) 往数据流中插入一个新的元素 num 。
+    int calculateMKAverage() 对当前的数据流计算并返回 MK 平均数 ，结果需 向下取整到最近的整数 。
+1825
+ */
+class MKAverage
+{
+public:
+    MKAverage(int m, int k) : m(m), k(k) {}
+    void addElement(int num)
+    {
+        if (mq.size() >= m)
+        {
+            int n = mq.front();
+            mq.pop();
+            if (s2.count(n))
+            {
+                if (--s2[n] == 0)
+                {
+                    s2.erase(n);
+                }
+                sum -= n;
+            }
+            else if (s1.count(n))
+            {
+                if (--s1[n] == 0)
+                {
+                    s1.erase(n);
+                }
+                int b = s2.begin()->first;
+                s1[b]++;
+                if (--s2[b] == 0)
+                {
+                    s2.erase(n);
+                }
+                sum -= b;
+            }
+            else if (s3.count(n))
+            {
+                if (--s3[n] == 0)
+                {
+                    s3.erase(n);
+                }
+                int b = s2.end()->first;
+                s3[b]++;
+                if (--s2[b] == 0)
+                {
+                    s2.erase(n);
+                }
+                sum -= b;
+            }
+        }
+        mq.emplace(num);
+    }
+
+    int calculateMKAverage()
+    {
+    }
+
+private:
+    int m, k, sum;
+    map<int, int> s1, s2, s3;
+    queue<int> mq;
+};
+/*
 小写字符 的 数值 是它在字母表中的位置（从 1 开始），因此 a 的数值为 1 ，b 的数值为 2 ，c 的数值为 3 ，以此类推。
 
 字符串由若干小写字符组成，字符串的数值 为各字符的数值之和。例如，字符串 "abe" 的数值等于 1 + 2 + 5 = 8 。
@@ -9091,5 +9245,108 @@ public:
             }
         }
         return true;
+    }
+};
+/*
+You are given the strings key and message, which represent a cipher key and a secret message, respectively. The steps to decode message are as follows:
+
+    Use the first appearance of all 26 lowercase English letters in key as the order of the substitution table.
+    Align the substitution table with the regular English alphabet.
+    Each letter in message is then substituted using the table.
+    Spaces ' ' are transformed to themselves.
+
+    For example, given key = "happy boy" (actual key would have at least one instance of each letter in the alphabet), we have the partial substitution table of ('h' -> 'a', 'a' -> 'b', 'p' -> 'c', 'y' -> 'd', 'b' -> 'e', 'o' -> 'f').
+
+Return the decoded message.
+2325
+ */
+class Solution
+{
+public:
+    string decodeMessage(string key, string message)
+    {
+        map<int, int> mp;
+        char a = 'a';
+        for (auto c : key)
+        {
+            if (!mp.count(c) && c != ' ')
+            {
+                mp[c] = a++;
+            }
+        }
+        for (auto &c : message)
+        {
+            if (c != ' ')
+            {
+                c = mp[c];
+            }
+        }
+        return message;
+    }
+};
+/*
+在一个有向图中，节点分别标记为 0, 1, ..., n-1。图中每条边为红色或者蓝色，且存在自环或平行边。
+
+red_edges 中的每一个 [i, j] 对表示从节点 i 到节点 j 的红色有向边。类似地，blue_edges 中的每一个 [i, j] 对表示从节点 i 到节点 j 的蓝色有向边。
+
+返回长度为 n 的数组 answer，其中 answer[X] 是从节点 0 到节点 X 的红色边和蓝色边交替出现的最短路径的长度。如果不存在这样的路径，那么 answer[x] = -1。
+ */
+class Solution
+{
+public:
+    vector<int> shortestAlternatingPaths(int n, vector<vector<int>> &redEdges, vector<vector<int>> &blueEdges)
+    {
+        map<int, vector<int>> m1, m2;
+        for (auto vec : redEdges)
+        {
+            m1[vec[0]].emplace_back(vec[1]);
+        }
+        for (auto vec : blueEdges)
+        {
+            m2[vec[0]].emplace_back(vec[1]);
+        }
+        vector<vector<int>> dist(n, vector<int>(2, INT_MAX));
+        queue<pair<int, int>> mq;
+        mq.emplace(0, 0);
+        mq.emplace(0, 1);
+        while (!mq.empty())
+        {
+            auto [x, t] = mq.front();
+            mq.pop();
+            if (t == 0)
+            {
+                for (auto i : m2[x])
+                {
+                    if (dist[i][1] != INT_MAX)
+                    {
+                        continue;
+                    }
+                    dist[i][1] = dist[x][0] + 1;
+                    mq.emplace(i, 1);
+                }
+            }
+            else
+            {
+                for (auto i : m1[x])
+                {
+                    if (dist[i][0] != INT_MAX)
+                    {
+                        continue;
+                    }
+                    dist[i][0] = dist[x][1] + 1;
+                    mq.emplace(i, 0);
+                }
+            }
+        }
+        vector<int> res(n);
+        for (int i = 0; i < n; i++)
+        {
+            res[i] = min(dist[i][0], dist[i][1]);
+            if (res[i] == INT_MAX)
+            {
+                res[i] = -1;
+            }
+        }
+        return res;
     }
 };
