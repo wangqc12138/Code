@@ -29,6 +29,29 @@ int minimumSize(vector<int> &nums, int maxOperations)
 
 int main()
 {
+    vector<int> temp = {4, 1, 1, 2, 5, 1, 5, 4};
+    for (int i = 0; i < temp.size(); i++)
+    {
+        int m = 0, n = 0, index = 0;
+        for (int j = 0; j < temp.size(); j++)
+        {
+            if (j == i)
+            {
+                continue;
+            }
+            if (index % 2)
+            {
+                m += temp[j];
+            }
+            else
+            {
+                n += temp[j];
+            }
+            index++;
+        }
+        cout << m << " " << n << endl;
+    }
+    return 0;
     regex re("data.*");
     cout << regex_match("data1", re) << endl;
 
