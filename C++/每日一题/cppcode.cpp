@@ -9394,3 +9394,154 @@ public:
         return 1 + l + r;
     }
 };
+/*
+你还记得那条风靡全球的贪吃蛇吗？
+
+我们在一个 n*n 的网格上构建了新的迷宫地图，蛇的长度为 2，也就是说它会占去两个单元格。蛇会从左上角（(0, 0) 和 (0, 1)）开始移动。
+我们用 0 表示空单元格，用 1 表示障碍物。蛇需要移动到迷宫的右下角（(n-1, n-2) 和 (n-1, n-1)）。
+
+每次移动，蛇可以这样走：
+
+    如果没有障碍，则向右移动一个单元格。并仍然保持身体的水平／竖直状态。
+    如果没有障碍，则向下移动一个单元格。并仍然保持身体的水平／竖直状态。
+    如果它处于水平状态并且其下面的两个单元都是空的，就顺时针旋转 90 度。蛇从（(r, c)、(r, c+1)）移动到 （(r, c)、(r+1, c)）。
+    如果它处于竖直状态并且其右面的两个单元都是空的，就逆时针旋转 90 度。蛇从（(r, c)、(r+1, c)）移动到（(r, c)、(r, c+1)）。
+
+返回蛇抵达目的地所需的最少移动次数。
+
+如果无法到达目的地，请返回 -1。
+1210
+ */
+using pii = pair<int, int>;
+using ppi = pair<pii, int>;
+class Solution
+{
+public:
+    int minimumMoves(vector<vector<int>> &grid)
+    {
+        queue<ppi> mq;
+        mq.emplace(ppi({{0, 0}, 0}));
+        int res = 0, n = grid.size();
+        set<ppi> visit;
+        visit.emplace(ppi({{0, 0}, 0}));
+        while (!mq.empty())
+        {
+            int len = mq.size();
+            for (int i = 0; i < len; i++)
+            {
+                auto [x, y] = mq.front().first;
+                auto t = mq.front().second;
+                mq.pop();
+                cout << x << " " << y << " " << t << endl;
+                if (x == n - 1 && y == n - 2 && t == 0)
+                {
+                    return res;
+                }
+                if (t == 0 && y + 2 < n && grid[x][y + 2] == 0 && !visit.count(ppi{{x, y + 1}, t}))
+                {
+                    visit.emplace(ppi{{x, y + 1}, t});
+                    mq.emplace(ppi{{x, y + 1}, t});
+                }
+                if (t == 1 && x + 2 < n && grid[x + 2][y] == 0 && !visit.count(ppi{{x + 1, y}, t}))
+                {
+                    visit.emplace(ppi{{x + 1, y}, t});
+                    mq.emplace(ppi{{x + 1, y}, t});
+                }
+                if (t == 0 && x + 1 < n && y + 1 < n && grid[x + 1][y + 1] == 0 && grid[x + 1][y] == 0 && !visit.count(ppi{{x + 1, y}, t}))
+                {
+                    visit.emplace(ppi{{x + 1, y}, t});
+                    mq.emplace(ppi{{x + 1, y}, t});
+                }
+                if (t == 1 && x + 1 < n && y + 1 < n && grid[x + 1][y + 1] == 0 && grid[x][y + 1] == 0 && !visit.count(ppi{{x, y + 1}, t}))
+                {
+                    visit.emplace(ppi{{x, y + 1}, t});
+                    mq.emplace(ppi{{x, y + 1}, t});
+                }
+                if (t == 0 && x + 1 < n && y + 1 < n && grid[x + 1][y] == 0 && grid[x + 1][y + 1] == 0 && !visit.count(ppi(ppi{{x, y}, t ^ 1})))
+                {
+                    visit.emplace(ppi{{x, y}, t ^ 1});
+                    mq.emplace(ppi{{x, y}, t ^ 1});
+                }
+                if (t == 1 && x + 1 < n && y + 1 < n && grid[x][y + 1] == 0 && grid[x + 1][y + 1] == 0 && !visit.count(ppi(ppi{{x, y}, t ^ 1})))
+                {
+                    visit.emplace(ppi{{x, y}, t ^ 1});
+                    mq.emplace(ppi{{x, y}, t ^ 1});
+                }
+            }
+            res++;
+        }
+        return -1;
+    }
+};
+/*
+给你一个长度为 n 的整数数组 coins ，它代表你拥有的 n 个硬币。第 i 个硬币的值为 coins[i] 。
+如果你从这些硬币中选出一部分硬币，它们的和为 x ，那么称，你可以 构造 出 x 。
+
+请返回从 0 开始（包括 0 ），你最多能 构造 出多少个连续整数。
+
+你可能有多个相同值的硬币。
+1798
+ */
+class Solution
+{
+public:
+    set<int> sum;
+    int getMaximumConsecutive(vector<int> &coins)
+    {
+        sort(coins.begin(), coins.end());
+        int r = 0;
+        for (auto i : coins)
+        {
+            if (r + 1 < i)
+            {
+                break;
+            }
+            r += i;
+        }
+        return r + 1;
+    }
+};
+/*
+给你一棵 完整二叉树 的根，这棵树有以下特征：
+
+    叶子节点 要么值为 0 要么值为 1 ，其中 0 表示 False ，1 表示 True 。
+    非叶子节点 要么值为 2 要么值为 3 ，其中 2 表示逻辑或 OR ，3 表示逻辑与 AND 。
+
+计算 一个节点的值方式如下：
+
+    如果节点是个叶子节点，那么节点的 值 为它本身，即 True 或者 False 。
+    否则，计算 两个孩子的节点值，然后将该节点的运算符对两个孩子值进行 运算 。
+
+返回根节点 root 的布尔运算值。
+
+完整二叉树 是每个节点有 0 个或者 2 个孩子的二叉树。
+
+叶子节点 是没有孩子的节点。
+2331
+ */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution
+{
+public:
+    bool evaluateTree(TreeNode *root)
+    {
+        if (root->left)
+        {
+            return root->val == 2 ? (evaluateTree(root->left) || evaluateTree(root->right)) : (evaluateTree(root->left) && evaluateTree(root->right));
+        }
+        else
+        {
+            return root->val == 1;
+        }
+    }
+};
