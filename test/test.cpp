@@ -29,6 +29,20 @@ int minimumSize(vector<int> &nums, int maxOperations)
 
 int main()
 {
+    string src = "/leetcode/problems/";
+    int n = src.find('/');
+    vector<string> res;
+    while (n != string::npos)
+    {
+        int k = src.find('/', n + 1);
+        res.emplace_back(src.substr(n + 1, k - n - 1));
+        n = k;
+    }
+    for (auto i : res)
+    {
+        cout << i << endl;
+    }
+    return 0;
     vector<int> temp = {4, 1, 1, 2, 5, 1, 5, 4};
     for (int i = 0; i < temp.size(); i++)
     {

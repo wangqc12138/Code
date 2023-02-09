@@ -106,3 +106,49 @@ public:
         return l;
     }
 };
+/*
+你有两个果篮，每个果篮中有 n 个水果。给你两个下标从 0 开始的整数数组 basket1 和 basket2 ，用以表示两个果篮中每个水果的成本。
+
+你希望两个果篮相等。为此，可以根据需要多次执行下述操作：
+
+    选中两个下标 i 和 j ，并交换 basket1 中的第 i 个水果和 basket2 中的第 j 个水果。
+    交换的成本是 min(basket1i,basket2j) 。
+
+根据果篮中水果的成本进行排序，如果排序后结果完全相同，则认为两个果篮相等。
+
+返回使两个果篮相等的最小交换成本，如果无法使两个果篮相等，则返回 -1 。
+ */
+class Solution
+{
+public:
+    long long minCost(vector<int> &basket1, vector<int> &basket2)
+    {
+        map<int, int> mp;
+        for (int i = 0; i < basket1.size(); i++)
+        {
+            mp[basket1[i]]++;
+            mp[basket2[i]]--;
+        }
+        int t = INT_MAX;
+        vector<int> temp;
+        for (auto [x, y] : mp)
+        {
+            if (y % 2)
+            {
+                return -1;
+            }
+            t = min(x, t);
+            for (int i = abs(y) / 2; i > 0; i--)
+            {
+                temp.emplace_back(x);
+            }
+        }
+        sort(temp.begin(), temp.end());
+        long long res = 0;
+        for (int i = 0; i < temp.size() / 2; i++)
+        {
+            res += min(2 * t, temp[i]);
+        }
+        return res;
+    }
+};

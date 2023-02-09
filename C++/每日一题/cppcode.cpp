@@ -8578,110 +8578,110 @@ public:
 漂亮数对 是一个形如 (i, j) 的数对，其中 0 <= i < j < nums.length 且 low <= (nums[i] XOR nums[j]) <= high 。
 1803
  */
-class trie
-{
-public:
-    void insert(int n)
-    {
-        trie *root = this;
-        for (int i = 15; i >= 0; i--)
-        {
-            int k = (n >> i) & 1;
-            if (!root->next[k])
-            {
-                root->next[k] = new trie();
-            }
-            root = root->next[k];
-            root->num++;
-        }
-        trie *root = this;
-        for (int i = 15; i >= 0; i--)
-        {
-            int k = (n >> i) & 1;
-            if (!root->next[k])
-            {
-                root->next[k] = new trie();
-            }
-            root = root->next[k];
-            cout << root->num << " ";
-        }
-        cout << endl;
-    }
-    int find(int n, int k)
-    {
-        trie *root = this;
-        int res = 0;
-        for (int i = 15; i >= 0; i--)
-        {
-            int b1 = (n >> i) & 1;
-            int b2 = (k >> i) & 1;
-            if (b2 == 0)
-            {
-                if (!root->next[b1])
-                {
-                    return res;
-                }
-                root = root->next[b1];
-            }
-            else
-            {
-                if (root->next[b1])
-                {
-                    res += root->next[b1]->num;
-                }
-                if (!root->next[!b1])
-                {
-                    return res;
-                }
-                root = root->next[!b1];
-            }
-        }
-        return res + root->num;
-    }
+// class trie
+// {
+// public:
+//     void insert(int n)
+//     {
+//         trie *root = this;
+//         for (int i = 15; i >= 0; i--)
+//         {
+//             int k = (n >> i) & 1;
+//             if (!root->next[k])
+//             {
+//                 root->next[k] = new trie();
+//             }
+//             root = root->next[k];
+//             root->num++;
+//         }
+//         trie *root = this;
+//         for (int i = 15; i >= 0; i--)
+//         {
+//             int k = (n >> i) & 1;
+//             if (!root->next[k])
+//             {
+//                 root->next[k] = new trie();
+//             }
+//             root = root->next[k];
+//             cout << root->num << " ";
+//         }
+//         cout << endl;
+//     }
+//     int find(int n, int k)
+//     {
+//         trie *root = this;
+//         int res = 0;
+//         for (int i = 15; i >= 0; i--)
+//         {
+//             int b1 = (n >> i) & 1;
+//             int b2 = (k >> i) & 1;
+//             if (b2 == 0)
+//             {
+//                 if (!root->next[b1])
+//                 {
+//                     return res;
+//                 }
+//                 root = root->next[b1];
+//             }
+//             else
+//             {
+//                 if (root->next[b1])
+//                 {
+//                     res += root->next[b1]->num;
+//                 }
+//                 if (!root->next[!b1])
+//                 {
+//                     return res;
+//                 }
+//                 root = root->next[!b1];
+//             }
+//         }
+//         return res + root->num;
+//     }
 
-private:
-    trie *next[2];
-    int num = 0;
-};
-class Solution
-{
-public:
-    int countPairs(vector<int> &nums, int low, int high)
-    {
-        trie *root = new trie();
-        int res = 0;
-        for (auto i : nums)
-        {
-            root->insert(i);
-            res += root->find(i, high) - root->find(i, low - 1);
-        }
-        return res;
-    }
-};
-/*
-给你一个正整数 num ，请你统计并返回 小于或等于 num 且各位数字之和为 偶数 的正整数的数目。
+// private:
+//     trie *next[2];
+//     int num = 0;
+// };
+// class Solution
+// {
+// public:
+//     int countPairs(vector<int> &nums, int low, int high)
+//     {
+//         trie *root = new trie();
+//         int res = 0;
+//         for (auto i : nums)
+//         {
+//             root->insert(i);
+//             res += root->find(i, high) - root->find(i, low - 1);
+//         }
+//         return res;
+//     }
+// };
+// /*
+// 给你一个正整数 num ，请你统计并返回 小于或等于 num 且各位数字之和为 偶数 的正整数的数目。
 
-正整数的 各位数字之和 是其所有位上的对应数字相加的结果。
-2180
- */
-class Solution
-{
-public:
-    int countEven(int num)
-    {
-        vector<int> ans(1001, 0);
-        for (int i = 1; i <= 1000; i++)
-        {
-            int t = 0;
-            for (auto c : to_string(i))
-            {
-                t += c - '0';
-            }
-            ans[i] = ans[i - 1] + t % 2 == 0;
-        }
-        return ans[num];
-    }
-};
+// 正整数的 各位数字之和 是其所有位上的对应数字相加的结果。
+// 2180
+//  */
+// class Solution
+// {
+// public:
+//     int countEven(int num)
+//     {
+//         vector<int> ans(1001, 0);
+//         for (int i = 1; i <= 1000; i++)
+//         {
+//             int t = 0;
+//             for (auto c : to_string(i))
+//             {
+//                 t += c - '0';
+//             }
+//             ans[i] = ans[i - 1] + t % 2 == 0;
+//         }
+//         return ans[num];
+//     }
+// };
 /*
 给你一个偶数 n​​​​​​ ，已知存在一个长度为 n 的排列 perm ，其中 perm[i] == i​（下标 从 0 开始 计数）。
 
@@ -9544,4 +9544,180 @@ public:
             return root->val == 1;
         }
     }
+};
+/*
+力扣公司的员工都使用员工卡来开办公室的门。每当一个员工使用一次他的员工卡，安保系统会记录下员工的名字和使用时间。
+如果一个员工在一小时时间内使用员工卡的次数大于等于三次，这个系统会自动发布一个 警告 。
+
+给你字符串数组 keyName 和 keyTime ，其中 [keyName[i], keyTime[i]] 对应一个人的名字和他在 某一天 内使用员工卡的时间。
+
+使用时间的格式是 24小时制 ，形如 "HH:MM" ，比方说 "23:51" 和 "09:49" 。
+
+请你返回去重后的收到系统警告的员工名字，将它们按 字典序升序 排序后返回。
+
+请注意 "10:00" - "11:00" 视为一个小时时间范围内，而 "23:51" - "00:10" 不被视为一小时内，因为系统记录的是某一天内的使用情况。
+1604
+ */
+class Solution
+{
+public:
+    vector<string> alertNames(vector<string> &keyName, vector<string> &keyTime)
+    {
+        map<string, set<int>> mp;
+        for (int i = 0; i < keyName.size(); i++)
+        {
+            int time = stoi(keyTime[i].substr(0, 2)) * 60 + stoi(keyTime[i].substr(3));
+            mp[keyName[i]].emplace(time);
+        }
+        vector<string> res;
+        for (auto [name, st] : mp)
+        {
+            vector<int> temp(st.begin(), st.end());
+            for (int i = 2; i < st.size(); i++)
+            {
+                if (temp[i] - temp[i - 2] <= 60)
+                {
+                    res.emplace_back(name);
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+};
+/*
+你是一位系统管理员，手里有一份文件夹列表 folder，你的任务是要删除该列表中的所有 子文件夹，并以 任意顺序 返回剩下的文件夹。
+
+如果文件夹 folder[i] 位于另一个文件夹 folder[j] 下，那么 folder[i] 就是 folder[j] 的 子文件夹 。
+
+文件夹的「路径」是由一个或多个按以下格式串联形成的字符串：'/' 后跟一个或者多个小写英文字母。
+
+    例如，"/leetcode" 和 "/leetcode/problems" 都是有效的路径，而空字符串和 "/" 不是。
+1233
+ */
+class trie
+{
+public:
+    trie() {}
+    void add(vector<string> vstr)
+    {
+        trie *root = this;
+        for (auto s : vstr)
+        {
+            // cout<<s<<" ";
+            if (root->next[s] == nullptr)
+            {
+                root->next[s] = new trie();
+            }
+            root = root->next[s];
+        }
+        // cout<<endl;
+        root->end = true;
+    }
+    bool find(vector<string> vstr)
+    {
+        trie *root = this;
+        int i = 0;
+        for (i++; auto s : vstr)
+        {
+            if (root->next[s] == nullptr)
+            {
+                return false;
+            }
+            root = root->next[s];
+            if (root->end == true)
+            {
+                break;
+            }
+        }
+        return vstr.size() == i;
+    }
+
+private:
+    map<string, trie *> next;
+    bool end = false;
+};
+class Solution
+{
+public:
+    vector<string> removeSubfolders(vector<string> &folder)
+    {
+        map<string, vector<string>> mp;
+        trie *root = new trie();
+        vector<string> res;
+        for (auto str : folder)
+        {
+            mp[str] = split(str);
+            root->add(mp[str]);
+        }
+        for (auto str : folder)
+        {
+            if (root->find(mp[str]))
+            {
+                res.emplace_back(str);
+            }
+        }
+        return res;
+    }
+    vector<string> split(string src)
+    {
+        int n = src.find('/');
+        vector<string> res;
+        while (n != string::npos)
+        {
+            int k = src.find('/', n + 1);
+            res.emplace_back(src.substr(n + 1, k - n - 1));
+            n = k;
+        }
+        return res;
+    }
+};
+/*
+你需要设计一个包含验证码的验证系统。每一次验证中，用户会收到一个新的验证码，这个验证码在 currentTime 时刻之后 timeToLive 秒过期。
+如果验证码被更新了，那么它会在 currentTime （可能与之前的 currentTime 不同）时刻延长 timeToLive 秒。
+
+请你实现 AuthenticationManager 类：
+
+    AuthenticationManager(int timeToLive) 构造 AuthenticationManager 并设置 timeToLive 参数。
+    generate(string tokenId, int currentTime) 给定 tokenId ，在当前时间 currentTime 生成一个新的验证码。
+    renew(string tokenId, int currentTime) 将给定 tokenId 且 未过期 的验证码在 currentTime 时刻更新。
+    如果给定 tokenId 对应的验证码不存在或已过期，请你忽略该操作，不会有任何更新操作发生。
+    countUnexpiredTokens(int currentTime) 请返回在给定 currentTime 时刻，未过期 的验证码数目。
+
+如果一个验证码在时刻 t 过期，且另一个操作恰好在时刻 t 发生（renew 或者 countUnexpiredTokens 操作），过期事件 优先于 其他操作。
+1797
+ */
+class AuthenticationManager
+{
+public:
+    AuthenticationManager(int timeToLive)
+    {
+        time = timeToLive;
+    }
+
+    void generate(string tokenId, int currentTime)
+    {
+        m1[tokenId] = currentTime;
+        s1.emplace(currentTime);
+    }
+
+    void renew(string tokenId, int currentTime)
+    {
+        if (!m1.count(tokenId) || m1[tokenId] + time <= currentTime)
+        {
+            return;
+        }
+        s1.erase(m1[tokenId]);
+        m1[tokenId] = currentTime;
+        s1.emplace(currentTime);
+    }
+
+    int countUnexpiredTokens(int currentTime)
+    {
+        vector<int> temp(s1.begin(), s1.end());
+        return temp.end() - upper_bound(temp.begin(), temp.end(), currentTime - time);
+    }
+    map<string, int> m1;
+    multiset<int> s1;
+    int time;
 };
