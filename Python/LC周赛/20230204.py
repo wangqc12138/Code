@@ -68,7 +68,9 @@ class Solution:
 
 
 """ 
-给你一个下标从 0 开始的 m x n 二进制 矩阵 grid 。你可以从一个格子 (row, col) 移动到格子 (row + 1, col) 或者 (row, col + 1) ，前提是前往的格子值为 1 。如果从 (0, 0) 到 (m - 1, n - 1) 没有任何路径，我们称该矩阵是 不连通 的。
+给你一个下标从 0 开始的 m x n 二进制 矩阵 grid 。
+你可以从一个格子 (row, col) 移动到格子 (row + 1, col) 或者 (row, col + 1) ，前提是前往的格子值为 1 。
+如果从 (0, 0) 到 (m - 1, n - 1) 没有任何路径，我们称该矩阵是 不连通 的。
 
 你可以翻转 最多一个 格子的值（也可以不翻转）。你 不能翻转 格子 (0, 0) 和 (m - 1, n - 1) 。
 
@@ -80,3 +82,48 @@ class Solution:
 
 class Solution:
     def isPossibleToCutPath(self, grid: List[List[int]]) -> bool:
+        m, n = len(grid), len(grid[0])
+
+        def dfs(x, y: int) -> bool:
+            if x == m-1 and y == n-1:
+                return True
+            grid[x][y] = 0
+            return x+1 < m and grid[x+1][y] == 1 and dfs(x+1, y) or y+1 < n and grid[x][y+1] == 1 and dfs(x, y+1)
+        return not dfs(0, 0) or not dfs(0, 0)
+
+
+class Solution:
+    def isPossibleToCutPath(self, grid: List[List[int]]) -> bool:
+        m, n = len(grid), len(grid[0])
+        vist = []*m
+        for i in range(0, m):
+            vist.append([0]*n)
+        mq = []
+        mq.append((m-1, n-1))
+        vist[m-1][n-1] = 1
+        while len(mq) > 0:
+            (x, y) = mq[0]
+            mq.pop(0)
+            if x-1 >= 0 and grid[x-1][y] == 1 and vist[x-1][y] == 0:
+                mq.append((x-1, y))
+                vist[x-1][y] = 1
+            if y-1 >= 0 and grid[x][y-1] == 1 and vist[x][y-1] == 0:
+                mq.append((x, y-1))
+                vist[x][y-1] = 1
+        if vist[0][0] == 0:
+            return True
+        mq.append((0, 0))
+        while len(mq) > 0:
+            if len(mq) == 1 and mq[0] != (0, 0) and mq[0] != (m-1, n-1):
+                # print(mq[0])
+                return True
+            temp = []
+            for (x, y) in mq:
+                if x+1 < m and grid[x+1][y] == 1 and vist[x+1][y] == 1:
+                    temp.append((x+1, y))
+                    vist[x+1][y] = 0
+                if y+1 < n and grid[x][y+1] == 1 and vist[x][y+1] == 1:
+                    temp.append((x, y+1))
+                    vist[x][y+1] = 0
+            mq = temp
+        return False
