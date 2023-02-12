@@ -9721,3 +9721,67 @@ public:
     multiset<int> s1;
     int time;
 };
+/* 
+我们从一块字母板上的位置 (0, 0) 出发，该坐标对应的字符为 board[0][0]。
+
+在本题里，字母板为board = ["abcde", "fghij", "klmno", "pqrst", "uvwxy", "z"]，如下所示。
+
+我们可以按下面的指令规则行动：
+
+    如果方格存在，'U' 意味着将我们的位置上移一行；
+    如果方格存在，'D' 意味着将我们的位置下移一行；
+    如果方格存在，'L' 意味着将我们的位置左移一列；
+    如果方格存在，'R' 意味着将我们的位置右移一列；
+    '!' 会把在我们当前位置 (r, c) 的字符 board[r][c] 添加到答案中。
+
+（注意，字母板上只存在有字母的位置。）
+
+返回指令序列，用最小的行动次数让答案和目标 target 相同。你可以返回任何达成目标的路径。
+1138
+ */
+using pii=pair<int,int>;
+class Solution {
+public:
+    string alphabetBoardPath(string target) {
+        queue<pii> mq;
+        mq.emplace(0,0);
+        map<int,string> visit;
+        visit[0]="";
+        string res="";
+        vector<vector<int>> dir={{0,1},{0,-1},{-1,0},{1,0}};
+        string d="RLDU";
+        for(auto c:target){
+            while(!mq.empty()){
+                auto [x,y]=mq.front();
+                mq.pop();
+                // cout<<x*5+y<<" "<<c-'a'<<endl;
+                if(c-'a'==x*5+y){
+                    cout<<char(x*5+y+'a')<<endl;
+                    mq=queue<pii>();
+                    mq.emplace(x,y);
+                    res+=visit[c-'a'];
+                    res+='!';
+                    visit.clear();
+                    visit[c-'a']="";
+                    break;
+                }
+                for(int i=0;i<4;i++){
+                    int xx=dir[i][0]+x,yy=y+dir[i][1];
+                    if(xx<0||yy<0||yy>=5||(xx>=5&&yy>0)){
+                        continue;
+                    }
+                    // cout<<char(x*5+y+'a')<<"->"<<char(xx*5+yy+'a')<<endl;
+                    // cout<<x<<" "<<y<<":"<<xx<<" "<<yy<<endl;
+                    if(visit.count(xx*5+yy)){
+                        continue;
+                    }
+                    // cout<<char(x*5+y+'a')<<"->"<<char(xx*5+yy+'a')<<endl;
+                    // cout<<x<<" "<<y<<":"<<xx<<" "<<yy<<endl;
+                    mq.emplace(xx,yy);
+                    visit[xx*5+yy]+=visit[x*5+y]+d[i];
+                }
+            }
+        }
+        return res;
+    }
+};
