@@ -9,17 +9,13 @@ n 块石头放置在二维平面中的一些整数坐标点上。每个坐标点
 947
 */
 // 将行列坐标视为个体，每个石头的行列则视为同一个集合，最后返回共有多少集合，再用总数减去即为所求
-class Solution
-{
+class Solution {
 public:
-    int removeStones(vector<vector<int>> &stones)
-    {
+    int removeStones(vector<vector<int>> &stones) {
         UnionFindSet uset;
         uset.makeSet(stones);
-        for (auto stone : stones)
-        {
-            if (!uset.isSameSet(stone[0], stone[1] + 10000))
-            {
+        for (auto stone : stones) {
+            if (!uset.isSameSet(stone[0], stone[1] + 10000)) {
                 uset.unionSet(stone[0], stone[1] + 10000);
             }
         }
@@ -27,70 +23,55 @@ public:
     }
 
 public:
-    class UnionFindSet
-    {
+    class UnionFindSet {
     public:
-        UnionFindSet()
-        {
+        UnionFindSet() {
             head.clear();
             size.clear();
             count = 0;
         }
-        void makeSet(vector<vector<int>> &stones)
-        {
-            for (auto stone : stones)
-            {
-                if (!head.count(stone[0]))
-                {
+        void makeSet(vector<vector<int>> &stones) {
+            for (auto stone : stones) {
+                if (!head.count(stone[0])) {
                     head[stone[0]] = stone[0];
                     size[stone[0]] = 1;
                     count++;
                 }
-                if (!head.count(stone[1] + 10000))
-                {
+                if (!head.count(stone[1] + 10000)) {
                     head[stone[1] + 10000] = stone[1] + 10000;
                     size[stone[1] + 10000] = 1;
                     count++;
                 }
             }
         }
-        int findHead(int i)
-        {
+        int findHead(int i) {
             int f = head[i];
-            if (i != f)
-            {
+            if (i != f) {
                 f = findHead(f);
             }
             head[i] = f;
             return f;
         }
-        bool isSameSet(int i, int j)
-        {
+        bool isSameSet(int i, int j) {
             return findHead(i) == findHead(j);
         }
-        void unionSet(int i, int j)
-        {
+        void unionSet(int i, int j) {
             int ihead = findHead(i);
             int jhead = findHead(j);
-            if (ihead != jhead)
-            {
+            if (ihead != jhead) {
                 int isize = size[ihead];
                 int jsize = size[jhead];
-                if (isize > jsize)
-                {
+                if (isize > jsize) {
                     head[jhead] = ihead;
                     size[ihead] = isize + jsize;
-                }
-                else
-                {
+                } else {
                     head[ihead] = jhead;
                     size[jhead] = isize + jsize;
                 }
                 count--;
             }
         }
-        int getCount()
-        {
+        int getCount() {
             return count;
         }
 
@@ -197,51 +178,39 @@ Alice 和 Bob 共有一个无向图，其中包含 n 个节点和 3  种类型�
 如果图是二分图，返回 true ；否则，返回 false 。
 785
  */
-class UnionFindSet
-{
+class UnionFindSet {
 public:
-    UnionFindSet()
-    {
+    UnionFindSet() {
         head.clear();
         size.clear();
     }
-    void makeSet(int n)
-    {
-        for (int i = 0; i < n; i++)
-        {
+    void makeSet(int n) {
+        for (int i = 0; i < n; i++) {
             head[i] = i;
             size[i] = 1;
         }
     }
-    int findHead(int i)
-    {
+    int findHead(int i) {
         int f = head[i];
-        if (f != i)
-        {
+        if (f != i) {
             f = findHead(f);
         }
         head[i] = f;
         return f;
     }
-    bool isSameSet(int i, int j)
-    {
+    bool isSameSet(int i, int j) {
         return findHead(i) == findHead(j);
     }
-    void unionSet(int i, int j)
-    {
+    void unionSet(int i, int j) {
         int headi = findHead(i);
         int headj = findHead(j);
-        if (headi != headj)
-        {
+        if (headi != headj) {
             int sizei = size[headi];
             int sizej = size[headj];
-            if (sizei > sizej)
-            {
+            if (sizei > sizej) {
                 head[headj] = headi;
                 size[headi] += sizej;
-            }
-            else
-            {
+            } else {
                 head[headi] = headj;
                 size[headj] += sizei;
             }
@@ -251,26 +220,20 @@ public:
 private:
     map<int, int> head, size;
 };
-class Solution
-{
+class Solution {
 public:
-    bool isBipartite(vector<vector<int>> &graph)
-    {
+    bool isBipartite(vector<vector<int>> &graph) {
         int n = graph.size();
         UnionFindSet ufs = UnionFindSet();
         ufs.makeSet(n);
-        for (int i = 0; i < n; i++)
-        {
-            if (graph[i].empty())
-            {
+        for (int i = 0; i < n; i++) {
+            if (graph[i].empty()) {
                 continue;
             }
-            for (int j = 1; j < graph[i].size(); j++)
-            {
+            for (int j = 1; j < graph[i].size(); j++) {
                 ufs.unionSet(graph[i][0], graph[i][j]);
             }
-            if (ufs.isSameSet(i, graph[i][0]))
-            {
+            if (ufs.isSameSet(i, graph[i][0])) {
                 return false;
             }
         }
@@ -286,49 +249,37 @@ public:
 请你返回一个 布尔数组 answer ，其中 answer.length == queries.length ，当 queries[j] 的查询结果为 true 时， answer 第 j 个值为 true ，否则为 false 。
 1697
  */
-class Solution
-{
+class Solution {
 public:
-    class UnionFindSet
-    {
+    class UnionFindSet {
     public:
-        UnionFindSet(int n)
-        {
-            for (int i = 0; i < n; i++)
-            {
+        UnionFindSet(int n) {
+            for (int i = 0; i < n; i++) {
                 head[i] = i;
                 size[i] = 1;
             }
         }
-        int findHead(int i)
-        {
+        int findHead(int i) {
             int f = head[i];
-            if (f != i)
-            {
+            if (f != i) {
                 f = findHead(f);
             }
             head[i] = f;
             return f;
         }
-        bool isSameSet(int i, int j)
-        {
+        bool isSameSet(int i, int j) {
             return findHead(i) == findHead(j);
         }
-        void unionSet(int i, int j)
-        {
+        void unionSet(int i, int j) {
             int hi = findHead(i);
             int hj = findHead(j);
-            if (hi != hj)
-            {
+            if (hi != hj) {
                 int si = size[hi];
                 int sj = size[hj];
-                if (si > sj)
-                {
+                if (si > sj) {
                     head[hj] = hi;
                     size[hi] += size[hj];
-                }
-                else
-                {
+                } else {
                     head[hi] = hj;
                     size[hj] += size[hi];
                 }
@@ -338,28 +289,21 @@ public:
     private:
         map<int, int> head, size;
     };
-    vector<bool> distanceLimitedPathsExist(int n, vector<vector<int>> &edgeList, vector<vector<int>> &queries)
-    {
-        for (int i = 0; auto &vec : queries)
-        {
+    vector<bool> distanceLimitedPathsExist(int n, vector<vector<int>> &edgeList, vector<vector<int>> &queries) {
+        for (int i = 0; auto &vec : queries) {
             vec.emplace_back(i++);
         }
-        sort(queries.begin(), queries.end(), [](vector<int> &i, vector<int> &j)
-             { return i[2] < j[2]; });
-        sort(edgeList.begin(), edgeList.end(), [](vector<int> &i, vector<int> &j)
-             { return i[2] < j[2]; });
+        sort(queries.begin(), queries.end(), [](vector<int> &i, vector<int> &j) { return i[2] < j[2]; });
+        sort(edgeList.begin(), edgeList.end(), [](vector<int> &i, vector<int> &j) { return i[2] < j[2]; });
         UnionFindSet ufs = UnionFindSet(n);
         int i = 0;
         vector<bool> res(queries.size(), false);
-        for (auto &vec : queries)
-        {
+        for (auto &vec : queries) {
             int t = vec[2];
-            for (; i < edgeList.size() && edgeList[i][2] < t; i++)
-            {
+            for (; i < edgeList.size() && edgeList[i][2] < t; i++) {
                 ufs.unionSet(edgeList[i][0], edgeList[i][1]);
             }
-            if (ufs.isSameSet(vec[0], vec[1]))
-            {
+            if (ufs.isSameSet(vec[0], vec[1])) {
                 res[vec[3]] = true;
             }
         }
@@ -379,79 +323,61 @@ public:
 返回结果数组 answer 。
 2503
  */
-class Solution
-{
+class Solution {
 public:
-    vector<int> maxPoints(vector<vector<int>> &grid, vector<int> &queries)
-    {
+    vector<int> maxPoints(vector<vector<int>> &grid, vector<int> &queries) {
         int m = grid.size(), n = grid[0].size();
         map<int, int> head, size;
         vector<pair<int, int>> v1(m * n), v2(queries.size());
-        for (int i = 0; i < m * n; i++)
-        {
+        for (int i = 0; i < m * n; i++) {
             head[i] = i;
             size[i] = 1;
             v1[i] = {grid[i / n][i % n], i};
         }
-        for (int i = 0; i < queries.size(); i++)
-        {
+        for (int i = 0; i < queries.size(); i++) {
             v2[i] = {queries[i], i};
         }
         sort(v1.begin(), v1.end());
         sort(v2.begin(), v2.end());
-        function<int(int)> findHead = [&](int x) -> int
-        {
-            if (head[x] != x)
-            {
+        function<int(int)> findHead = [&](int x) -> int {
+            if (head[x] != x) {
                 head[x] = findHead(head[x]);
             }
             return head[x];
         };
-        auto isSameHead = [&](int i, int j)
-        {
+        auto isSameHead = [&](int i, int j) {
             return findHead(i) == findHead(j);
         };
-        auto unionSet = [&](int i, int j)
-        {
+        auto unionSet = [&](int i, int j) {
             int hi = findHead(i);
             int hj = findHead(j);
-            if (hi != hj)
-            {
-                if (size[hi] > size[hj])
-                {
+            if (hi != hj) {
+                if (size[hi] > size[hj]) {
                     head[hj] = hi;
                     size[hi] += size[hj];
-                }
-                else
-                {
+                } else {
                     head[hi] = hj;
                     size[hj] += size[hi];
                 }
             }
         };
-        auto getNum = [&]()
-        {
+        auto getNum = [&]() {
             return size[findHead(0)];
         };
         int i = 0;
         vector<int> res(v2.size());
         vector<pair<int, int>> dir = {{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
-        for (auto [a, b] : v2)
-        {
-            for (; i < m * n && v1[i].first < a; i++)
-            {
+        for (auto [a, b] : v2) {
+            for (; i < m * n && v1[i].first < a; i++) {
                 int t = v1[i].second;
-                for (auto [x, y] : dir)
-                {
-                    if (t / n + x < 0 || t / n + x >= m || t % n + y < 0 || t % n + y >= n || grid[t / n + x][t % n + y] >= a)
-                    {
+                for (auto [x, y] : dir) {
+                    if (t / n + x < 0 || t / n + x >= m || t % n + y < 0 || t % n + y >= n || grid[t / n + x][t % n + y] >= a) {
                         continue;
                     }
                     unionSet(t, (t / n + x) * n + t % n + y);
                 }
             }
-            if (grid[0][0] < a)
-            {
+            if (grid[0][0] < a) {
                 res[b] = getNum();
             }
         }

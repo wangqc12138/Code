@@ -7,50 +7,34 @@
 // 当判断条件为left<=right，已经判断过了，直接返回-1即可！
 // 私以为需要找到是否有目标值则用<=比较好，而找出范围什么的就用<比较好，另外right的初值也可以用size来设置
 // 当要排除右半部分时---righ=mid-1，left=mid；mid最好向上取整，才不会死循环
-class Solution
-{
+class Solution {
 public:
-    int search(vector<int> &nums, int target)
-    {
+    int search(vector<int> &nums, int target) {
         int left = 0, right = nums.size();
-        while (left < right)
-        {
+        while (left < right) {
             int mid = left + (right - left) / 2;
-            if (nums[mid] == target)
-            {
+            if (nums[mid] == target) {
                 return mid;
-            }
-            else if (nums[mid] < target)
-            {
+            } else if (nums[mid] < target) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid - 1;
             }
         }
         return nums[left] == target ? left : -1;
     }
 };
-class Solution
-{
+class Solution {
 public:
-    int search(vector<int> &nums, int target)
-    {
+    int search(vector<int> &nums, int target) {
         int left = 0, right = nums.size() - 1;
-        while (left <= right)
-        {
+        while (left <= right) {
             int mid = left + (right - left) / 2;
-            if (nums[mid] == target)
-            {
+            if (nums[mid] == target) {
                 return mid;
-            }
-            else if (nums[mid] < target)
-            {
+            } else if (nums[mid] < target) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid - 1;
             }
         }
@@ -63,21 +47,15 @@ public:
 由于返回类型是整数，结果只保留整数的部分，小数部分将被舍去。
 69
 */
-class Solution
-{
+class Solution {
 public:
-    int mySqrt(int x)
-    {
+    int mySqrt(int x) {
         long left = 0, right = x;
-        while (left < right)
-        {
-            long mid = left + (right - left + 1) / 2; // 向上取整
-            if (mid > x / mid)
-            {
+        while (left < right) {
+            long mid = left + (right - left + 1) / 2;  // 向上取整
+            if (mid > x / mid) {
                 right = mid - 1;
-            }
-            else
-            {
+            } else {
                 left = mid;
             }
         }
@@ -103,38 +81,25 @@ public:
 33
 不重复！
 */
-class Solution
-{
+class Solution {
 public:
-    int search(vector<int> &nums, int target)
-    {
+    int search(vector<int> &nums, int target) {
         int left = 0, right = nums.size() - 1, mid;
-        while (left <= right)
-        {
+        while (left <= right) {
             mid = (right - left) / 2 + left;
-            if (nums[mid] == target)
-            {
+            if (nums[mid] == target) {
                 return mid;
             }
-            if (nums[mid] >= nums[left])
-            { // 左边有序
-                if (nums[mid] > target && nums[left] <= target)
-                {
+            if (nums[mid] >= nums[left]) {  // 左边有序
+                if (nums[mid] > target && nums[left] <= target) {
                     right = mid - 1;
-                }
-                else
-                {
+                } else {
                     left = mid + 1;
                 }
-            }
-            else
-            { // 右边有序
-                if (nums[mid] < target && nums[right] >= target)
-                {
+            } else {  // 右边有序
+                if (nums[mid] < target && nums[right] >= target) {
                     left = mid + 1;
-                }
-                else
-                {
+                } else {
                     right = mid - 1;
                 }
             }
@@ -149,46 +114,31 @@ public:
 给你旋转后的数组nums和一个整数target，请你编写一个函数来判断给定的目标值是否存在于数组中。如果nums中存在这个目标值target，则返回true，否则返回false。
 81
 */
-class Solution
-{
+class Solution {
 public:
-    bool search(vector<int> &nums, int target)
-    {
+    bool search(vector<int> &nums, int target) {
         int left = 0, right = nums.size() - 1, mid;
-        while (left <= right)
-        {
-            while (left < right && nums[left] == nums[left + 1])
-            {
+        while (left <= right) {
+            while (left < right && nums[left] == nums[left + 1]) {
                 left++;
             }
-            while (left < right && nums[right] == nums[right - 1])
-            {
+            while (left < right && nums[right] == nums[right - 1]) {
                 right--;
             }
             mid = (right - left) / 2 + left;
-            if (nums[mid] == target)
-            {
+            if (nums[mid] == target) {
                 return true;
             }
-            if (nums[mid] >= nums[left])
-            { // 左边有序
-                if (nums[mid] > target && nums[left] <= target)
-                {
+            if (nums[mid] >= nums[left]) {  // 左边有序
+                if (nums[mid] > target && nums[left] <= target) {
                     right = mid - 1;
-                }
-                else
-                {
+                } else {
                     left = mid + 1;
                 }
-            }
-            else
-            { // 右边有序
-                if (nums[mid] < target && nums[right] >= target)
-                {
+            } else {  // 右边有序
+                if (nums[mid] < target && nums[right] >= target) {
                     left = mid + 1;
-                }
-                else
-                {
+                } else {
                     right = mid - 1;
                 }
             }
@@ -217,21 +167,15 @@ public:
 请找出其中最小的元素。
 153
 */
-class Solution
-{
+class Solution {
 public:
-    int findMin(vector<int> &nums)
-    {
+    int findMin(vector<int> &nums) {
         int left = 0, right = nums.size(), mid;
-        while (left < right)
-        {
+        while (left < right) {
             mid = left + (right - left) / 2;
-            if (nums[mid] > nums[right])
-            {
+            if (nums[mid] > nums[right]) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid;
             }
         }
@@ -246,21 +190,15 @@ public:
 658
 */
 // 其他二分是查找一个数，这个可以看作查找一段数
-class Solution
-{
+class Solution {
 public:
-    vector<int> findClosestElements(vector<int> &arr, int k, int x)
-    {
+    vector<int> findClosestElements(vector<int> &arr, int k, int x) {
         int left = 0, right = arr.size() - 1 - k, mid;
-        while (left <= right)
-        { // 找出左边界
+        while (left <= right) {  // 找出左边界
             mid = left + (right - left) / 2;
-            if (x - arr[mid] > arr[mid + k] - x)
-            { // 如果mid距离x比mid+k距离x更远，则左边界还在右侧
+            if (x - arr[mid] > arr[mid + k] - x) {  // 如果mid距离x比mid+k距离x更远，则左边界还在右侧
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid - 1;
             }
         }
@@ -282,25 +220,17 @@ public:
  * };
  */
 
-class Solution
-{
+class Solution {
 public:
-    int search(/* const  */ ArrayReader &reader, int target)
-    {
+    int search(/* const  */ ArrayReader &reader, int target) {
         int left = 0, right = INT_MAX, mid;
-        while (left <= right)
-        {
+        while (left <= right) {
             mid = left + (right - left) / 2;
-            if (reader.get(mid) == target)
-            {
+            if (reader.get(mid) == target) {
                 return mid;
-            }
-            else if (reader.get(mid) > 9999 || reader.get(mid) > target)
-            {
+            } else if (reader.get(mid) > 9999 || reader.get(mid) > target) {
                 right = mid - 1;
-            }
-            else
-            {
+            } else {
                 left = mid + 1;
             }
         }
@@ -313,23 +243,17 @@ public:
 如果数组中不存在目标值 target，返回 [-1, -1]。
 34
 */
-class Solution
-{
+class Solution {
 public:
-    vector<int> searchRange(vector<int> &nums, int target)
-    {
+    vector<int> searchRange(vector<int> &nums, int target) {
         int left = 0, right = nums.size() - 1, mid;
         vector<int> res;
         // 找第一次出现的位置
-        while (left < right)
-        {
+        while (left < right) {
             mid = left + (right - left) / 2;
-            if (nums[mid] < target)
-            {
+            if (nums[mid] < target) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid;
             }
         }
@@ -337,15 +261,11 @@ public:
         left = 0;
         right = nums.size() - 1;
         // 找最后一次出现的位置
-        while (left < right)
-        {
-            mid = left + (right - left + 1) / 2; // 注意向上取整
-            if (nums[mid] > target)
-            {
+        while (left < right) {
+            mid = left + (right - left + 1) / 2;  // 注意向上取整
+            if (nums[mid] > target) {
                 right = mid - 1;
-            }
-            else
-            {
+            } else {
                 left = mid;
             }
         }
@@ -356,11 +276,9 @@ public:
 /*
 实现 pow(x, n) ，即计算 x 的 n 次幂函数（即，xn）。
 */
-class Solution
-{
+class Solution {
 public:
-    double myPow(double x, int n)
-    {
+    double myPow(double x, int n) {
     }
 };
 /*
@@ -371,30 +289,22 @@ public:
 给你一个可能存在 重复 元素值的数组 nums ，它原来是一个升序排列的数组，并按上述情形进行了多次旋转。请你找出并返回数组中的 最小元素 。
 154
 */
-class Solution
-{
+class Solution {
 public:
-    int findMin(vector<int> &nums)
-    {
+    int findMin(vector<int> &nums) {
         int left = 0, right = nums.size() - 1, mid;
-        while (left < right)
-        {
-            while (left < right && nums[left] == nums[left + 1])
-            {
+        while (left < right) {
+            while (left < right && nums[left] == nums[left + 1]) {
                 left++;
             }
-            while (left < right && nums[right] == nums[right - 1])
-            {
+            while (left < right && nums[right] == nums[right - 1]) {
                 right--;
             }
             mid = left + (right - left) / 2;
 
-            if (nums[mid] > nums[right])
-            {
+            if (nums[mid] > nums[right]) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid;
             }
         }
@@ -407,26 +317,19 @@ public:
 进阶：不要 使用任何内置的库函数，如  sqrt 。
 367
 */
-class Solution
-{
+class Solution {
 public:
-    bool isPerfectSquare(int num)
-    {
+    bool isPerfectSquare(int num) {
         long left = 0, right = num, mid, t;
-        while (left < right)
-        {
+        while (left < right) {
             mid = left + (right - left) / 2;
             t = mid * mid;
-            if (t == num)
-            {
+            if (t == num) {
                 return true;
             }
-            if (t < num)
-            {
+            if (t < num) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid;
             }
         }
@@ -439,22 +342,16 @@ public:
     如果目标字母 target = 'z' 并且字符列表为 letters = ['a', 'b']，则答案返回 'a'
 744
 */
-class Solution
-{
+class Solution {
 public:
-    char nextGreatestLetter(vector<char> &letters, char target)
-    {
+    char nextGreatestLetter(vector<char> &letters, char target) {
         int left = 0, right = letters.size() - 1, mid;
         target = target >= letters[right] ? 'a' : target + 1;
-        while (left < right)
-        {
+        while (left < right) {
             mid = left + (right - left) / 2;
-            if (letters[mid] < target)
-            {
+            if (letters[mid] < target) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid;
             }
         }
@@ -467,11 +364,9 @@ public:
 287
 */
 // 此方法可以用快慢指针的方法
-class Solution
-{
+class Solution {
 public:
-    int findDuplicate(vector<int> &nums)
-    {
+    int findDuplicate(vector<int> &nums) {
         /*int slow=0,quick=0,n=nums.size();
         do{
             slow=nums[slow];
@@ -484,23 +379,17 @@ public:
         }
         return slow;*/
         int left = 1, right = nums.size() - 1, mid, cnt;
-        while (left < mid)
-        {
+        while (left < mid) {
             mid = left + (right - mid) / 2;
             cnt = 0;
-            for (int i : nums)
-            {
-                if (i <= mid)
-                { // 计算小于mid的数
+            for (int i : nums) {
+                if (i <= mid) {  // 计算小于mid的数
                     cnt++;
                 }
             }
-            if (mid < cnt)
-            {
+            if (mid < cnt) {
                 right = mid;
-            }
-            else
-            {
+            } else {
                 left = mid + 1;
             }
         }
@@ -511,27 +400,21 @@ public:
 给定两个大小分别为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的 中位数 。
 4
 */
-class Solution
-{
+class Solution {
 public:
-    double findMedianSortedArrays(vector<int> &nums1, vector<int> &nums2)
-    {
+    double findMedianSortedArrays(vector<int> &nums1, vector<int> &nums2) {
         int len = nums1.size() + nums2.size();
         int index1 = 0, index2 = 0;
-        while (len)
-        {
+        while (len) {
             len /= 2;
         }
     }
-    int process(vector<int> &nums1, vector<int> &nums2, int index)
-    {
+    int process(vector<int> &nums1, vector<int> &nums2, int index) {
         int i1 = 0, i2 = 0;
-        while (index)
-        {
+        while (index) {
             // i1=min(index/2,nums1.size()-1);
             // i2=min(index/2,nums2.size()-1);
-            if (nums1[i1] >= nums2[i2])
-            {
+            if (nums1[i1] >= nums2[i2]) {
             }
         }
     }
@@ -543,33 +426,25 @@ public:
 1011
 */
 // 二分
-class Solution
-{
+class Solution {
 public:
-    int shipWithinDays(vector<int> &weights, int D)
-    {
+    int shipWithinDays(vector<int> &weights, int D) {
         int n = weights.size();
         int left = *max_element(weights.begin(), weights.end());
         int right = accumulate(weights.begin(), weights.end(), 0);
-        while (left < right)
-        {
+        while (left < right) {
             int mid = left + (right - left) / 2;
             int temp = 0, day = 1;
-            for (int w : weights)
-            {
+            for (int w : weights) {
                 temp += w;
-                if (temp > mid)
-                {
+                if (temp > mid) {
                     day++;
                     temp = w;
                 }
             }
-            if (day > D)
-            {
+            if (day > D) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid;
             }
         }
@@ -584,26 +459,19 @@ public:
 返回她可以在 H 小时内吃掉所有香蕉的最小速度 K（K 为整数）。
 875
 */
-class Solution
-{
+class Solution {
 public:
-    int minEatingSpeed(vector<int> &piles, int H)
-    {
+    int minEatingSpeed(vector<int> &piles, int H) {
         int left = 1, right = *max_element(piles.begin(), piles.end());
-        while (left < right)
-        {
+        while (left < right) {
             int mid = left + (right - left) / 2;
             int h = 0;
-            for (int p : piles)
-            {
+            for (int p : piles) {
                 h += (p - 1) / mid + 1;
             }
-            if (h > H)
-            {
+            if (h > H) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid;
             }
         }
@@ -617,34 +485,26 @@ public:
 请找出一个最佳的切割策略，使得你所分得的巧克力 总甜度最大，并返回这个 最大总甜度。
 1231
 */
-class Solution
-{
+class Solution {
 public:
-    int maximizeSweetness(vector<int> &sweetness, int K)
-    {
+    int maximizeSweetness(vector<int> &sweetness, int K) {
         int left = *min_element(sweetness.begin(), sweetness.end());
         int right = accumulate(sweetness.begin(), sweetness.end(), 0);
-        while (left < right)
-        {
+        while (left < right) {
             int mid = left + (right - left) / 2;
             int k = 0, temp = 0;
-            for (auto c : sweetness)
-            {
+            for (auto c : sweetness) {
                 temp += c;
-                if (temp > mid)
-                {
+                if (temp > mid) {
                     // 我是最小值，其他可以允许比我大
                     k++;
                     // 当分配的大于mid时，这个一小块也分给前个人，而不是可以切割
                     temp = 0;
                 }
             }
-            if (k > K)
-            {
+            if (k > K) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid;
             }
         }
@@ -656,33 +516,25 @@ public:
 设计一个算法使得这 m 个子数组各自和的最大值最小。
 410
 */
-class Solution
-{
+class Solution {
 public:
-    int splitArray(vector<int> &nums, int m)
-    {
-        int left = *max_element(nums.begin(), nums.end()); // 注意取值
+    int splitArray(vector<int> &nums, int m) {
+        int left = *max_element(nums.begin(), nums.end());  // 注意取值
         int right = accumulate(nums.begin(), nums.end(), 0);
-        while (left < right)
-        {
+        while (left < right) {
             int mid = left + (right - left) / 2;
             int temp = 0, k = 1;
-            for (auto num : nums)
-            {
+            for (auto num : nums) {
                 temp += num;
-                if (temp > mid)
-                {
+                if (temp > mid) {
                     // mid时最大值，其他不允许比mid大，所以num得算到下一个人身上
                     k++;
                     temp = num;
                 }
             }
-            if (k > m)
-            {
+            if (k > m) {
                 left = mid + 1;
-            }
-            else
-            {
+            } else {
                 right = mid;
             }
         }
@@ -705,36 +557,26 @@ bloomDay.length == n
 1 <= m <= 10^6
 1 <= k <= n
  */
-class Solution
-{
+class Solution {
 public:
-    int minDays(vector<int> &bloomDay, int m, int k)
-    {
-        if (m * k > bloomDay.size())
-        {
+    int minDays(vector<int> &bloomDay, int m, int k) {
+        if (m * k > bloomDay.size()) {
             return -1;
         }
         int left = 1, right = *max_element(bloomDay.begin(), bloomDay.end());
-        auto check = [&](int n)
-        {
+        auto check = [&](int n) {
             vector<int> now(bloomDay.size());
-            for (int i = 0; i < bloomDay.size(); ++i)
-            {
+            for (int i = 0; i < bloomDay.size(); ++i) {
                 now[i] = bloomDay[i] <= n ? 1 : 0;
             }
             int l = 0, ans = 0;
-            for (int i : now)
-            {
-                if (i == 1)
-                {
+            for (int i : now) {
+                if (i == 1) {
                     l++;
-                }
-                else
-                {
+                } else {
                     l = 0;
                 }
-                if (l == k)
-                {
+                if (l == k) {
                     ans++;
                     l = 0;
                 }
@@ -742,15 +584,11 @@ public:
             // 当可以拿到的花大于m也行
             return ans >= m;
         };
-        while (left < right)
-        {
+        while (left < right) {
             int mid = left + (right - left) / 2;
-            if (check(mid))
-            {
+            if (check(mid)) {
                 right = mid;
-            }
-            else
-            {
+            } else {
                 left = mid + 1;
             }
         }
@@ -763,68 +601,49 @@ public:
 给你一个整数 k ，请你找出并返回从数组最左边开始的第 k 个缺失数字。
 1060
  */
-class Solution
-{
+class Solution {
 public:
-    int missingElement(vector<int> &nums, int k)
-    {
+    int missingElement(vector<int> &nums, int k) {
         int i = nums[0], index = 0;
-        while (k)
-        {
-            if (index < nums.size() && nums[index] == i)
-            {
+        while (k) {
+            if (index < nums.size() && nums[index] == i) {
                 index++;
-            }
-            else
-            {
+            } else {
                 k--;
             }
-            if (k)
-            {
+            if (k) {
                 i++;
             }
         }
         return i;
     }
 };
-class Solution
-{
+class Solution {
 public:
-    int missingElement(vector<int> &nums, int k)
-    {
+    int missingElement(vector<int> &nums, int k) {
         int i = 1;
-        for (; i < nums.size(); i++)
-        {
-            if (nums[i] - nums[i - 1] - 1 >= k)
-            {
+        for (; i < nums.size(); i++) {
+            if (nums[i] - nums[i - 1] - 1 >= k) {
                 break;
-            }
-            else
-            {
+            } else {
                 k -= nums[i] - nums[i - 1] - 1;
             }
         }
         return nums[i - 1] + k;
     }
 };
-class Solution
-{
+class Solution {
 public:
-    int missingElement(vector<int> &nums, int k)
-    {
+    int missingElement(vector<int> &nums, int k) {
         int n = nums.size();
         int left = 0, right = n - 1;
-        while (left < right)
-        {
+        while (left < right) {
             // 排除右半部分，使用向上取整
             int mid = left + (right - left + 1) / 2;
             // cout<<left<<" "<<mid<<" "<<right<<endl;
-            if (nums[mid] - nums[0] - mid < k)
-            {
+            if (nums[mid] - nums[0] - mid < k) {
                 left = mid;
-            }
-            else
-            {
+            } else {
                 right = mid - 1;
             }
         }
@@ -843,40 +662,30 @@ public:
 1901
  */
 // 不合法
-class Solution
-{
+class Solution {
 public:
-    vector<int> findPeakGrid(vector<vector<int>> &mat)
-    {
+    vector<int> findPeakGrid(vector<vector<int>> &mat) {
         int m = mat.size(), n = mat[0].size();
-        for (int i = 0; i < m; i++)
-        {
-            for (int j = 0; j < n; j++)
-            {
-                if (check(mat, i, j, m, n))
-                {
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (check(mat, i, j, m, n)) {
                     return {i, j};
                 }
             }
         }
         return {};
     }
-    bool check(vector<vector<int>> &mat, int i, int j, int m, int n)
-    {
-        if (i - 1 >= 0 && mat[i][j] < mat[i - 1][j])
-        {
+    bool check(vector<vector<int>> &mat, int i, int j, int m, int n) {
+        if (i - 1 >= 0 && mat[i][j] < mat[i - 1][j]) {
             return false;
         }
-        if (i + 1 < m && mat[i][j] < mat[i + 1][j])
-        {
+        if (i + 1 < m && mat[i][j] < mat[i + 1][j]) {
             return false;
         }
-        if (j - 1 >= 0 && mat[i][j] < mat[i][j - 1])
-        {
+        if (j - 1 >= 0 && mat[i][j] < mat[i][j - 1]) {
             return false;
         }
-        if (j + 1 < n && mat[i][j] < mat[i][j + 1])
-        {
+        if (j + 1 < n && mat[i][j] < mat[i][j + 1]) {
             return false;
         }
         return true;
@@ -889,77 +698,52 @@ public:
 [14,49,7,6,25]
 [7,23,39,17,3]
  */
-class Solution
-{
+class Solution {
 public:
-    vector<int> findPeakGrid(vector<vector<int>> &mat)
-    {
+    vector<int> findPeakGrid(vector<vector<int>> &mat) {
         int m = mat.size();
         int left = 0, right = m - 1;
-        while (left <= right)
-        {
+        while (left <= right) {
             int mid = left + (right - left) / 2;
             // cout<<left<<" "<<mid<<" "<<right<<endl;
-            if (mid > 0 && mid < m - 1)
-            {
+            if (mid > 0 && mid < m - 1) {
                 int m1 = *max_element(mat[mid - 1].begin(), mat[mid - 1].end());
                 int m2 = *max_element(mat[mid].begin(), mat[mid].end());
                 int m3 = *max_element(mat[mid + 1].begin(), mat[mid + 1].end());
                 // cout<<m1<<" "<<m2<<" "<<m3<<endl;
-                if (m1 <= m2 && m3 <= m2)
-                {
-                    for (int i = 0; i < mat[mid].size(); i++)
-                    {
-                        if (m2 == mat[mid][i])
-                        {
+                if (m1 <= m2 && m3 <= m2) {
+                    for (int i = 0; i < mat[mid].size(); i++) {
+                        if (m2 == mat[mid][i]) {
                             return {mid, i};
                         }
                     }
-                }
-                else if (m1 <= m2)
-                {
+                } else if (m1 <= m2) {
                     left = mid + 1;
-                }
-                else
-                {
+                } else {
                     right = mid - 1;
                 }
-            }
-            else if (mid == 0)
-            {
+            } else if (mid == 0) {
                 int m2 = *max_element(mat[mid].begin(), mat[mid].end());
                 int m3 = *max_element(mat[mid + 1].begin(), mat[mid + 1].end());
-                if (m3 <= m2)
-                {
-                    for (int i = 0; i < mat[mid].size(); i++)
-                    {
-                        if (m2 == mat[mid][i])
-                        {
+                if (m3 <= m2) {
+                    for (int i = 0; i < mat[mid].size(); i++) {
+                        if (m2 == mat[mid][i]) {
                             return {mid, i};
                         }
                     }
-                }
-                else
-                {
+                } else {
                     left = mid + 1;
                 }
-            }
-            else
-            {
+            } else {
                 int m1 = *max_element(mat[mid - 1].begin(), mat[mid - 1].end());
                 int m2 = *max_element(mat[mid].begin(), mat[mid].end());
-                if (m1 <= m2)
-                {
-                    for (int i = 0; i < mat[mid].size(); i++)
-                    {
-                        if (m2 == mat[mid][i])
-                        {
+                if (m1 <= m2) {
+                    for (int i = 0; i < mat[mid].size(); i++) {
+                        if (m2 == mat[mid][i]) {
                             return {mid, i};
                         }
                     }
-                }
-                else
-                {
+                } else {
                     right = mid - 1;
                 }
             }
@@ -977,36 +761,26 @@ public:
 如果不存在解决方案，请返回 -1。
 1182
  */
-class Solution
-{
+class Solution {
 public:
-    vector<int> shortestDistanceColor(vector<int> &colors, vector<vector<int>> &queries)
-    {
+    vector<int> shortestDistanceColor(vector<int> &colors, vector<vector<int>> &queries) {
         vector<vector<int>> vec(4);
-        for (int i = 0; i < colors.size(); i++)
-        {
+        for (int i = 0; i < colors.size(); i++) {
             vec[colors[i]].emplace_back(i);
         }
         vector<int> res;
-        for (auto v : queries)
-        {
+        for (auto v : queries) {
             int m = v[1];
-            if (vec[m].empty())
-            {
+            if (vec[m].empty()) {
                 res.emplace_back(-1);
                 continue;
             }
             auto i = lower_bound(vec[m].begin(), vec[m].end(), v[0]) - vec[m].begin();
-            if (i == 0)
-            {
+            if (i == 0) {
                 res.emplace_back(vec[m][0] - v[0]);
-            }
-            else if (i == vec[m].size())
-            {
+            } else if (i == vec[m].size()) {
                 res.emplace_back(v[0] - vec[m][i - 1]);
-            }
-            else
-            {
+            } else {
                 res.emplace_back(min(vec[m][i] - v[0], v[0] - vec[m][i - 1]));
             }
         }
@@ -1019,31 +793,23 @@ public:
 
         返回礼盒的 最大 甜蜜度。
 */
-class Solution
-{
+class Solution {
 public:
-    int maximumTastiness(vector<int> &price, int k)
-    {
+    int maximumTastiness(vector<int> &price, int k) {
         sort(price.begin(), price.end());
         int left = 0, right = price.back() - price[0];
-        while (left < right)
-        {
+        while (left < right) {
             int mid = (left + right) / 2;
             int pre = price[0], t = 1;
-            for (int i : price)
-            {
-                if (i - pre >= mid)
-                {
+            for (int i : price) {
+                if (i - pre >= mid) {
                     pre = i;
                     t++;
                 }
             }
-            if (t < k)
-            {
+            if (t < k) {
                 right = mid - 1;
-            }
-            else
-            {
+            } else {
                 left = mid;
             }
         }
@@ -1059,31 +825,23 @@ Rick 有 n 个空的篮子，第 i 个篮子的位置在 position[i] ，Morty �
 给你一个整数数组 position 和一个整数 m ，请你返回最大化的最小磁力。
 1552
  */
-class Solution
-{
+class Solution {
 public:
-    int maxDistance(vector<int> &position, int m)
-    {
+    int maxDistance(vector<int> &position, int m) {
         sort(position.begin(), position.end());
         int left = 0, right = position.back() - position[0];
-        while (left < right)
-        {
+        while (left < right) {
             int mid = (left + right + 1) / 2;
             int t = 1, pre = position[0];
-            for (int i : position)
-            {
-                if (i - pre >= mid)
-                {
+            for (int i : position) {
+                if (i - pre >= mid) {
                     t++;
                     pre = i;
                 }
             }
-            if (t < m)
-            {
+            if (t < m) {
                 right = mid - 1;
-            }
-            else
-            {
+            } else {
                 left = mid;
             }
         }
@@ -1104,42 +862,30 @@ public:
 注意：abs(x) 等于 x 的前提是 x >= 0 ；否则，abs(x) 等于 -x 。
 1802
  */
-class Solution
-{
+class Solution {
 public:
-    int maxValue(int n, int index, int maxSum)
-    {
+    int maxValue(int n, int index, int maxSum) {
         int len1 = index, len2 = n - 1 - index;
         // cout<<len1<<" "<<len2<<endl;
         int left = 1, right = maxSum;
-        while (left < right)
-        {
+        while (left < right) {
             int mid = (left + right + 1) / 2;
             long long sum = -mid;
-            if (mid <= len1)
-            {
+            if (mid <= len1) {
                 sum += (long long)(mid + 1) * mid / 2 + len1 - mid + 1;
-            }
-            else
-            {
+            } else {
                 sum += (long long)(mid + mid - len1) * (len1 + 1) / 2;
             }
-            if (mid <= len2)
-            {
+            if (mid <= len2) {
                 sum += (long long)(mid + 1) * mid / 2 + len2 - mid + 1;
-            }
-            else
-            {
+            } else {
                 sum += (long long)(mid + mid - len2) * (len2 + 1) / 2;
             }
             // cout<<left<<" "<<mid<<" "<<right<<endl;
             // cout<<sum<<endl;
-            if (sum > maxSum)
-            {
+            if (sum > maxSum) {
                 right = mid - 1;
-            }
-            else
-            {
+            } else {
                 left = mid;
             }
         }
