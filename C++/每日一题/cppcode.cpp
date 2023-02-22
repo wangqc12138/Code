@@ -8500,3 +8500,66 @@ public:
         }
     }
 };
+/*
+在 x 轴上有一个一维的花园。花园长度为 n，从点 0 开始，到点 n 结束。
+
+花园里总共有 n + 1 个水龙头，分别位于 [0, 1, ..., n] 。
+
+给你一个整数 n 和一个长度为 n + 1 的整数数组 ranges ，其中 ranges[i] （下标从 0 开始）表示：如果打开点 i 处的水龙头，可以灌溉的区域为 [i -  ranges[i], i + ranges[i]] 。
+
+请你返回可以灌溉整个花园的 最少水龙头数目 。如果花园始终存在无法灌溉到的地方，请你返回 -1 。
+1326
+ */
+using pii = pair<int, int>;
+class Solution {
+public:
+    int minTaps(int n, vector<int> &ranges) {
+        int res = 0;
+        vector<pii> temp;
+        for (int i = 0; i < ranges.size(); i++) {
+            temp.emplace_back(i - ranges[i], i + ranges[i]);
+        }
+        auto cmp = [&](pii i, pii j) {
+            return i.first < j.first || i.first == j.first && i.second < j.second;
+        };
+        sort(temp.begin(), temp.end(), cmp);
+        int last = -101, right = 0;
+        for (auto [x, y] : temp) {
+            if (right >= n) {
+                break;
+            }
+            if (x > right) {
+                return -1;
+            }
+            if (y <= right) {
+                continue;
+            }
+            if (x > last) {
+                res++;
+                last = right;
+            }
+            right = y;
+            // cout<<x<<" "<<y<<endl;
+            // cout<<last<<" "<<right<<endl;
+        }
+        return right < n ? -1 : res;
+    }
+};
+
+/*
+爱丽丝和鲍勃继续他们的石子游戏。许多堆石子 排成一行，每堆都有正整数颗石子 piles[i]。游戏以谁手中的石子最多来决出胜负。
+
+爱丽丝和鲍勃轮流进行，爱丽丝先开始。最初，M = 1。
+
+在每个玩家的回合中，该玩家可以拿走剩下的 前 X 堆的所有石子，其中 1 <= X <= 2M。然后，令 M = max(M, X)。
+
+游戏一直持续到所有石子都被拿走。
+
+假设爱丽丝和鲍勃都发挥出最佳水平，返回爱丽丝可以得到的最大数量的石头。
+1140
+ */
+class Solution {
+public:
+    int stoneGameII(vector<int> &piles) {
+        }
+};
