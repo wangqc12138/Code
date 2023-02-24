@@ -8561,5 +8561,79 @@ public:
 class Solution {
 public:
     int stoneGameII(vector<int> &piles) {
+    }
+};
+/*
+给你两个整数 n 和 start。你的任务是返回任意 (0,1,2,,...,2^n-1) 的排列 p，并且满足：
+
+    p[0] = start
+    p[i] 和 p[i+1] 的二进制表示形式只有一位不同
+    p[0] 和 p[2^n -1] 的二进制表示形式也只有一位不同
+1238
+ */
+class Solution {
+public:
+    vector<int> circularPermutation(int n, int start) {
+        vector<int> res;
+        set<int> visit;
+        res.emplace_back(start);
+        visit.emplace(start);
+        auto help = [&](int t) {
+            for (int i = 0; i < n; i++) {
+                int k = (t >> i) & 1;
+                if (k && !visit.count(t - pow(2, i))) {
+                    visit.emplace(t - pow(2, i));
+                    return t - pow(2, i);
+                }
+                if (!k && !visit.count(t + pow(2, i))) {
+                    visit.emplace(t + pow(2, i));
+                    return t + pow(2, i);
+                }
+            }
+        };
+        for (int i = 0; i < pow(2, n) - 1; i++) {
+            res.emplace_back(help(res.back()));
         }
+        return res;
+    }
+};
+/*
+n 位格雷码序列 是一个由 2n 个整数组成的序列，其中：
+
+    每个整数都在范围 [0, 2n - 1] 内（含 0 和 2n - 1）
+    第一个整数是 0
+    一个整数在序列中出现 不超过一次
+    每对 相邻 整数的二进制表示 恰好一位不同 ，且
+    第一个 和 最后一个 整数的二进制表示 恰好一位不同
+
+给你一个整数 n ，返回任一有效的 n 位格雷码序列 。
+89
+ */
+class Solution {
+public:
+    vector<int> grayCode(int n) {
+        int start = 0;
+        vector<int> res;
+        set<int> visit;
+        res.emplace_back(start);
+        visit.emplace(start);
+        auto help = [&](int t) {
+            for (int i = 0; i < n; i++) {
+                int k = (t >> i) & 1;
+                if (k && !visit.count(t - pow(2, i))) {
+                    visit.emplace(t - pow(2, i));
+                    return t - pow(2, i);
+                }
+                if (!k && !visit.count(t + pow(2, i))) {
+                    visit.emplace(t + pow(2, i));
+                    return t + pow(2, i);
+                }
+            }
+            return (double)0;
+        };
+        for (int i = 0; i < pow(2, n) - 1; i++) {
+            res.emplace_back(help(res.back()));
+        }
+        return res;
+    }
 };
