@@ -8637,3 +8637,153 @@ public:
         return res;
     }
 };
+/*
+有两个长度相同的字符串 s1 和 s2，且它们其中 只含有 字符 "x" 和 "y"，你需要通过「交换字符」的方式使这两个字符串相同。
+
+每次「交换字符」的时候，你都可以在两个字符串中各选一个字符进行交换。
+
+交换只能发生在两个不同的字符串之间，绝对不能发生在同一个字符串内部。也就是说，我们可以交换 s1[i] 和 s2[j]，但不能交换 s1[i] 和 s1[j]。
+
+最后，请你返回使 s1 和 s2 相同的最小交换次数，如果没有方法能够使得这两个字符串相同，则返回 -1 。
+1247
+ */
+/*
+xy
+yx
+xx
+yy
+ */
+class Solution {
+public:
+    int minimumSwap(string s1, string s2) {
+        string t1, t2;
+        for (int i = 0; i < s1.size(); i++) {
+            if (s1[i] != s2[i]) {
+                t1 += s1[i];
+                t2 += s2[i];
+            }
+        }
+        int i1 = 0, i2 = 0;
+        for (auto i : t1) {
+            i1 += i == 'x';
+            i2 += i == 'y';
+        }
+        int res = 0;
+        res += i1 / 2;
+        i1 %= 2;
+        res += i2 / 2;
+        i2 %= 2;
+        if (i1 + i2 == 2) {
+            res += 2;
+        } else if (i1 + i2 == 1) {
+            return -1;
+        }
+        return res;
+    }
+};
+/*
+给你一个整数数组 nums，每次 操作 会从中选择一个元素并 将该元素的值减少 1。
+
+如果符合下列情况之一，则数组 A 就是 锯齿数组：
+
+    每个偶数索引对应的元素都大于相邻的元素，即 A[0] > A[1] < A[2] > A[3] < A[4] > ...
+    或者，每个奇数索引对应的元素都大于相邻的元素，即 A[0] < A[1] > A[2] < A[3] > A[4] < ...
+
+返回将数组 nums 转换为锯齿数组所需的最小操作次数。
+1144
+ */
+class Solution {
+public:
+    int movesToMakeZigzag(vector<int> &nums) {
+        int m = 0, n = 0, len = nums.size();
+        for (int i = 0; i < len; i++) {
+            int minn;
+            if (i == 0) {
+                minn = nums[i + 1];
+            } else if (i == len - 1) {
+                minn = nums[i - 1];
+            } else {
+                minn = min(nums[i - 1], nums[i + 1]);
+            }
+            if (i % 2) {
+                m += max(nums[i] - minn, 0);
+            } else {
+                n += max(nums[i] - minn, 0);
+            }
+        }
+        return min(m, n);
+    }
+};
+/*
+给你两个二维整数数组 items1 和 items2 ，表示两个物品集合。每个数组 items 有以下特质：
+
+    items[i] = [valuei, weighti] 其中 valuei 表示第 i 件物品的 价值 ，weighti 表示第 i 件物品的 重量 。
+    items 中每件物品的价值都是 唯一的 。
+
+请你返回一个二维数组 ret，其中 ret[i] = [valuei, weighti]， weighti 是所有价值为 valuei 物品的 重量之和 。
+
+注意：ret 应该按价值 升序 排序后返回。
+1363
+ */
+class Solution {
+public:
+    vector<vector<int>> mergeSimilarItems(vector<vector<int>> &items1, vector<vector<int>> &items2) {
+        map<int, int> mp;
+        for (auto vec : items1) {
+            mp[vec[0]] += vec[1];
+        }
+        for (auto vec : items2) {
+            mp[vec[0]] += vec[1];
+        }
+        vector<vector<int>> res;
+        for (auto [x, y] : mp) {
+            res.push_back({x, y});
+        }
+        return res;
+    }
+};
+/*
+二进制数转字符串。给定一个介于0和1之间的实数（如0.72），类型为double，打印它的二进制表达式。如果该数字无法精确地用32位以内的二进制表示，则打印“ERROR”。
+面试题 05.02. 二进制数转字符串
+*2相当于左移一位，这时候小数点前的数字就是二进制的0或者1了
+ */
+class Solution {
+public:
+    string printBin(double num) {
+        string str = to_string(num);
+        while (str.back() == '0') {
+            str.pop_back();
+        }
+        if (str.back() != '5') {
+            return "ERROR";
+        }
+        int n = stoi(str.substr(2));
+        // 0.5,0.25,0.125,0.0625,
+        int len = str.size() - 2;
+        int first = 5 * pow(10, len - 1);
+        string res = "0.";
+        for (; first >= 0 && n > 0; first /= 2) {
+            if (n >= first) {
+                n -= first;
+                res += '1';
+            } else {
+                res += '0';
+            }
+        }
+        return res;
+    }
+};
+// 官解
+class Solution {
+public:
+    string printBin(double num) {
+        string res = "0.";
+        while (res.size() <= 32 && num != 0) {
+            num *= 2;
+            int digit = num;
+            res.push_back(digit + '0');
+            num -= digit;
+        }
+        return res.size() <= 32 ? res : "ERROR";
+    }
+};
