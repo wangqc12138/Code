@@ -8607,6 +8607,7 @@ n 位格雷码序列 是一个由 2n 个整数组成的序列，其中：
     第一个 和 最后一个 整数的二进制表示 恰好一位不同
 
 给你一个整数 n ，返回任一有效的 n 位格雷码序列 。
+i/2 ^ i
 89
  */
 class Solution {
@@ -8785,5 +8786,131 @@ public:
             num -= digit;
         }
         return res.size() <= 32 ? res : "ERROR";
+    }
+};
+/*
+给你一个长度为 n 的字符串数组 names 。你将会在文件系统中创建 n 个文件夹：在第 i 分钟，新建名为 names[i] 的文件夹。
+
+由于两个文件 不能 共享相同的文件名，因此如果新建文件夹使用的文件名已经被占用，系统会以 (k) 的形式为新文件夹的文件名添加后缀，其中 k 是能保证文件名唯一的 最小正整数 。
+
+返回长度为 n 的字符串数组，其中 ans[i] 是创建第 i 个文件夹时系统分配给该文件夹的实际名称。
+1487
+ */
+class Solution {
+public:
+    vector<string> getFolderNames(vector<string> &names) {
+        map<string, int> mp;
+        vector<string> res;
+        for (auto name : names) {
+            if (!mp.count(name)) {
+                mp[name]++;
+            } else {
+                string temp = name;
+                while (mp.count(name)) {
+                    name = temp + "(" + to_string(mp[name]++) + ")";
+                }
+            }
+            res.emplace_back(name);
+        }
+        return res;
+    }
+};
+/*
+给你一个字符串 s ，它仅包含字符 'a' 和 'b'​​​​ 。
+
+你可以删除 s 中任意数目的字符，使得 s 平衡 。当不存在下标对 (i,j) 满足 i < j ，且 s[i] = 'b' 的同时 s[j]= 'a' ，此时认为 s 是 平衡 的。
+
+请你返回使 s 平衡 的 最少 删除次数。
+1653
+ */
+class Solution {
+public:
+    int minimumDeletions(string s) {
+        int n = s.size();
+        int dp[n][2];
+        memset(dp, 0, sizeof(dp));
+        dp[0][0] = s[0] == 'a';
+        dp[0][1] = s[0] == 'b';
+        for (int i = 1; i < n; i++) {
+            if (s[i] == 'a') {
+                dp[i][0] = dp[i - 1][0] + 1;
+                dp[i][1] = dp[i - 1][1];
+            } else {
+                dp[i][0] = dp[i - 1][0];
+                dp[i][1] = max(dp[i - 1][0], dp[i - 1][1]) + 1;
+            }
+        }
+        return n - max(dp[n - 1][0], dp[n - 1][1]);
+    }
+};
+class Solution {
+public:
+    int minimumDeletions(string s) {
+        int a = 0, b = 0;
+        for (auto i : s) {
+            if (i == 'a') {
+                a++;
+            } else {
+                b = max(a, b) + 1;
+            }
+        }
+        return s.size() - max(a, b);
+    }
+};
+class Solution {
+public:
+    int minimumDeletions(string s) {
+        int lb = 0, ra = count(s.begin(), s.end(), 'a'), res = INT_MAX;
+        for (auto c : s) {
+            ra -= c == 'a';
+            res = min(res, ra + lb);
+            lb += c == 'b';
+        }
+        return res;
+    }
+};
+/*
+如果你熟悉 Shell 编程，那么一定了解过花括号展开，它可以用来生成任意字符串。
+
+花括号展开的表达式可以看作一个由 花括号、逗号 和 小写英文字母 组成的字符串，定义下面几条语法规则：
+
+    如果只给出单一的元素 x，那么表达式表示的字符串就只有 "x"。R(x) = {x}
+        例如，表达式 "a" 表示字符串 "a"。
+        而表达式 "w" 就表示字符串 "w"。
+    当两个或多个表达式并列，以逗号分隔，我们取这些表达式中元素的并集。R({e_1,e_2,...}) = R(e_1) ∪ R(e_2) ∪ ...
+        例如，表达式 "{a,b,c}" 表示字符串 "a","b","c"。
+        而表达式 "{{a,b},{b,c}}" 也可以表示字符串 "a","b","c"。
+    要是两个或多个表达式相接，中间没有隔开时，我们从这些表达式中各取一个元素依次连接形成字符串。R(e_1 + e_2) = {a + b for (a, b) in R(e_1) × R(e_2)}
+        例如，表达式 "{a,b}{c,d}" 表示字符串 "ac","ad","bc","bd"。
+    表达式之间允许嵌套，单一元素与表达式的连接也是允许的。
+        例如，表达式 "a{b,c,d}" 表示字符串 "ab","ac","ad"​​​​​​。
+        例如，表达式 "a{b,c}{d,e}f{g,h}" 可以表示字符串 "abdfg", "abdfh", "abefg", "abefh", "acdfg", "acdfh", "acefg", "acefh"。
+
+给出表示基于给定语法规则的表达式 expression，返回它所表示的所有字符串组成的有序列表。
+
+假如你希望以「集合」的概念了解此题，也可以通过点击 “显示英文描述” 获取详情。
+1096
+ */
+class Solution {
+public:
+    set<string> res;
+    void dfs(string str) {
+        int j = str.find_first_of('}');
+        if (j == string::npos) {
+            res.emplace(str);
+            return;
+        }
+        int i = str.rfind('{', j);
+        string a = str.substr(0, i);
+        string c = str.substr(j + 1);
+        string b;
+        stringstream ss(str.substr(i + 1, j - i - 1));
+        while (getline(ss, b, ',')) {
+            dfs(a + b + c);
+        }
+    }
+    vector<string> braceExpansionII(string str) {
+        dfs(str);
+        return vector<string>(res.begin(), res.end());
     }
 };

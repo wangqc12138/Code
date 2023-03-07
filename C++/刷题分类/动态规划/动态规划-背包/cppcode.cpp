@@ -624,9 +624,20 @@ public:
  */
 class Solution {
 public:
-    int numRollsToTarget(int n, int k, int target) {
-        vector<int> dp(target + 1, 0);
-        dp[0] = 1;
+    int numRollsToTarget(int n, int t, int target) {
+        int dp[n + 1][target + 1];
+        memset(dp, 0, sizeof(dp));
+        dp[0][0] = 1;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 0; j <= target; j++) {
+                // 必须要选一个
+                for (int k = 1; k <= t && k <= j; k++) {
+                    dp[i][j] += dp[i - 1][j - k];
+                    dp[i][j] %= 1000000007;
+                }
+            }
+        }
+        return dp[n][target];
     }
 };
 /*
@@ -659,5 +670,80 @@ public:
 class Solution {
 public:
     int profitableSchemes(int n, int minProfit, vector<int>& group, vector<int>& profit) {
+    }
+};
+// 分组背包
+/*
+考试中有 n 种类型的题目。给你一个整数 target 和一个下标从 0 开始的二维整数数组 types ，其中 types[i] = [counti, marksi] 表示第 i 种类型的题目有 counti 道，每道题目对应 marksi 分。
+
+返回你在考试中恰好得到 target 分的方法数。由于答案可能很大，结果需要对 109 +7 取余。
+
+注意，同类型题目无法区分。
+
+    比如说，如果有 3 道同类型题目，那么解答第 1 和第 2 道题目与解答第 1 和第 3 道题目或者第 2 和第 3 道题目是相同的。
+2585
+ */
+class Solution {
+public:
+    int waysToReachTarget(int target, vector<vector<int>>& types) {
+        int n = types.size(), dp[n + 1][target + 1];
+        memset(dp, 0, sizeof(dp));
+        dp[0][0] = 1;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 0; j <= target; j++) {
+                // 可以不选
+                for (int k = 0; k * types[i - 1][1] <= j && k <= types[i - 1][0]; k++) {
+                    dp[i][j] += dp[i - 1][j - k * types[i - 1][1]];
+                    dp[i][j] %= 1000000007;
+                }
+            }
+        }
+        return dp[n][target];
+    }
+};
+// 一维
+class Solution {
+public:
+    int waysToReachTarget(int target, vector<vector<int>>& types) {
+        int dp[target + 1];
+        memset(dp, 0, sizeof(dp));
+        dp[0] = 1;
+        for (auto vec : types) {
+            for (int i = target; i >= 0; i--) {
+                for (int k = 1; k * vec[1] <= i && k <= vec[0]; k++) {
+                    dp[i] += dp[i - k * vec[1]];
+                    dp[i] %= 1000000007;
+                }
+            }
+        }
+        return dp[target];
+    }
+};
+/*
+给你一个大小为 m x n 的整数矩阵 mat 和一个整数 target 。
+
+从矩阵的 每一行 中选择一个整数，你的目标是 最小化 所有选中元素之 和 与目标值 target 的 绝对差 。
+
+返回 最小的绝对差 。
+
+a 和 b 两数字的 绝对差 是 a - b 的绝对值。
+1981
+ */
+class Solution {
+public:
+    int minimizeTheDifference(vector<vector<int>>& mat, int target) {
+    }
+};
+/*
+一张桌子上总共有 n 个硬币 栈 。每个栈有 正整数 个带面值的硬币。
+
+每一次操作中，你可以从任意一个栈的 顶部 取出 1 个硬币，从栈中移除它，并放入你的钱包里。
+
+给你一个列表 piles ，其中 piles[i] 是一个整数数组，分别表示第 i 个栈里 从顶到底 的硬币面值。同时给你一个正整数 k ，请你返回在 恰好 进行 k 次操作的前提下，你钱包里硬币面值之和 最大为多少 。
+2218
+ */
+class Solution {
+public:
+    int maxValueOfCoins(vector<vector<int>>& piles, int k) {
     }
 };

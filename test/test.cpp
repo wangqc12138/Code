@@ -1,64 +1,50 @@
 #include <bits/stdc++.h>
 #include <sys/stat.h>
+
 #include <regex>
 using namespace std;
-int minimumSize(vector<int> &nums, int maxOperations)
-{
+int minimumSize(vector<int>& nums, int maxOperations) {
     int left = 1, right = *max_element(nums.begin(), nums.end());
-    while (left < right)
-    {
+    while (left < right) {
         int mid = (right + left) / 2;
         cout << left << " " << right << "->" << mid << endl;
         long long k = 0;
         auto temp = nums;
-        for (int i = 0; i < temp.size(); i++)
-        {
+        for (int i = 0; i < temp.size(); i++) {
             k += (temp[i] - 1) / mid;
         }
-        if (k <= maxOperations)
-        {
+        if (k <= maxOperations) {
             right = mid;
-        }
-        else
-        {
+        } else {
             left = mid + 1;
         }
     }
     return left;
 }
 
-int main()
-{
+int main() {
     string src = "/leetcode/problems/";
     int n = src.find('/');
     vector<string> res;
-    while (n != string::npos)
-    {
+    while (n != string::npos) {
         int k = src.find('/', n + 1);
         res.emplace_back(src.substr(n + 1, k - n - 1));
         n = k;
     }
-    for (auto i : res)
-    {
+    for (auto i : res) {
         cout << i << endl;
     }
     return 0;
     vector<int> temp = {4, 1, 1, 2, 5, 1, 5, 4};
-    for (int i = 0; i < temp.size(); i++)
-    {
+    for (int i = 0; i < temp.size(); i++) {
         int m = 0, n = 0, index = 0;
-        for (int j = 0; j < temp.size(); j++)
-        {
-            if (j == i)
-            {
+        for (int j = 0; j < temp.size(); j++) {
+            if (j == i) {
                 continue;
             }
-            if (index % 2)
-            {
+            if (index % 2) {
                 m += temp[j];
-            }
-            else
-            {
+            } else {
                 n += temp[j];
             }
             index++;
@@ -73,8 +59,7 @@ int main()
     string str = "data.*$@$son.*";
     string::size_type begin = str.find("$@$");
     cout << begin << endl;
-    if (begin != str.npos)
-    {
+    if (begin != str.npos) {
         string strTemp1 = str.substr(begin + 3);
         cout << strTemp1 << endl;
         string strTemp2 = str.substr(0, begin);
