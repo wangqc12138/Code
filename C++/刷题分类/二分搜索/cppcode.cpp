@@ -691,13 +691,6 @@ public:
         return true;
     }
 };
-/*
-[45,35,27,15,29]
-[38,18,1,49,11]
-[45,28,22,18,10]
-[14,49,7,6,25]
-[7,23,39,17,3]
- */
 class Solution {
 public:
     vector<int> findPeakGrid(vector<vector<int>> &mat) {

@@ -136,8 +136,73 @@ public:
 class Solution {
 public:
     int findValidSplit(vector<int>& nums) {
+        int maxn = *max_element(nums.begin(), nums.end());
+        unordered_map<int, unordered_map<int, int>> temp;
+        unordered_set<int> p;
+        for (auto i : nums) {
+            temp[i] = {};
+        }
+        vector<int> prim(maxn + 1, 1);
+        for (int i = 2; i * i <= maxn; i++) {
+            if (prim[i]) {
+                p.emplace(i);
+                for (int j = 1; j * i <= maxn; j++) {
+                    prim[j * i] = 0;
+                }
+            }
+        }
+        for (auto [x, y] : temp) {
+            int t = x;
+            for (auto i : p) {
+                if (t % i)
+                    continue;
+                if (t < i)
+                    break;
+                while (t % i == 0) {
+                    t /= i;
+                    temp[x][i]++;
+                }
+            }
+            if (t > 1) {
+                temp[x][t]++;
+            }
+        }
+        unordered_map<int, int> sum;
+        map<int, int> now;
+        for (auto i : nums) {
+            for (auto [x, y] : temp[i]) {
+                sum[x] += y;
+            }
+        }
+        int n = nums.size();
+        for (int i = 0; i <= n - 2; i++) {
+            int flag = true;
+            for (auto [x, y] : temp[nums[i]]) {
+                sum[x] -= y;
+                now[x] += y;
+                if (sum[x] != 0) {
+                    flag = false;
+                }
+            }
+            if (!flag) {
+                continue;
+            }
+            for (auto [x, y] : now) {
+                if (sum[x] != 0) {
+                    flag = false;
+                } else {
+                    now.erase(x);
+                }
+            }
+            if (flag) {
+                return i;
+            }
+        }
+        return -1;
     }
 };
+// 方法二 类似跳跃游戏 找最远的能到达的地方，超过最远的地方后就是互质的另外一部分
+
 /*
 考试中有 n 种类型的题目。给你一个整数 target 和一个下标从 0 开始的二维整数数组 types ，其中 types[i] = [counti, marksi] 表示第 i 种类型的题目有 counti 道，每道题目对应 marksi 分。
 

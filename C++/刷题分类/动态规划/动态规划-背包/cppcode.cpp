@@ -732,6 +732,27 @@ a 和 b 两数字的 绝对差 是 a - b 的绝对值。
 class Solution {
 public:
     int minimizeTheDifference(vector<vector<int>>& mat, int target) {
+        int m = mat.size(), n = mat[0].size();
+        // 前m行是否能找出j值
+        bool dp[m + 1][4901];
+        memset(dp, false, sizeof(dp));
+        dp[0][0] = true;
+        int len = 0;
+        for (int i = 1; i <= m; i++) {
+            len += *max_element(mat[i - 1].begin(), mat[i - 1].end());
+            for (int k = 0; k < n; k++) {
+                for (int j = mat[i - 1][k]; j <= len; j++) {
+                    dp[i][j] |= dp[i - 1][j - mat[i - 1][k]];
+                }
+            }
+        }
+        int res = INT_MAX;
+        for (int i = 0; i <= 4900; i++) {
+            if (dp[m][i]) {
+                res = min(res, abs(target - i));
+            }
+        }
+        return res;
     }
 };
 /*
@@ -739,11 +760,48 @@ public:
 
 每一次操作中，你可以从任意一个栈的 顶部 取出 1 个硬币，从栈中移除它，并放入你的钱包里。
 
-给你一个列表 piles ，其中 piles[i] 是一个整数数组，分别表示第 i 个栈里 从顶到底 的硬币面值。同时给你一个正整数 k ，请你返回在 恰好 进行 k 次操作的前提下，你钱包里硬币面值之和 最大为多少 。
+给你一个列表 piles ，其中 piles[i] 是一个整数数组，分别表示第 i 个栈里 从顶到底 的硬币面值。
+同时给你一个正整数 k ，请你返回在 恰好 进行 k 次操作的前提下，你钱包里硬币面值之和 最大为多少 。
 2218
  */
 class Solution {
 public:
     int maxValueOfCoins(vector<vector<int>>& piles, int k) {
+        int n = piles.size();
+        // 第i个栈装了j个硬币的最大值
+        int dp[n + 1][k + 1];
+        memset(dp, 0, sizeof(dp));
+        for (int i = 1; i <= n; i++) {
+            int now = 0;
+            for (int a = 0; a <= piles[i - 1].size(); a++) {
+                if (a > 0) {
+                    now += piles[i - 1][a - 1];
+                }
+                for (int j = a; j <= k; j++) {
+                    dp[i][j] = max(dp[i][j], dp[i - 1][j - a] + now);
+                }
+            }
+        }
+        return dp[n][k];
+    }
+};
+// 一维 不能物品在外面了
+class Solution {
+public:
+    int maxValueOfCoins(vector<vector<int>>& piles, int k) {
+        int n = 0;
+        int dp[k + 1];
+        memset(dp, 0, sizeof(dp));
+        for (auto vec : piles) {
+            n = vec.size();
+            for (int j = k; j >= 0; j--) {
+                int now = 0;
+                for (int i = 1; i <= min(j, n); i++) {
+                    now += vec[i - 1];
+                    dp[j] = max(dp[j], dp[j - i] + now);
+                }
+            }
+        }
+        return dp[k];
     }
 };
