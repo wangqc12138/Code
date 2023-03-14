@@ -8933,3 +8933,70 @@ public:
         return dp[m][n];
     }
 };
+/*
+给你一个长度为 n 下标从 0 开始的字符串 blocks ，blocks[i] 要么是 'W' 要么是 'B' ，表示第 i 块的颜色。字符 'W' 和 'B' 分别表示白色和黑色。
+
+给你一个整数 k ，表示想要 连续 黑色块的数目。
+
+每一次操作中，你可以选择一个白色块将它 涂成 黑色块。
+
+请你返回至少出现 一次 连续 k 个黑色块的 最少 操作次数。
+2379
+ */
+class Solution {
+public:
+    int minimumRecolors(string blocks, int k) {
+        int res = 0, n = blocks.size();
+        vector<int> sum(n);
+        for (int i = 0; i < n; i++) {
+            if (i == 0) {
+                sum[i] = blocks[i] == 'B';
+            } else {
+                sum[i] = sum[i - 1] + (blocks[i] == 'B');
+            }
+            // cout<<sum[i]<<" ";
+        }
+        res = k - sum[k - 1];
+        for (int i = k; i < n; i++) {
+            res = min(res, k - sum[i] + sum[i - k]);
+        }
+        return res;
+    }
+};
+/*
+给你一个正整数数组 nums，请你移除 最短 子数组（可以为 空），使得剩余元素的 和 能被 p 整除。 不允许 将整个数组都移除。
+
+请你返回你需要移除的最短子数组的长度，如果无法满足题目要求，返回 -1 。
+
+子数组 定义为原数组中连续的一组元素。
+1590
+ */
+class Solution {
+public:
+    int minSubarray(vector<int> &nums, int p) {
+        int target = 0;
+        for (auto &i : nums) {
+            i %= p;
+            target += i;
+            target %= p;
+        }
+        if (target == 0) {
+            return 0;
+        }
+        int sum = 0, res = nums.size();
+        map<int, int> mp;
+        mp[0] = -1;
+        for (int i = 0; i < nums.size(); i++) {
+            nums[i] %= p;
+            sum += nums[i];
+            sum %= p;
+            // cout<<sum<<" "<<(sum + p - target) % p<<endl;
+            if (mp.count((sum + p - target) % p)) {
+                // cout<<sum<<" "<<(sum + p - target) % p<<endl;
+                res = min(res, i - mp[(sum + p - target) % p]);
+            }
+            mp[sum] = i;
+        }
+        return res == nums.size() ? -1 : res;
+    }
+};

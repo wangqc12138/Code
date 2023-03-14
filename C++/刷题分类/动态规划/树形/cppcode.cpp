@@ -2,7 +2,8 @@
 /*
 树是一个无向图，其中任何两个顶点只通过一条路径连接。 换句话说，一个任何没有简单环路的连通图都是一棵树。
 
-给你一棵包含 n 个节点的树，标记为 0 到 n - 1 。给定数字 n 和一个有 n - 1 条无向边的 edges 列表（每一个边都是一对标签），其中 edges[i] = [ai, bi] 表示树中节点 ai 和 bi 之间存在一条无向边。
+给你一棵包含 n 个节点的树，标记为 0 到 n - 1 。
+给定数字 n 和一个有 n - 1 条无向边的 edges 列表（每一个边都是一对标签），其中 edges[i] = [ai, bi] 表示树中节点 ai 和 bi 之间存在一条无向边。
 
 可选择树中任何一个节点作为根。当选择节点 x 作为根节点时，设结果树的高度为 h 。在所有可能的树中，具有最小高度的树（即，min(h)）被称为 最小高度树 。
 
@@ -13,6 +14,31 @@
 class Solution {
 public:
     vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges) {
+        vector<vector<int>> next(n);
+        for (auto vec : edges) {
+            next[vec[0]].emplace_back(vec[1]);
+            next[vec[1]].emplace_back(vec[0]);
+        }
+        vector<int> high(n, 1);
+        function<int(int, int)> dfs = [&](int x, int f) -> int {
+            int h = 1;
+            for (auto i : next[x]) {
+                if (i != f) {
+                    h = max(dfs(i, x) + 1, h);
+                }
+            }
+            high[x]=h;
+            return h;
+        };
+        int maxh=INT_MAX,res=0;
+        function<int(int,int,int)> dfs1=[&](int x,int f,int hg) ->int{
+            int h=high[x];
+            for(auto i:next[x]){
+                if(i!=f){
+                    h=max(dfs1(i,x,h),hg+1);
+                }
+            }
+        };
     }
 };
 /*
