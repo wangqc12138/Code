@@ -41,7 +41,6 @@ public:
     vector<vector<int>> rangeAddQueries(int n, vector<vector<int>>& queries) {
         vector<vector<int>> pre(n, vector<int>(n, 0));
         for (auto vec : queries) {
-            pre
         }
     }
 };

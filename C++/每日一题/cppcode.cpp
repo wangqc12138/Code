@@ -9000,3 +9000,80 @@ public:
         return res == nums.size() ? -1 : res;
     }
 };
+/*
+给你两个非负整数数组 rowSum 和 colSum ，其中 rowSum[i] 是二维矩阵中第 i 行元素的和， colSum[j] 是第 j 列元素的和。
+换言之你不知道矩阵里的每个元素，但是你知道每一行和每一列的和。
+
+请找到大小为 rowSum.length x colSum.length 的任意 非负整数 矩阵，且该矩阵满足 rowSum 和 colSum 的要求。
+
+请你返回任意一个满足题目要求的二维矩阵，题目保证存在 至少一个 可行矩阵。
+1605
+ */
+class Solution {
+public:
+    vector<vector<int>> restoreMatrix(vector<int> &rowSum, vector<int> &colSum) {
+        int m = rowSum.size(), n = colSum.size();
+        vector<vector<int>> res(m, vector<int>(n, 0));
+        int i = 0, j = 0;
+        while (i < m && j < n) {
+            int minn = min(rowSum[i], colSum[j]);
+            rowSum[i] -= minn;
+            colSum[j] -= minn;
+            res[i][j] = minn;
+            if (rowSum[i] == 0) {
+                i++;
+            }
+            if (colSum[j] == 0) {
+                j++;
+            }
+        }
+        return res;
+    }
+};
+/*
+n 座城市和一些连接这些城市的道路 roads 共同组成一个基础设施网络。每个 roads[i] = [ai, bi] 都表示在城市 ai 和 bi 之间有一条双向道路。
+
+两座不同城市构成的 城市对 的 网络秩 定义为：与这两座城市 直接 相连的道路总数。如果存在一条道路直接连接这两座城市，则这条道路只计算 一次 。
+
+整个基础设施网络的 最大网络秩 是所有不同城市对中的 最大网络秩 。
+
+给你整数 n 和数组 roads，返回整个基础设施网络的 最大网络秩 。
+1615
+ */
+class Solution {
+public:
+    int maximalNetworkRank(int n, vector<vector<int>> &roads) {
+        vector<unordered_set<int>> vus(n);
+        for (auto vec : roads) {
+            vus[vec[0]].emplace(vec[1]);
+            vus[vec[1]].emplace(vec[0]);
+        }
+        vector<int> vec(n);
+        for (int i = 0; i < n; i++) {
+            vec[i] = i;
+        }
+        sort(vec.begin(), vec.end(), [&](int i, int j) { return vus[i].size() > vus[j].size(); });
+        int maxlen = vus[vec[0]].size(), res = 0;
+        unordered_set<int> maxs;
+        maxs.emplace(vec[0]);
+        for (int i = 1; i < n; i++) {
+            int t = 0;
+            for (auto j : maxs) {
+                if (!vus[vec[i]].count(j)) {
+                    t = 0;
+                    break;
+                } else {
+                    t = -1;
+                }
+            }
+            res = max(res, int(maxlen + vus[vec[i]].size() + t));
+            if (t == 0) {
+                break;
+            }
+            if (maxlen == vus[vec[i]].size()) {
+                maxs.emplace(vec[i]);
+            }
+        }
+        return res;
+    }
+};

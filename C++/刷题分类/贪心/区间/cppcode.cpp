@@ -243,3 +243,96 @@ public:
         return res;
     }
 };
+/*
+你有一台电脑，它可以 同时 运行无数个任务。给你一个二维整数数组 tasks ，
+其中 tasks[i] = [starti, endi, durationi] 表示第 i 个任务需要在 闭区间 时间段 [starti, endi] 内运行 durationi 个整数时间点（但不需要连续）。
+
+当电脑需要运行任务时，你可以打开电脑，如果空闲时，你可以将电脑关闭。
+
+请你返回完成所有任务的情况下，电脑最少需要运行多少秒。
+
+ */
+class Solution {
+public:
+    int findMinimumTime(vector<vector<int>>& tasks) {
+        sort(tasks.begin(), tasks.end(), [](vector<int>& a, vector<int>& b) { return a[1] < b[1]; });
+        int used[2001], res = 0;
+        fill(used, used + 2001, 0);
+        for (auto vec : tasks) {
+            int st = vec[0], ed = vec[1], du = vec[2];
+            for (int i = st; i <= ed && du; i++) {
+                if (used[i]) {
+                    du--;
+                }
+            }
+            for (int i = ed; i >= st && du; i--) {
+                if (used[i] == 0) {
+                    res++;
+                    du--;
+                    used[i] = 1;
+                }
+            }
+        }
+        return res;
+    }
+};
+/*
+有一些球形气球贴在一堵用 XY 平面表示的墙面上。墙面上的气球记录在整数数组 points ，其中points[i] = [xstart, xend] 表示水平直径在 xstart 和 xend之间的气球。
+你不知道气球的确切 y 坐标。
+
+一支弓箭可以沿着 x 轴从不同点 完全垂直 地射出。在坐标 x 处射出一支箭，
+若有一个气球的直径的开始和结束坐标为 xstart，xend， 且满足  xstart ≤ x ≤ xend，则该气球会被 引爆 。可以射出的弓箭的数量 没有限制 。
+弓箭一旦被射出之后，可以无限地前进。
+
+给你一个数组 points ，返回引爆所有气球所必须射出的 最小 弓箭数 。
+452
+ */
+class Solution {
+public:
+    int findMinArrowShots(vector<vector<int>>& points) {
+        sort(points.begin(), points.end(), [](vector<int>& v1, vector<int>& v2) { return v1[0] < v2[0]; });
+        int right = points[0][1], res = 1;
+        for (auto vec : points) {
+            if (vec[0] > right) {
+                right = vec[1];
+                res++;
+            } else {
+                right = min(right, vec[1]);
+            }
+        }
+        return res;
+    }
+};
+/*
+给定一个区间的集合 intervals ，其中 intervals[i] = [starti, endi] 。返回 需要移除区间的最小数量，使剩余区间互不重叠 。
+435
+ */
+
+/*
+给你一个二维整数数组 intervals ，其中 intervals[i] = [starti, endi] 表示从 starti 到 endi 的所有整数，包括 starti 和 endi 。
+
+包含集合 是一个名为 nums 的数组，并满足 intervals 中的每个区间都 至少 有 两个 整数在 nums 中。
+
+    例如，如果 intervals = [[1,3], [3,7], [8,9]] ，那么 [1,2,4,7,8,9] 和 [2,3,4,8,9] 都符合 包含集合 的定义。
+
+返回包含集合可能的最小大小。
+757
+ */
+class Solution {
+public:
+    int intersectionSizeTwo(vector<vector<int>>& intervals) {
+        sort(intervals.begin(), intervals.end(), [](vector<int>& v1, vector<int>& v2) { return v1[0] < v2[0]; });
+        int right = intervals[0][1], res = 2;
+        for (auto vec : intervals) {
+            if (vec[0] > right) {
+                right = vec[1];
+                res += 2;
+            } else if (vec[0] == right) {
+                right = vec[1];
+                res++;
+            }
+            right = min(right, vec[1]);
+        }
+        return res;
+    }
+};

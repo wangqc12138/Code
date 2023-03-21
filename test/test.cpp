@@ -23,6 +23,9 @@ int minimumSize(vector<int>& nums, int maxOperations) {
 }
 
 int main() {
+    int d = 1024;
+    cout << bitset<32>(d) << endl;
+    return 0;
     string src = "/leetcode/problems/";
     int n = src.find('/');
     vector<string> res;

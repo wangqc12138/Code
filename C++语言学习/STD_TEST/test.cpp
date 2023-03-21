@@ -293,6 +293,50 @@ void test() {
     cout << endl;
 }
 }  // namespace T16
+namespace T17 {
+void test() {
+    // find_first_of()
+    // 在容器1中找第一个能和容器2中的元素匹配上的元素
+    // 可以传函数
+    string s1 = "12345678";
+    string s2 = "777333";
+    // 7
+    cout << *find_first_of(s1.begin(), s1.end(), s2.begin(), s2.begin() + 3) << endl;
+    // 3
+    cout << *find_first_of(s1.begin(), s1.end(), s2.begin(), s2.end()) << endl;
+    // 2
+    cout << *find_first_of(s1.begin(), s1.end(), s2.begin(), s2.end(), [](char c1, char c2) { return c1 + 1 == c2; }) << endl;
+}
+}  // namespace T17
+namespace T18 {
+void test() {
+    // find_if
+    // 返回满足函数的第一个元素
+    string s = "0001000001";
+    cout << *find_if(s.begin(), s.end(), [](char c) { return c == '1'; }) << endl;
+    // find_if_not
+    // 返回不满足函数的第一个元素
+    cout << *find_if_not(s.begin(), s.end(), [](char c) { return c == '1'; }) << endl;
+}
+}  // namespace T18
+namespace T19 {
+void test() {
+    // for_each
+    // 对容器里的元素挨个做func的处理
+    vector<int> vec(10, 0);
+    int k = 0;
+    for_each(vec.begin(), vec.end(), [&](int i) { i = k++; });
+    for (auto i : vec) {
+        cout << i << " ";
+    }
+    cout << endl;
+    for_each(vec.begin(), vec.end(), [&](int& i) { i = k--; });
+    for (auto i : vec) {
+        cout << i << " ";
+    }
+    cout << endl;
+}
+}  // namespace T19
 
 int main() {
     // std::adjacent_find
@@ -307,6 +351,6 @@ int main() {
     // T5::test();
     // std::copy_backward
     // T6::test();
-    T16::test();
+    T19::test();
     return 0;
 }

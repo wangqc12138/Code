@@ -85,5 +85,24 @@ public:
 class Solution {
 public:
     int findMinimumTime(vector<vector<int>>& tasks) {
+        sort(tasks.begin(), tasks.end(), [](vector<int>& a, vector<int>& b) { return a[1] < b[1]; });
+        int used[2001], res = 0;
+        fill(used, used + 2001, 0);
+        for (auto vec : tasks) {
+            int st = vec[0], ed = vec[1], du = vec[2];
+            for (int i = st; i <= ed && du; i++) {
+                if (used[i]) {
+                    du--;
+                }
+            }
+            for (int i = ed; i >= st && du; i--) {
+                if (used[i] == 0) {
+                    res++;
+                    du--;
+                    used[i] = 1;
+                }
+            }
+        }
+        return res;
     }
 };
