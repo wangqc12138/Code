@@ -23,6 +23,11 @@ int minimumSize(vector<int>& nums, int maxOperations) {
 }
 
 int main() {
+    vector<int> v1 = {1, 2, 3};
+    vector<int> v2 = {1, 2, 3, 0};
+    auto flag = v1 < v2;
+    cout << flag << endl;
+    return 0;
     int d = 1024;
     cout << bitset<32>(d) << endl;
     return 0;

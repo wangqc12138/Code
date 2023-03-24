@@ -148,3 +148,132 @@ public:
         return res;
     }
 };
+/*
+如果一个数列由至少两个元素组成，且每两个连续元素之间的差值都相同，那么这个序列就是 等差数列 。
+更正式地，数列 s 是等差数列，只需要满足：对于每个有效的 i ， s[i+1] - s[i] == s[1] - s[0] 都成立。
+给你一个由 n 个整数组成的数组 nums，和两个由 m 个整数组成的数组 l 和 r，后两个数组表示 m 组范围查询，其中第 i 个查询对应范围 [l[i], r[i]] 。
+所有数组的下标都是 从 0 开始 的。
+
+返回 boolean 元素构成的答案列表 answer 。
+如果子数组 nums[l[i]], nums[l[i]+1], ... , nums[r[i]] 可以 重新排列 形成 等差数列 ，answer[i] 的值就是 true；否则answer[i] 的值就是 false 。
+T1630
+ */
+// 错误，这个是判断不重新排列的！
+class Solution {
+public:
+    vector<bool> checkArithmeticSubarrays(vector<int>& nums, vector<int>& l, vector<int>& r) {
+        int pre = 0, n = nums.size();
+        vector<int> L, R;
+        for (int i = 1; i < n; i++) {
+            if (nums[i] - nums[i - 1] != nums[pre + 1] - nums[pre]) {
+                L.emplace_back(pre);
+                R.emplace_back(i - 1);
+                pre = i - 1;
+            }
+        }
+        L.emplace_back(pre);
+        R.emplace_back(n - 1);
+        int len = l.size();
+        vector<bool> res(len);
+        for (int i = 0; i < len; i++) {
+            int t1 = lower_bound(L.begin(), L.end(), l[i]) - L.begin();
+            int t2 = upper_bound(R.begin(), R.end(), r[i]) - R.begin() - 1;
+            res[i] = t1 == t2;
+        }
+        return res;
+    }
+};
+/*
+直接暴力
+没啥说法
+ */
+class Solution {
+public:
+    vector<bool> checkArithmeticSubarrays(vector<int>& nums, vector<int>& l, vector<int>& r) {
+        int len = l.size();
+        vector<bool> res(len, true);
+        for (int i = 0; i < len; i++) {
+            vector<int> temp = vector<int>(nums.begin() + l[i], nums.begin() + r[i] + 1);
+            sort(temp.begin(), temp.end());
+            for (int j = 2; j < temp.size(); j++) {
+                if (temp[j] - temp[j - 1] != temp[1] - temp[0]) {
+                    res[i] = false;
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+};
+/*
+设计一个算法：接收一个字符流，并检查这些字符的后缀是否是字符串数组 words 中的一个字符串。
+
+例如，words = ["abc", "xyz"] 且字符流中逐个依次加入 4 个字符 'a'、'x'、'y' 和 'z' ，你所设计的算法应当可以检测到 "axyz" 的后缀 "xyz" 与 words 中的字符串 "xyz" 匹配。
+
+按下述要求实现 StreamChecker 类：
+
+    StreamChecker(String[] words) ：构造函数，用字符串数组 words 初始化数据结构。
+    boolean query(char letter)：从字符流中接收一个新字符，如果字符流中的任一非空后缀能匹配 words 中的某一字符串，返回 true ；否则，返回 false。
+1032
+ */
+class trie {
+public:
+    trie() {
+        fill(next, next + 26, nullptr);
+        end = false;
+    }
+    void insert(const string& str) {
+        trie* root = this;
+        for (auto c : str) {
+            if (root->next[c - 'a'] == nullptr) {
+                root->next[c - 'a'] = new trie();
+            }
+            root = root->next[c - 'a'];
+        }
+        root->end = true;
+    }
+    trie* search(char c) {
+        return this->next[c - 'a'];
+    }
+    bool isend() {
+        return this->end;
+    }
+
+private:
+    trie* next[26];
+    bool end;
+};
+class StreamChecker {
+public:
+    StreamChecker(vector<string>& words) {
+        root = new trie();
+        for (auto str : words) {
+            root->insert(str);
+        }
+        now.clear();
+        now.emplace_back(root);
+    }
+
+    bool query(char letter) {
+        vector<trie*> temp;
+        bool res = false;
+        for (auto t : now) {
+            auto child = t->search(letter);
+            if (child) {
+                temp.emplace_back(child);
+                res |= child->isend();
+            }
+        }
+        auto child = root->search(letter);
+        if (child) {
+            temp.emplace_back(child);
+            res |= child->isend();
+        }
+        now = temp;
+        return res;
+    }
+
+private:
+    trie* root;
+    vector<trie*> now;
+};

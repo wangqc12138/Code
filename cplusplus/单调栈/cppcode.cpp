@@ -303,6 +303,7 @@ public:
 
 求满足该条件的最大数。结果返回一个表示该最大数的长度为 k 的数组。
 T321
+一个数组去掉k个字符的最大值可求，则挨个遍历（1-n）长度求出两个数组的最大值，然后合并
  */
 class Solution {
 public:
@@ -313,28 +314,9 @@ public:
             if (i > m || k - i > n) {
                 continue;
             }
-            // auto v1 = help(nums1, i);
-            // auto v2 = help(nums2, k - i);
-            // for (auto i : v1) {
-            //     cout << i << " ";
-            // }
-            // cout << "\n";
-            // for (auto i : v2) {
-            //     cout << i << " ";
-            // }
-            // cout << "\n";
             auto temp = merge(help(nums1, i), help(nums2, k - i));
-            // for (auto i : temp) {
-            //     cout << i << " ";
-            // }
-            // cout << "\n";
-            for (int j = 0; j < k; j++) {
-                if (temp[j] > res[j]) {
-                    res = temp;
-                    break;
-                } else if (temp[j] < res[j]) {
-                    break;
-                }
+            if (res < temp) {
+                res = temp;
             }
         }
         return res;
@@ -356,7 +338,11 @@ public:
         int i = 0, j = 0, k = 0, m = A.size(), n = B.size();
         vector<int> res(m + n);
         while (i < m && j < n) {
-            res[k++] = A[i] > B[j] ? A[i++] : B[j++];
+            if (vector<int>(A.begin() + i, A.end()) > vector<int>(B.begin() + j, B.end())) {
+                res[k++] = A[i++];
+            } else {
+                res[k++] = B[j++];
+            }
         }
         while (i < m) {
             res[k++] = A[i++];
@@ -365,5 +351,102 @@ public:
             res[k++] = B[j++];
         }
         return res;
+    }
+};
+/*
+给定一个整数数组 arr，找到 min(b) 的总和，其中 b 的范围为 arr 的每个（连续）子数组。
+
+由于答案可能很大，因此 返回答案模 10^9 + 7 。
+T907
+每个元素找到最近的比他小的元素影响范围就是l到r。（2^n-1）*val
+ */
+class Solution {
+public:
+    int sumSubarrayMins(vector<int>& arr) {
+        // 从小到大
+        stack<int> sk;
+        int n = arr.size();
+        long long res = 0;
+        for (int i = 0; i < n; i++) {
+            while (!sk.empty() && arr[sk.top()] > arr[i]) {
+                int t = sk.top();
+                sk.pop();
+                int right = i - t, left;
+                if (!sk.empty()) {
+                    left = t - sk.top();
+                } else {
+                    left = t + 1;
+                }
+                res += (long long)left * right * arr[t];
+                res %= 1000000007;
+            }
+            sk.emplace(i);
+        }
+        while (!sk.empty()) {
+            int t = sk.top();
+            sk.pop();
+            int right = n - t, left;
+            if (!sk.empty()) {
+                left = t - sk.top();
+            } else {
+                left = t + 1;
+            }
+            res += (long long)left * right * arr[t];
+            res %= 1000000007;
+        }
+        return res;
+    }
+};
+/*
+1856
+2104
+2281
+20230330
+ */
+
+/*
+输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 true，否则返回 false。假设输入的数组的任意两个数字都互不相同。
+剑指 Offer 33. 二叉搜索树的后序遍历序列
+ */
+// 非单调栈做法
+class Solution {
+public:
+    bool verifyPostorder(vector<int>& postorder) {
+        function<bool(int, int)> f = [&](int i, int j) -> bool {
+            if (i >= j) {
+                return true;
+            }
+            int p = i;
+            while (postorder[p] < postorder[j]) {
+                p++;
+            }
+            int m = p;
+            while (postorder[p] > postorder[j]) {
+                p++;
+            }
+            return p == j && f(i, m - 1) && f(m, j - 1);
+        };
+        return f(0, postorder.size() - 1);
+    }
+};
+// 20230330
+// 从后到前，每个在栈中比当前元素大的有可能是当前的parent，最小的大是parent
+class Solution {
+public:
+    bool verifyPostorder(vector<int>& postorder) {
+        stack<int> sk;
+        reverse(postorder.begin(), postorder.end());
+        int root = INT_MAX;
+        for (auto i : postorder) {
+            while (!sk.empty() && sk.top() > i) {
+                root = sk.top();
+                sk.pop();
+            }
+            if (root < i) {
+                return false;
+            }
+            sk.emplace(i);
+        }
+        return true;
     }
 };
