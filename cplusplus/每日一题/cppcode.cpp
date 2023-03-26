@@ -277,3 +277,48 @@ private:
     trie* root;
     vector<trie*> now;
 };
+
+/*
+给你一个整数数组 arr ，请你删除一个子数组（可以为空），使得 arr 中剩下的元素是 非递减 的。
+
+一个子数组指的是原数组中连续的一个子序列。
+
+请你返回满足题目要求的最短子数组的长度。
+T1574
+ */
+class Solution {
+public:
+    int findLengthOfShortestSubarray(vector<int>& arr) {
+        int n = arr.size(), res = n;
+        vector<int> head, tail;
+        for (int i = 0; i < n; i++) {
+            if (head.empty() || arr[i] >= head.back()) {
+                head.emplace_back(arr[i]);
+            } else {
+                break;
+            }
+        }
+        if (head.size() == n) {
+            return 0;
+        }
+        for (int i = n - 1; i >= 0; i--) {
+            if (tail.empty() || arr[i] <= tail.back()) {
+                tail.emplace_back(arr[i]);
+            } else {
+                break;
+            }
+        }
+        res = n - min(head.size(), tail.size());
+        for (int i = head.size() - 1; i >= 0; i--) {
+            for (int j = tail.size() - 1; j >= 0; j--) {
+                if (head[i] > tail[j]) {
+                    continue;
+                } else {
+                    res = min(res, n - i - j - 2);
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+};
