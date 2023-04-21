@@ -86,3 +86,71 @@ public:
         return dp[n];
     }
 };
+/*
+给你一个整数数组 arr，请你将该数组分隔为长度 最多 为 k 的一些（连续）子数组。分隔完成后，每个子数组的中的所有值都会变为该子数组中的最大值。
+
+返回将数组分隔变换后能够得到的元素最大和。本题所用到的测试用例会确保答案是一个 32 位整数。
+T1043
+ */
+using pii = pair<int, int>;
+class Solution {
+public:
+    int maxSumAfterPartitioning(vector<int>& arr, int K) {
+        int n = arr.size();
+        int dp[n + 1];
+        memset(dp, 0, sizeof(dp));
+        // auto cmp = [&](int a, int b) { return arr[a] < arr[b] || arr[a] == arr[b] && a > b; };
+        // priority_queue<int, vector<int>, decltype(cmp)> mpq(cmp);
+        for (int i = 1; i <= n; i++) {
+            // while (!mpq.empty() && i - mpq.top() > K) {
+            //     mpq.pop();
+            // }
+            // mpq.emplace(i - 1);
+            int maxn = arr[i - 1];
+            for (int j = i - 1; j >= i - K && j >= 0; j--) {
+                dp[i] = max(dp[i], dp[j] + maxn * (i - j));
+                if (j > 0) {
+                    maxn = max(maxn, arr[j - 1]);
+                }
+            }
+        }
+        return dp[n];
+    }
+};
+/*
+给你一个下标从 0 开始的整数数组 nums ，你必须将数组划分为一个或多个 连续 子数组。
+
+如果获得的这些子数组中每个都能满足下述条件 之一 ，则可以称其为数组的一种 有效 划分：
+
+    子数组 恰 由 2 个相等元素组成，例如，子数组 [2,2] 。
+    子数组 恰 由 3 个相等元素组成，例如，子数组 [4,4,4] 。
+    子数组 恰 由 3 个连续递增元素组成，并且相邻元素之间的差值为 1 。例如，子数组 [3,4,5] ，但是子数组 [1,3,5] 不符合要求。
+
+如果数组 至少 存在一种有效划分，返回 true ，否则，返回 false 。
+T2369
+ */
+class Solution {
+public:
+    bool validPartition(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> dp(n, 0);
+        if (nums[0] == nums[1]) {
+            dp[1] = 1;
+        }
+        if (n == 2) {
+            return dp[1];
+        }
+        if (nums[0] == nums[1] && nums[0] == nums[2] || nums[0] == nums[1] - 1 && nums[0] == nums[2] - 2) {
+            dp[2] = 1;
+        }
+        for (int i = 3; i < n; i++) {
+            if (nums[i] == nums[i - 1]) {
+                dp[i] |= dp[i - 2];
+            }
+            if (nums[i] == nums[i - 1] && nums[i] == nums[i - 2] || nums[i] == nums[i - 1] + 1 && nums[i] == nums[i - 2] + 2) {
+                dp[i] |= dp[i - 3];
+            }
+        }
+        return dp[n - 1];
+    }
+};

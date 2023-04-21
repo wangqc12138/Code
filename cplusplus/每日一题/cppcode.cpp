@@ -322,3 +322,557 @@ public:
         return res;
     }
 };
+/*
+给你两个字符串 s 和 t ，请你找出 s 中的非空子串的数目，这些子串满足替换 一个不同字符 以后，是 t 串的子串。
+换言之，请你找到 s 和 t 串中 恰好 只有一个字符不同的子字符串对的数目。
+
+比方说， "compute" and "computa" 只有一个字符不同： 'e'/'a' ，所以这一对子字符串会给答案加 1 。
+
+请你返回满足上述条件的不同子字符串对数目。
+
+一个 子字符串 是一个字符串中连续的字符。
+T1638
+ */
+class Solution {
+public:
+    int countSubstrings(string s, string t) {
+        int m = s.size(), n = t.size(), res = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                int k = i, l = j;
+                int flag = 0;
+                while (l < n && k < m) {
+                    if (s[k] != t[l] && flag == 0) {
+                        res++;
+                        flag = 1;
+                    } else if (s[k] == t[l] && flag == 1) {
+                        res++;
+                    } else if (s[k] != t[l] && flag == 1) {
+                        break;
+                    }
+                    k++;
+                    l++;
+                }
+            }
+        }
+        return res;
+    }
+};
+// dp
+class Solution {
+public:
+    int countSubstrings(string s, string t) {
+        int m = s.size(), n = t.size();
+        int dp[m][n][2];
+        memset(dp, 0, sizeof(dp));
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (s[i] == t[j]) {
+                    dp[i][j][0] = (i > 0 && j > 0 ? dp[i - 1][j - 1][0] : 0) + 1;
+                    dp[i][j][1] = (i > 0 && j > 0 ? dp[i - 1][j - 1][1] : 0) + 1;
+                } else {
+                    dp[i][j][1] += (i > 0 && j > 0 ? dp[i - 1][j - 1][0] : 0) + 1;
+                    dp[i][j][1] += (i > 0 && j > 0 ? dp[i - 1][j - 1][1] : 0);
+                }
+                cout << dp[i][j][0] << "+" << dp[i][j][1] << " ";
+            }
+            cout << endl;
+        }
+        return dp[m - 1][n - 1][1];
+    }
+};
+/*
+给你一个整数 n，请返回长度为 n 、仅由元音 (a, e, i, o, u) 组成且按 字典序排列 的字符串数量。
+
+字符串 s 按 字典序排列 需要满足：对于所有有效的 i，s[i] 在字母表中的位置总是与 s[i+1] 相同或在 s[i+1] 之前。
+T1641
+ */
+class Solution {
+public:
+    int countVowelStrings(int n) {
+        vector<vector<int>> dp(n, vector<int>(5, -1));
+        function<int(int, int)> f = [&](int pos, int now) -> int {
+            if (pos >= n) {
+                return 1;
+            }
+            if (dp[pos][now] != -1) {
+                return dp[pos][now];
+            }
+            int res = 0;
+            for (int i = now; i < 5; i++) {
+                res += f(pos + 1, i);
+            }
+            dp[pos][now] = res;
+            return res;
+        };
+        return f(0, 0);
+    }
+};
+// dp
+class Solution {
+public:
+    int countVowelStrings(int n) {
+        vector<int> dp(5, 1);
+        int s = 0;
+        for (int i = 1; i < n; i++) {
+            s = 0;
+            for (int j = 0; j < 5; j++) {
+                s += dp[j];
+                dp[j] = s;
+            }
+        }
+        return s;
+    }
+};
+/*
+有 N 堆石头排成一排，第 i 堆中有 stones[i] 块石头。
+
+每次移动（move）需要将连续的 K 堆石头合并为一堆，而这个移动的成本为这 K 堆石头的总数。
+
+找出把所有石头合并成一堆的最低成本。如果不可能，返回 -1 。
+T1000
+ */
+class Solution {
+public:
+    int mergeStones(vector<int>& stones, int k) {
+        int n = stones.size();
+        vector<int> sum(n);
+        partial_sum(stones.begin(), stones.end(), sum.begin());
+    }
+};
+/*
+给你一个整数 n ，以二进制字符串的形式返回该整数的 负二进制（base -2）表示。
+
+注意，除非字符串就是 "0"，否则返回的字符串中不能含有前导零。
+T1017
+ */
+// 超时
+class Solution {
+public:
+    string baseNeg2(int n) {
+        map<string, int> mp;
+        mp["1"] = 1;
+        mp["0"] = 0;
+        while (!mp.empty()) {
+            map<string, int> temp;
+            for (auto& [x, y] : mp) {
+                if (y == n) {
+                    return x;
+                }
+                string s1 = "0" + x;
+                int n1 = y;
+                string s2 = "1" + x;
+                int n2 = y + (s2.size() % 2 ? pow(2, s2.size() - 1) : pow(-2, s2.size() - 1));
+                temp[s1] = n1;
+                temp[s2] = n2;
+            }
+            mp = temp;
+        }
+        return "";
+    }
+};
+class Solution {
+public:
+    string baseNeg2(int n) {
+        if (!n) {
+            return "0";
+        }
+        vector<int> bits(32);
+        int index = 0;
+        while (n) {
+            bits[index++] = n % 2;
+            n /= 2;
+        }
+        for (int i = 0; i < 32; i++) {
+            if (bits[i] == 2) {
+                bits[i] = 0;
+                bits[i + 1]++;
+            }
+            if (bits[i] == 1 && i % 2) {
+                bits[i + 1]++;
+            }
+        }
+        string res = "";
+        for (int i = 31; i >= 0; i--) {
+            if (res == "" && bits[i] == 0) {
+                continue;
+            } else {
+                res += to_string(bits[i]);
+            }
+        }
+        return res;
+    }
+};
+// 让余数为非负数！
+class Solution {
+public:
+    string baseNeg2(int n) {
+        return help(n, -2);
+    }
+    string help(int n, int x) {
+        string res = "";
+        while (n) {
+            int remain = (n - x) % x;
+            int q = n / x;
+            res += to_string(remain);
+        }
+        reverse(res.begin(), res.end());
+        return res;
+    }
+};
+
+/*
+在一个长度 无限 的数轴上，第 i 颗石子的位置为 stones[i]。如果一颗石子的位置最小/最大，那么该石子被称作 端点石子 。
+
+每个回合，你可以将一颗端点石子拿起并移动到一个未占用的位置，使得该石子不再是一颗端点石子。
+
+值得注意的是，如果石子像 stones = [1,2,5] 这样，你将 无法 移动位于位置 5 的端点石子，因为无论将它移动到任何位置（例如 0 或 3），该石子都仍然会是端点石子。
+
+当你无法进行任何移动时，即，这些石子的位置连续时，游戏结束。
+
+要使游戏结束，你可以执行的最小和最大移动次数分别是多少？ 以长度为 2 的数组形式返回答案：answer = [minimum_moves, maximum_moves] 。
+T1040
+ */
+class Solution {
+public:
+    vector<int> numMovesStonesII(vector<int>& stones) {
+    }
+};
+/*
+给定一个长度为 n 的链表 head
+
+对于列表中的每个节点，查找下一个 更大节点 的值。也就是说，对于每个节点，找到它旁边的第一个节点的值，这个节点的值 严格大于 它的值。
+
+返回一个整数数组 answer ，其中 answer[i] 是第 i 个节点( 从1开始 )的下一个更大的节点的值。如果第 i 个节点没有下一个更大的节点，设置 answer[i] = 0 。
+T1019
+ */
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> nextLargerNodes(ListNode* head) {
+        unordered_map<int, int> ump;
+        stack<int> sk;
+        int index = 0;
+        vector<int> res;
+        while (head) {
+            while (!sk.empty() && head->val > ump[sk.top()]) {
+                res[sk.top()] = head->val;
+                sk.pop();
+            }
+            sk.emplace(index);
+            ump[index++] = head->val;
+            res.emplace_back(0);
+            head = head->next;
+        }
+        return res;
+    }
+};
+/*
+在无限的平面上，机器人最初位于 (0, 0) 处，面朝北方。注意:
+
+    北方向 是y轴的正方向。
+    南方向 是y轴的负方向。
+    东方向 是x轴的正方向。
+    西方向 是x轴的负方向。
+
+机器人可以接受下列三条指令之一：
+
+    "G"：直走 1 个单位
+    "L"：左转 90 度
+    "R"：右转 90 度
+
+机器人按顺序执行指令 instructions，并一直重复它们。
+
+只有在平面中存在环使得机器人永远无法离开时，返回 true。否则，返回 false。
+T1041
+ */
+class Solution {
+public:
+    bool isRobotBounded(string instructions) {
+        pair<int, int> now;
+        int dir = 0;
+        for (int i = 0; i < 4; i++) {
+            for (auto c : instructions) {
+                if (c == 'G') {
+                    if (dir == 0) {
+                        now.first++;
+                    } else if (dir == 1) {
+                        now.second++;
+                    } else if (dir == 2) {
+                        now.first--;
+                    } else {
+                        now.second--;
+                    }
+                } else if (c == 'L') {
+                    if (++dir == 4) {
+                        dir = 0;
+                    }
+                } else {
+                    if (--dir == -1) {
+                        dir = 3;
+                    }
+                }
+            }
+        }
+        return now == pair<int, int>{0, 0} && dir == 0;
+    }
+};
+/*
+如果我们可以将小写字母插入模式串 pattern 得到待查询项 query，那么待查询项与给定模式串匹配。（我们可以在任何位置插入每个字符，也可以插入 0 个字符。）
+
+给定待查询列表 queries，和模式串 pattern，返回由布尔值组成的答案列表 answer。
+只有在待查项 queries[i] 与模式串 pattern 匹配时， answer[i] 才为 true，否则为 false。
+1023
+ */
+class Solution {
+public:
+    vector<bool> camelMatch(vector<string>& queries, string pattern) {
+        vector<bool> res;
+        for (auto q : queries) {
+            int i = 0, j = 0;
+            bool flag = true;
+            while (i < q.size() && j < pattern.size()) {
+                if (pattern[j] == q[i]) {
+                    i++;
+                    j++;
+                } else {
+                    if (q[i] >= 'A' && q[i] <= 'Z') {
+                        flag = false;
+                        break;
+                    }
+                    i++;
+                }
+            }
+            flag = j == pattern.size();
+            if (j == pattern.size()) {
+                for (; i < q.size(); i++) {
+                    if (q[i] >= 'A' && q[i] <= 'Z') {
+                        flag = false;
+                        break;
+                    }
+                }
+            }
+            res.emplace_back(flag);
+        }
+        return res;
+    }
+};
+// 正则
+class Solution {
+public:
+    vector<bool> camelMatch(vector<string>& queries, string pattern) {
+        string str = "[a-z]*";
+        for (auto c : pattern) {
+            str += c;
+            str += "[a-z]*";
+        }
+        regex re(str);
+        vector<bool> res;
+        for (auto q : queries) {
+            res.emplace_back(regex_match(q, re));
+        }
+        return res;
+    }
+};
+/*
+有 n 个花园，按从 1 到 n 标记。另有数组 paths ，其中 paths[i] = [xi, yi] 描述了花园 xi 到花园 yi 的双向路径。在每个花园中，你打算种下四种花之一。
+
+另外，所有花园 最多 有 3 条路径可以进入或离开.
+
+你需要为每个花园选择一种花，使得通过路径相连的任何两个花园中的花的种类互不相同。
+
+以数组形式返回 任一 可行的方案作为答案 answer，其中 answer[i] 为在第 (i+1) 个花园中种植的花的种类。花的种类用  1、2、3、4 表示。保证存在答案。
+T1042
+ */
+// 不需要dfs，暴力即可，这个dfs虽然过了，但是证明不了，感觉是有问题的！
+class Solution {
+public:
+    vector<int> gardenNoAdj(int n, vector<vector<int>>& paths) {
+        map<int, vector<int>> next;
+        for (auto vec : paths) {
+            next[vec[0]].emplace_back(vec[1]);
+            next[vec[1]].emplace_back(vec[0]);
+        }
+        vector<int> clr(n + 1, 0);
+        function<int(int, int)> dfs = [&](int pos, int color) -> int {
+            if (clr[pos] != 0) {
+                return clr[pos];
+            }
+            clr[pos] = color;
+            vector<int> temp(5, 0);
+            for (auto i : next[pos]) {
+                temp[dfs(i, (color + 1) % 4 + 1)] = 1;
+            }
+            if (temp[color]) {
+                for (int i = 1; i <= 4; i++) {
+                    if (temp[i] == 0) {
+                        clr[pos] = i;
+                        break;
+                    }
+                }
+            }
+
+            return clr[pos];
+        };
+        for (int i = 1; i <= n; i++) {
+            if (clr[i] == 0) {
+                dfs(i, 1);
+            }
+        }
+        return vector<int>(clr.begin() + 1, clr.end());
+    }
+};
+// 暴力
+class Solution {
+public:
+    vector<int> gardenNoAdj(int n, vector<vector<int>>& paths) {
+        map<int, vector<int>> next;
+        for (auto vec : paths) {
+            next[vec[0]].emplace_back(vec[1]);
+            next[vec[1]].emplace_back(vec[0]);
+        }
+        vector<int> color(n + 1, 0);
+        for (int i = 1; i <= n; i++) {
+            vector<int> temp(5, 0);
+            for (auto j : next[i]) {
+                if (color[j]) {
+                    temp[color[j]] = 1;
+                }
+            }
+            for (int k = 1; k <= 4; k++) {
+                if (temp[k] == 0) {
+                    color[i] = k;
+                    break;
+                }
+            }
+        }
+        return vector<int>(color.begin() + 1, color.end());
+    }
+};
+/*
+给定二叉树的根节点 root，找出存在于 不同 节点 A 和 B 之间的最大值 V，其中 V = |A.val - B.val|，且 A 是 B 的祖先。
+
+（如果 A 的任何子节点之一为 B，或者 A 的任何子节点是 B 的祖先，那么我们认为 A 是 B 的祖先）
+T1026
+ */
+// dfs
+using pii = pair<int, int>;
+class Solution {
+public:
+    int maxAncestorDiff(TreeNode* root) {
+        int res = 0;
+        function<pii(TreeNode*)> dfs = [&](TreeNode* node) -> pair<int, int> {
+            if (node == nullptr) {
+                return {-1, -1};
+            }
+            auto pl = dfs(node->left);
+            auto pr = dfs(node->right);
+            pii re = {node->val, node->val};
+            if (pl.first != -1) {
+                res = max(res, max(abs(pl.first - node->val), abs(pl.second - node->val)));
+                re.first = min(re.first, pl.first);
+                re.second = max(re.second, pl.second);
+            }
+            if (pr.first != -1) {
+                res = max(res, max(abs(pr.first - node->val), abs(pr.second - node->val)));
+                re.first = min(re.first, pr.first);
+                re.second = max(re.second, pr.second);
+            }
+            return re;
+        };
+        dfs(root);
+        return res;
+    }
+};
+// bfs
+using pii = pair<int, int>;
+class Solution {
+public:
+    int maxAncestorDiff(TreeNode* root) {
+        int res = 0;
+        queue<TreeNode*> mq;
+        queue<pii> mm;
+        mq.emplace(root);
+        mm.emplace(root->val, root->val);
+        while (!mq.empty()) {
+            auto node = mq.front();
+            auto [minn, maxn] = mm.front();
+            mq.pop();
+            mm.pop();
+            if (node->left) {
+                mq.emplace(node->left);
+                mm.emplace(min(node->left->val, minn), max(node->left->val, maxn));
+                res = max(res, max(abs(node->left->val - minn), abs(node->left->val - maxn)));
+            }
+            if (node->right) {
+                mq.emplace(node->right);
+                mm.emplace(min(node->right->val, minn), max(node->right->val, maxn));
+                res = max(res, max(abs(node->right->val - minn), abs(node->right->val - maxn)));
+            }
+        }
+        return res;
+    }
+};
+/*
+给你一个整数数组 arr，请你将该数组分隔为长度 最多 为 k 的一些（连续）子数组。分隔完成后，每个子数组的中的所有值都会变为该子数组中的最大值。
+
+返回将数组分隔变换后能够得到的元素最大和。本题所用到的测试用例会确保答案是一个 32 位整数。
+T1043
+ */
+using pii = pair<int, int>;
+class Solution {
+public:
+    int maxSumAfterPartitioning(vector<int>& arr, int K) {
+        int n = arr.size();
+        int dp[n + 1];
+        memset(dp, 0, sizeof(dp));
+        // auto cmp = [&](int a, int b) { return arr[a] < arr[b] || arr[a] == arr[b] && a > b; };
+        // priority_queue<int, vector<int>, decltype(cmp)> mpq(cmp);
+        for (int i = 1; i <= n; i++) {
+            // while (!mpq.empty() && i - mpq.top() > K) {
+            //     mpq.pop();
+            // }
+            // mpq.emplace(i - 1);
+            int maxn = arr[i - 1];
+            for (int j = i - 1; j >= i - K && j >= 0; j--) {
+                dp[i] = max(dp[i], dp[j] + maxn * (i - j));
+                if (j > 0) {
+                    maxn = max(maxn, arr[j - 1]);
+                }
+            }
+        }
+        return dp[n];
+    }
+};
+/*
+给你两个整数数组 arr1 和 arr2，返回使 arr1 严格递增所需要的最小「操作」数（可能为 0）。
+
+每一步「操作」中，你可以分别从 arr1 和 arr2 中各选出一个索引，分别为 i 和 j，0 <= i < arr1.length 和 0 <= j < arr2.length，然后进行赋值运算 arr1[i] = arr2[j]。
+
+如果无法让 arr1 严格递增，请返回 -1。
+1187
+ */
+class Solution {
+public:
+    int makeArrayIncreasing(vector<int>& arr1, vector<int>& arr2) {
+        sort(arr2.begin(), arr2.end());
+        int n = arr1.size();
+        vector<int> dp(n, INT_MAX);
+        dp[0] = 0;
+        for (int i = 1; i < n; i++) {
+            if (arr1[i] > arr1[i - 1]) {
+                dp[i] = dp[i - 1];
+            } else {
+            }
+        }
+    }
+};

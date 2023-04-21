@@ -1,0 +1,135 @@
+./zookeeper-server-start.sh -daemon ../config/zookeeper.properties 
+./kafka-server-start.sh  -daemon ../config/server.properties 
+kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+kafka-topics.sh --list --zookeeper localhost:2181
+kafka-console-producer.sh --broker-list 10.0.12.11:9092 --topic test
+kafka-console-consumer.sh --bootstrap-server 10.0.12.11:9092 --topic test --from-beginning
+
+Broker 磁盘
+log.dirs csv格式，逗号分隔
+最好不同物理磁盘 
+1、提升读写性能
+2、实现故障转移
+log.dir
+
+zk
+zookeeper.connect csv格式，逗号分隔
+多个kafka集群的话，使用chroot 类似别名
+
+Broker 连接
+listeners 监听器，告诉外部通过什么协议访问指定主机端口的Kafka服务
+<协议名称，主机名，端口号>
+如果协议名称是自己定义的，还需要指定listener.security.protocol.map告诉
+这个协议底层使用了哪种安全协议
+advertised.listeners 对外发布
+host.name/port 不需要
+
+Topic
+auto.create.topics.enable 是否允许自动创建Topic
+unclean.leader.election.enable 是否允许Unclean Leader选举
+auto.leader.rebalance.enable 是否允许定期进行Leader选举
+
+数据留存
+log.retention.{hour|minutes|ms} 控制一条消息数据被保存多长时间
+log.retention.bytes 指定Broker为消息保存的总磁盘容量大小
+message.max.bytes 控制Broker能够接受的最大消息大小
+
+Topic
+retention.ms Topic消息被保存的时长，默认7天
+retention.bytes 为预留多大的磁盘空间
+
+max.message.bytes 正常接收该Topic的最大消息大小
+
+创建Topic时设置 
+kafka-topics
+修改时设置
+kafka-configs
+
+分区策略
+partitioner.class
+
+轮询策略 Round-robin策略 默认提供的分区策略
+随机策略 Randomness策略
+按消息键保序策略 Key-ordering策略 按KEY来分区
+消息的顺序问题
+
+生产者压缩算法
+生产者端和Broker端
+compression.type
+消息分为两层：消息集合以及消息
+消息集合中包含若干日志项，日志项是真正封装消息的地方
+
+Broker端和Producer端不同的压缩算法
+Broker端发生了消息格式转换
+新老版本转换除了压缩外 还丧失了零拷贝特性
+
+解压缩 消费者端
+每个压缩过的集合在Broker端写入时都要发生解压缩操作，目的是为了对消息执行各种验证
+
+消息丢失：
+只对已提交的消息做有限度的持久化保证
+
+producer.send(msg)
+fire and forget
+Producer永远要使用带有回调通知的发送API 要使用producer.send(msg,callback)
+设置 acks = all
+retries设置较大的值，能够自动重试消息发送
+
+设置 unclean.leader.election.enable = false。这是 Broker 端的参数，它控制的是哪
+些 Broker 有资格竞选分区的 Leader。如果一个 Broker 落后原先的 Leader 太多，那么
+它一旦成为新的 Leader，必然会造成消息的丢失。故一般都要将该参数设置成 false，
+即不允许这种情况的发生。
+设置 replication.factor >= 3。这也是 Broker 端的参数。其实这里想表述的是，最好将
+消息多保存几份，毕竟目前防止消息丢失的主要机制就是冗余。
+设置 min.insync.replicas > 1。这依然是 Broker 端参数，控制的是消息至少要被写入
+到多少个副本才算是“已提交”。设置成大于 1 可以提升消息持久性。在实际环境中千
+万不要使用默认值 1。
+确保 replication.factor > min.insync.replicas。如果两者相等，那么只要有一个副本挂
+机，整个分区就无法正常工作了。我们不仅要改善消息的持久性，防止数据丢失，还要
+在不降低可用性的基础上完成。推荐设置成 replication.factor = min.insync.replicas +
+1。
+
+消费者端
+维持先消费消息，再更新位移的顺序，这样虽然会重复消费，但是可以最大限度的保证消息不丢失
+如果多线程异步处理消费消息，Consumer程序不要开启自动提交位移，要应用程序手动提交位移
+
+三种发送消息的承诺
+最多一次
+至少一次 默认
+精确一次 Broker去重
+
+幂等性Producer 单分区不重复 单会话不重复
+事务性Producer read committed
+
+消费者组：
+1、一个组可以有一个或者多个实例
+2、每个topic下的分区只能由一个实例来独占，其他组不管
+实例数量应该等于grouo订阅topic的分区总数
+位移保存在Broker内部的topic中 __consumer_offsets
+重平衡条件
+1、组实例数发生变化
+2、主题数发生变化
+3、分区数发生变化
+分配策略：待加
+
+位移主题：
+__consumer_offsets保存Kafka消费者的位移信息
+消息格式是Kafka自定义的 用户不能随意向这个主题写消息
+KEY <GROUP ID,TOPIC,PARTITION ID>
+VALUE OFFSET
+除了上述的格式
+1、保存Consumer Group信息的消息--------注册Consumer Group
+2、用于删除Group过期位移甚至删除Group的消息------tombstone消息 delete mark
+当Kafka集群中的第一个Consumer程序启动时，Kafka会自动创建位移主题 
+自动创建50分区的位移主题 副本数是3
+offsets.topic.num.partitions
+offsets.topic.replication.factor
+Consumer端自动提交
+enable.auto.commit
+auto.commit.interval.ms
+手动consumer.commitSync
+Compact
+用于删除位移主题中的过期消息，避免该主题无限期膨胀
+Kafka 提供了专门的后台线程Log Cleaner定期地巡检待 Compact 的主题，看看是否存在满足条件的可删除数据。
+
+重平衡：
