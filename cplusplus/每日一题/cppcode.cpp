@@ -876,3 +876,156 @@ public:
         }
     }
 };
+/*
+给你一个整数数组 nums，返回 nums 中最长等差子序列的长度。
+
+回想一下，nums 的子序列是一个列表 nums[i1], nums[i2], ..., nums[ik] ，且 0 <= i1 < i2 < ... < ik <= nums.length - 1。并且如果 seq[i+1] - seq[i]( 0 <= i < seq.length - 1) 的值都相同，那么序列 seq 是等差的。
+T1027
+ */
+class Solution {
+public:
+    int longestArithSeqLength(vector<int>& A) {
+        int n = A.size(), res = 0;
+        int dp[n][2000];
+        memset(dp, 0, sizeof(dp));
+        for (int i = 0; i < n; i++) {
+            for (int j = i - 1; j >= 0; j--) {
+                int sub = A[i] - A[j] + 1000;
+                dp[i][sub] = max(dp[i][sub], dp[j][sub] + 1);
+                res = max(res, dp[i][sub]);
+            }
+        }
+        return res + 1;
+    }
+};
+
+/*
+给你一个字符串 s ，找出它的所有子串并按字典序排列，返回排在最后的那个子串。
+T1163
+20230501
+ */
+class Solution {
+public:
+    string lastSubstring(string s) {
+        int i = 0, j = 1, n = s.size();
+        while (j < n) {
+            int k = 0;
+            while (j + k < n && s[i + k] == s[j + k]) {
+                k++;
+            }
+            if (j + k < n && s[i + k] < s[j + k]) {
+                int t = i;
+                i = j;
+                j = max(i + 1, t + k + 1);
+            } else {
+                j += k + 1;
+            }
+        }
+        return s.substr(i);
+    }
+};
+/*
+给你一个整数数组 nums 和两个整数 firstLen 和 secondLen，请你找出并返回两个非重叠 子数组 中元素的最大和，长度分别为 firstLen 和 secondLen 。
+
+长度为 firstLen 的子数组可以出现在长为 secondLen 的子数组之前或之后，但二者必须是不重叠的。
+
+子数组是数组的一个 连续 部分。
+T1031
+ */
+class Solution {
+public:
+    int maxSumTwoNoOverlap(vector<int>& nums, int firstLen, int secondLen) {
+        int n = nums.size();
+        vector<int> v1(n - firstLen + 1), v2(n - secondLen + 1);
+        for (int i = 0; i < n; i++) {
+            if (i < firstLen) {
+                v1[0] += nums[i];
+            } else {
+                v1[i - firstLen + 1] = v1[i - firstLen] + nums[i] - nums[i - firstLen];
+            }
+            if (i < secondLen) {
+                v2[0] += nums[i];
+            } else {
+                v2[i - secondLen + 1] = v2[i - secondLen] + nums[i] - nums[i - secondLen];
+            }
+        }
+        int res = 0;
+        for (int i = 0; i <= n - firstLen; i++) {
+            for (int j = 0; j <= n - secondLen; j++) {
+                if (j <= i && i - j < secondLen) {
+                    continue;
+                }
+                if (i <= j && j - i < firstLen) {
+                    continue;
+                }
+                res = max(v1[i] + v2[j], res);
+            }
+        }
+        return res;
+    }
+};
+/*
+给出一个单词数组 words ，其中每个单词都由小写英文字母组成。
+
+如果我们可以 不改变其他字符的顺序 ，在 wordA 的任何地方添加 恰好一个 字母使其变成 wordB ，那么我们认为 wordA 是 wordB 的 前身 。
+
+    例如，"abc" 是 "abac" 的 前身 ，而 "cba" 不是 "bcad" 的 前身
+
+词链是单词 [word_1, word_2, ..., word_k] 组成的序列，k >= 1，其中 word1 是 word2 的前身，word2 是 word3 的前身，依此类推。一个单词通常是 k == 1 的 单词链 。
+
+从给定单词列表 words 中选择单词组成词链，返回 词链的 最长可能长度 。
+ T1048
+ */
+using psi = pair<string, int>;
+class Solution {
+public:
+    int longestStrChain(vector<string>& words) {
+        map<int, vector<psi>> mp;
+        int msize = INT_MAX;
+        for (auto word : words) {
+            mp[word.size()].emplace_back(word, 1);
+            msize = min(msize, (int)word.size());
+        }
+        vector<psi> temp = mp[msize];
+        int res = 0;
+        set<string> visit;
+        while (!temp.empty()) {
+            vector<psi> ttemp;
+            for (auto [s1, l1] : temp) {
+                res = max(res, l1);
+                for (auto [s2, l2] : mp[s1.size() + 1]) {
+                    if (!visit.count(s2) && help(s1, s2)) {
+                        visit.emplace(s2);
+                        ttemp.emplace_back(s2, l1 + 1);
+                    }
+                }
+            }
+            msize++;
+            for (auto [s1, l] : mp[msize]) {
+                if (!visit.count(s1)) {
+                    visit.emplace(s1);
+                    ttemp.emplace_back(s1, l);
+                }
+            }
+            temp = ttemp;
+        }
+        return res;
+    }
+    bool help(string& s1, string& s2) {
+        int i = 0, j = 0, n = s1.size(), flag = true;
+        while (i < n && j < n + 1) {
+            if (s1[i] != s2[j]) {
+                if (flag) {
+                    j++;
+                    flag = false;
+                } else {
+                    return false;
+                }
+            } else {
+                i++;
+                j++;
+            }
+        }
+        return true;
+    }
+};

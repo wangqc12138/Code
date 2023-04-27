@@ -877,3 +877,25 @@ public:
     int longestSubsequence(vector<int>& arr, int difference) {
     }
 };
+/*
+给你一个整数数组 nums，返回 nums 中最长等差子序列的长度。
+
+回想一下，nums 的子序列是一个列表 nums[i1], nums[i2], ..., nums[ik] ，且 0 <= i1 < i2 < ... < ik <= nums.length - 1。并且如果 seq[i+1] - seq[i]( 0 <= i < seq.length - 1) 的值都相同，那么序列 seq 是等差的。
+T1027
+ */
+class Solution {
+public:
+    int longestArithSeqLength(vector<int>& A) {
+        int n = A.size(), res = 0;
+        int dp[n][2000];
+        memset(dp, 0, sizeof(dp));
+        for (int i = 0; i < n; i++) {
+            for (int j = i - 1; j >= 0; j--) {
+                int sub = A[i] - A[j] + 1000;
+                dp[i][sub] = max(dp[i][sub], dp[j][sub] + 1);
+                res = max(res, dp[i][sub]);
+            }
+        }
+        return res + 1;
+    }
+};
