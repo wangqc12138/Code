@@ -23,7 +23,13 @@ int minimumSize(vector<int>& nums, int maxOperations) {
     return left;
 }
 
+int init = []() {
+    cout << "init\n";
+    return 0;
+}();
 int main() {
+    cout << "finish\n";
+    return 0;
     int16_t iRet;
     regex_t reTemp;
     string strPattern = "^XFER[1-2]_LIST";

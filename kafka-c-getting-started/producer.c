@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
                     rd_kafka_err2str(err));
             return 1;
         } else {
-            g_message("Produced event to topic %s: key = %12s value = %12s",
+            g_message("Produced event to topic %s: key = %s value = %s",
                       topic, key, value);
         }
 

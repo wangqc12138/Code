@@ -507,13 +507,22 @@ public:
 class Solution {
 public:
     string baseNeg2(int n) {
+        if (!n) {
+            return "0";
+        }
         return help(n, -2);
     }
     string help(int n, int x) {
         string res = "";
         while (n) {
-            int remain = (n - x) % x;
+            int remain = n % x;
             int q = n / x;
+            if (remain < 0) {
+                n = q + 1;
+                remain -= x;
+            } else {
+                n = q;
+            }
             res += to_string(remain);
         }
         reverse(res.begin(), res.end());
@@ -1027,5 +1036,677 @@ public:
             }
         }
         return true;
+    }
+};
+/*
+我们把无限数量 ∞ 的栈排成一行，按从左到右的次序从 0 开始编号。每个栈的的最大容量 capacity 都相同。
+
+实现一个叫「餐盘」的类 DinnerPlates：
+
+    DinnerPlates(int capacity) - 给出栈的最大容量 capacity。
+    void push(int val) - 将给出的正整数 val 推入 从左往右第一个 没有满的栈。
+    int pop() - 返回 从右往左第一个 非空栈顶部的值，并将其从栈中删除；如果所有的栈都是空的，请返回 -1。
+    int popAtStack(int index) - 返回编号 index 的栈顶部的值，并将其从栈中删除；如果编号 index 的栈是空的，请返回 -1。
+T1172
+ */
+class DinnerPlates {
+public:
+    DinnerPlates(int capacity) {
+    }
+
+    void push(int val) {
+    }
+
+    int pop() {
+    }
+
+    int popAtStack(int index) {
+    }
+};
+
+/**
+ * Your DinnerPlates object will be instantiated and called as such:
+ * DinnerPlates* obj = new DinnerPlates(capacity);
+ * obj->push(val);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->popAtStack(index);
+ */
+/*
+给你一个字符串 croakOfFrogs，它表示不同青蛙发出的蛙鸣声（字符串 "croak" ）的组合。由于同一时间可以有多只青蛙呱呱作响，所以 croakOfFrogs 中会混合多个 “croak” 。
+
+请你返回模拟字符串中所有蛙鸣所需不同青蛙的最少数目。
+
+要想发出蛙鸣 "croak"，青蛙必须 依序 输出 ‘c’, ’r’, ’o’, ’a’, ’k’ 这 5 个字母。如果没有输出全部五个字母，那么它就不会发出声音。如果字符串 croakOfFrogs 不是由若干有效的 "croak" 字符混合而成，请返回 -1 。
+1419
+ */
+class Solution {
+public:
+    int minNumberOfFrogs(string croakOfFrogs) {
+        if (croakOfFrogs.size() % 5) {
+            return -1;
+        }
+        map<int, int> mp;
+        int res = 0, t = 0;
+        for (auto c : croakOfFrogs) {
+            mp[c]++;
+            if (c == 'r' && mp[c] > mp['c']) {
+                return -1;
+            } else if (c == 'o' && mp[c] > mp['r']) {
+                return -1;
+            } else if (c == 'a' && mp[c] > mp['o']) {
+                return -1;
+            } else if (c == 'k' && mp[c] > mp['a']) {
+                return -1;
+            }
+            if (c == 'k') {
+                t--;
+            }
+            if (c == 'c') {
+                t++;
+                res = max(t, res);
+            }
+        }
+        for (auto [x, y] : mp) {
+            if (y != croakOfFrogs.size() / 5) {
+                return -1;
+            }
+        }
+        return res;
+    }
+};
+/*
+「推箱子」是一款风靡全球的益智小游戏，玩家需要将箱子推到仓库中的目标位置。
+
+游戏地图用大小为 m x n 的网格 grid 表示，其中每个元素可以是墙、地板或者是箱子。
+
+现在你将作为玩家参与游戏，按规则将箱子 'B' 移动到目标位置 'T' ：
+
+    玩家用字符 'S' 表示，只要他在地板上，就可以在网格中向上、下、左、右四个方向移动。
+    地板用字符 '.' 表示，意味着可以自由行走。
+    墙用字符 '#' 表示，意味着障碍物，不能通行。
+    箱子仅有一个，用字符 'B' 表示。相应地，网格上有一个目标位置 'T'。
+    玩家需要站在箱子旁边，然后沿着箱子的方向进行移动，此时箱子会被移动到相邻的地板单元格。记作一次「推动」。
+    玩家无法越过箱子。
+
+返回将箱子推到目标位置的最小 推动 次数，如果无法做到，请返回 -1。
+T1263
+ */
+class Solution {
+public:
+    int minPushBox(vector<vector<char>>& grid) {
+        int dir[4][2] = {0, 1, 0, -1, 1, 0, -1, 0};
+        int m = grid.size(), n = grid[0].size(), bi, bj, si, sj, ti, tj;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 'S') {
+                    si = i;
+                    sj = j;
+                } else if (grid[i][j] == 'B') {
+                    bi = i;
+                    bj = j;
+                } else if (grid[i][j] == 'T') {
+                    ti = i;
+                    tj = j;
+                }
+            }
+        }
+        auto check = [&](int i, int j) {
+            return i >= 0 && i < m && j >= 0 && j < n && grid[i][j] != '#';
+        };
+        deque<vector<int>> mdq;
+        set<vector<int>> visit;
+        mdq.emplace_back(vector<int>{si, sj, bi, bj, 0});
+        while (!mdq.empty()) {
+            auto nd = mdq.front();
+            mdq.pop_front();
+            auto tnd = nd;
+            tnd.pop_back();
+            if (visit.count(tnd)) {
+                continue;
+            }
+            visit.emplace(tnd);
+            if (nd[2] == ti && nd[3] == tj) {
+                return nd[4];
+            }
+            for (auto [x, y] : dir) {
+                if (nd[0] + x == nd[2] && nd[1] + y == nd[3] && check(nd[2] + x, nd[3] + y) && !visit.count(vector<int>{x + nd[0], y + nd[1], nd[2] + x, nd[3] + y})) {
+                    mdq.emplace_back(vector<int>{x + nd[0], y + nd[1], nd[2] + x, nd[3] + y, nd[4] + 1});
+                } else if ((nd[0] + x != nd[2] || nd[1] + y != nd[3]) && check(x + nd[0], y + nd[1]) && !visit.count(vector<int>{x + nd[0], y + nd[1], nd[2], nd[3]})) {
+                    mdq.emplace_front(vector<int>{x + nd[0], y + nd[1], nd[2], nd[3], nd[4]});
+                }
+            }
+        }
+        return -1;
+    }
+};
+/*
++++
+有 n 个房间，房间按从 0 到 n - 1 编号。最初，除 0 号房间外的其余所有房间都被锁住。你的目标是进入所有的房间。然而，你不能在没有获得钥匙的时候进入锁住的房间。
+
+当你进入一个房间，你可能会在里面找到一套不同的钥匙，每把钥匙上都有对应的房间号，即表示钥匙可以打开的房间。你可以拿上所有钥匙去解锁其他房间。
+
+给你一个数组 rooms 其中 rooms[i] 是你进入 i 号房间可以获得的钥匙集合。如果能进入 所有 房间返回 true，否则返回 false。
+T841
+ */
+class Solution {
+public:
+    bool canVisitAllRooms(vector<vector<int>>& rooms) {
+        queue<int> mq;
+        mq.emplace(0);
+        set<int> visit;
+        while (!mq.empty()) {
+            int node = mq.front();
+            mq.pop();
+            if (visit.count(node)) {
+                continue;
+            }
+            visit.emplace(node);
+            for (int i : rooms[node]) {
+                if (!visit.count(i)) {
+                    mq.emplace(i);
+                }
+            }
+        }
+        return visit.size() == rooms.size();
+    }
+};
+/*
+给你一个长度为 5 的字符串 time ，表示一个电子时钟当前的时间，格式为 "hh:mm" 。最早 可能的时间是 "00:00" ，最晚 可能的时间是 "23:59" 。
+
+在字符串 time 中，被字符 ? 替换掉的数位是 未知的 ，被替换的数字可能是 0 到 9 中的任何一个。
+
+请你返回一个整数 answer ，将每一个 ? 都用 0 到 9 中一个数字替换后，可以得到的有效时间的数目。
+T2347
+ */
+class Solution {
+public:
+    int countTime(string time) {
+        int res = 0;
+        function<void(int, string)> dfs = [&](int index, const string& s) {
+            if (index > 5) {
+                if (s.substr(0, 2) < "24" && s.substr(3, 2) < "60") {
+                    res++;
+                }
+                return;
+            }
+            if (time[index] == '?') {
+                for (int i = 0; i <= 9; i++) {
+                    string temp = s;
+                    temp[index] = '0' + i;
+                    dfs(index + 1, temp);
+                }
+            } else {
+                dfs(index + 1, s);
+            }
+        };
+        dfs(0, time);
+        return res;
+    }
+};
+/*
+给定正整数 k ，你需要找出可以被 k 整除的、仅包含数字 1 的最 小 正整数 n 的长度。
+
+返回 n 的长度。如果不存在这样的 n ，就返回-1。
+
+注意： n 不符合 64 位带符号整数。
+T1015
+ */
+class Solution {
+public:
+    int smallestRepunitDivByK(int k) {
+        if (k % 2 == 0 || k % 5 == 0) {
+            return -1;
+        }
+        set<int> st;
+        int r = 1 % k, len = 1;
+        while (r) {
+            // 同余推
+            /*
+            a = t % k
+            n = t*10 + 1;
+            b = n % k;
+              = (t*10 + 1) % k
+              = (t*10%k + 1%k) % k
+              = (a*10 + 1) % k
+             */
+            r = (r * 10 + 1) % k;
+            len++;
+            if (st.count(r)) {
+                return -1;
+            }
+            st.emplace(r);
+        }
+        return len;
+    }
+};
+/*
+给定两个整数，分别表示分数的分子 numerator 和分母 denominator，以 字符串形式返回小数 。
+
+如果小数部分为循环小数，则将循环的部分括在括号内。
+
+如果存在多个答案，只需返回 任意一个 。
+
+对于所有给定的输入，保证 答案字符串的长度小于 104 。
+T166
+ */
+class Solution {
+public:
+    string fractionToDecimal(int n, int d) {
+        string res = "";
+        long long a = n, b = d;
+        if (a % b == 0) {
+            return to_string(a / b);
+        }
+        if (n < 0 && d < 0) {
+            a = -a;
+            b = -b;
+        } else if (n < 0) {
+            a = -a;
+        } else if (d < 0) {
+            b = -b;
+        }
+        map<int, int> mp;
+        long long r = a % b;
+        mp[r] = 0;
+        while (r) {
+            res += to_string((r * 10) / b);
+            r = (r * 10) % b;
+            if (mp.count(r)) {
+                res = res.substr(0, mp[r]) + '(' + res.substr(mp[r]) + ')';
+                break;
+            }
+            mp[r] = res.size();
+        }
+        res = to_string(a / b) + '.' + res;
+        if (n < 0 && d > 0 || n > 0 && d < 0) {
+            res = "-" + res;
+        }
+        return res;
+    }
+};
+/*
+给定一个二进制字符串 s 和一个正整数 n，如果对于 [1, n] 范围内的每个整数，其二进制表示都是 s 的 子字符串 ，就返回 true，否则返回 false 。
+
+子字符串 是字符串中连续的字符序列。
+T1016
+ */
+class Solution {
+public:
+    bool queryString(string s, int n) {
+        int len = s.size();
+        set<int> st;
+        for (int i = 0; i < len; i++) {
+            int k = 0;
+            for (int j = i; j < len; j++) {
+                k = k * 2 + s[j] - '0';
+                if (k <= n && k > 0) {
+                    st.emplace(k);
+                }
+                if (k > n) {
+                    break;
+                }
+            }
+        }
+        return st.size() == n;
+    }
+};
+/*
+给定 m x n 矩阵 matrix 。
+
+你可以从中选出任意数量的列并翻转其上的 每个 单元格。（即翻转后，单元格的值从 0 变成 1，或者从 1 变为 0 。）
+
+返回 经过一些翻转后，行与行之间所有值都相等的最大行数 。
+T1072
+ */
+class Solution {
+public:
+    int maxEqualRowsAfterFlips(vector<vector<int>>& matrix) {
+        int m = matrix.size(), n = matrix[0].size();
+        for (int i = 0; i < m; i++) {
+        }
+        map<vector<int>, int> mp;
+        for (auto vec : matrix) {
+            vector<int> t1, t2;
+            int index = 0;
+            for (auto i : vec) {
+                if (i == 0) {
+                    t1.emplace_back(index++);
+                } else {
+                    t2.emplace_back(index++);
+                }
+            }
+            mp[t1]++;
+            mp[t2]++;
+        }
+        int res = 0;
+        for (auto [x, y] : mp) {
+            res = max(res, y);
+        }
+        return res;
+    }
+};
+/*
+在一个仓库里，有一排条形码，其中第 i 个条形码为 barcodes[i]。
+
+请你重新排列这些条形码，使其中任意两个相邻的条形码不能相等。 你可以返回任何满足该要求的答案，此题保证存在答案。
+T1054
+ */
+using pii = pair<int, int>;
+class Solution {
+public:
+    vector<int> rearrangeBarcodes(vector<int>& barcodes) {
+        map<int, int> mp;
+        auto cmp = [](pii a, pii b) { return a.second < b.second; };
+        priority_queue<pii, vector<pii>, decltype(cmp)> mpq(cmp);
+        for (auto i : barcodes) {
+            mp[i]++;
+        }
+        for (auto [x, y] : mp) {
+            mpq.emplace(pii(x, y));
+        }
+        vector<int> res;
+        while (!mpq.empty()) {
+            auto f = mpq.top();
+            mpq.pop();
+            res.emplace_back(f.first);
+            if (mpq.empty()) {
+                break;
+            }
+            auto s = mpq.top();
+            mpq.pop();
+            res.emplace_back(s.first);
+            if (--f.second) {
+                mpq.emplace(f);
+            }
+            if (--s.second) {
+                mpq.emplace(s);
+            }
+        }
+        return res;
+    }
+};
+/*
+给你两个字符串数组 event1 和 event2 ，表示发生在同一天的两个闭区间时间段事件，其中：
+
+    event1 = [startTime1, endTime1] 且
+    event2 = [startTime2, endTime2]
+
+事件的时间为有效的 24 小时制且按 HH:MM 格式给出。
+
+当两个事件存在某个非空的交集时（即，某些时刻是两个事件都包含的），则认为出现 冲突 。
+
+如果两个事件之间存在冲突，返回 true ；否则，返回 false 。
+T2446
+ */
+class Solution {
+public:
+    bool haveConflict(vector<string>& event1, vector<string>& event2) {
+        if (event1[0] < event2[0]) {
+            return event1[1] >= event2[0];
+        } else {
+            return event2[1] >= event1[0];
+        }
+    }
+};
+/*
+给出基数为 -2 的两个数 arr1 和 arr2，返回两数相加的结果。
+
+数字以 数组形式 给出：数组由若干 0 和 1 组成，按最高有效位到最低有效位的顺序排列。
+例如，arr = [1,1,0,1] 表示数字 (-2)^3 + (-2)^2 + (-2)^0 = -3。数组形式 中的数字 arr 也同样不含前导零：即 arr == [0] 或 arr[0] == 1。
+
+返回相同表示形式的 arr1 和 arr2 相加的结果。两数的表示形式为：不含前导零、由若干 0 和 1 组成的数组。
+T1073
+ */
+class Solution {
+public:
+    vector<int> addNegabinary(vector<int>& arr1, vector<int>& arr2) {
+        int m = arr1.size(), n = arr2.size(), i = m - 1, j = n - 1;
+        int c = 0;
+        vector<int> res;
+        while (i >= 0 || j >= 0 || c) {
+            int a = i >= 0 ? arr1[i--] : 0;
+            int b = j >= 0 ? arr2[j--] : 0;
+            int x = a + b + c;
+            if (x >= 0) {
+                res.emplace_back(x % 2);
+                c = x >= 2 ? -1 : 0;
+            } else {
+                res.emplace_back(1);
+                c = 1;
+            }
+        }
+        while (res.size() > 1 && res.back() == 0) {
+            res.pop_back();
+        }
+        reverse(res.begin(), res.end());
+        return res;
+    }
+};
+/*
+你有一套活字字模 tiles，其中每个字模上都刻有一个字母 tiles[i]。返回你可以印出的非空字母序列的数目。
+
+注意：本题中，每个活字字模只能使用一次。
+T1079
+ */
+class Solution {
+public:
+    int numTilePossibilities(string tiles) {
+        sort(tiles.begin(), tiles.end());
+        int res = 0, n = tiles.size();
+        string s = "";
+        vector<int> visit(n, 0);
+        function<void()> dfs = [&]() {
+            set<int> temp;
+            for (int i = 0; i < n; i++) {
+                if (visit[i] == 1 || temp.count(tiles[i])) {
+                    continue;
+                }
+                res++;
+                temp.count(tiles[i]);
+                visit[i] = 1;
+                dfs();
+                visit[i] = 0;
+            }
+        };
+        dfs();
+        return res;
+    }
+};
+/*
+给你二叉树的根节点 root 和一个整数 limit ，请你同时删除树中所有 不足节点 ，并返回最终二叉树的根节点。
+
+假如通过节点 node 的每种可能的 “根-叶” 路径上值的总和全都小于给定的 limit，则该节点被称之为 不足节点 ，需要被删除。
+
+叶子节点，就是没有子节点的节点。
+1080
+ */
+class Solution {
+public:
+    TreeNode* sufficientSubset(TreeNode* root, int limit) {
+        function<bool(TreeNode*&, int)> dfs = [&](TreeNode*& node, int sum) -> bool {
+            sum -= node->val;
+            if (!node->left && !node->right) {
+                return sum > 0;
+            }
+            bool l = dfs(node->left, sum);
+            bool r = dfs(node->right, sum);
+            if (l) {
+                node->left = nullptr;
+            }
+            if (r) {
+                node->right = nullptr;
+            }
+            return l && r;
+        };
+        TreeNode* dum = new TreeNode();
+        dum->left = root;
+        dfs(dum, 0);
+        return dum->left;
+    }
+};
+class Solution {
+public:
+    TreeNode* sufficientSubset(TreeNode* root, int limit) {
+        limit -= root->val;
+        if (root->left == root->right) {
+            return limit > 0 ? nullptr : root;
+        }
+        if (root->left) {
+            root->left = sufficientSubset(root->left, limit);
+        }
+        if (root->right) {
+            root->right = sufficientSubset(root->right, limit);
+        }
+        return root->right || root->left ? root : nullptr;
+    }
+};
+/*
+我们有一个 n 项的集合。给出两个整数数组 values 和 labels ，第 i 个元素的值和标签分别是 values[i] 和 labels[i]。还会给出两个整数 numWanted 和 useLimit 。
+
+从 n 个元素中选择一个子集 s :
+
+    子集 s 的大小 小于或等于 numWanted 。
+    s 中 最多 有相同标签的 useLimit 项。
+
+一个子集的 分数 是该子集的值之和。
+
+返回子集 s 的最大 分数 。
+T1090
+ */
+class Solution {
+public:
+    int largestValsFromLabels(vector<int>& values, vector<int>& labels, int numWanted, int useLimit) {
+        int n = values.size(), res = 0;
+        vector<int> index(n);
+        iota(index.begin(), index.end(), 0);
+        auto cmp = [&](int i, int j) { return values[i] > values[j]; };
+        sort(index.begin(), index.end(), cmp);
+        map<int, int> mp;
+        for (int i : index) {
+            if (mp[labels[i]] < useLimit && numWanted) {
+                mp[labels[i]]++;
+                res += values[i];
+                numWanted--;
+            }
+        }
+        return res;
+    }
+};
+/*
+给你一棵由 n 个顶点组成的无向树，顶点编号从 1 到 n。青蛙从 顶点 1 开始起跳。规则如下：
+
+    在一秒内，青蛙从它所在的当前顶点跳到另一个 未访问 过的顶点（如果它们直接相连）。
+    青蛙无法跳回已经访问过的顶点。
+    如果青蛙可以跳到多个不同顶点，那么它跳到其中任意一个顶点上的机率都相同。
+    如果青蛙不能跳到任何未访问过的顶点上，那么它每次跳跃都会停留在原地。
+
+无向树的边用数组 edges 描述，其中 edges[i] = [ai, bi] 意味着存在一条直接连通 ai 和 bi 两个顶点的边。
+
+返回青蛙在 t 秒后位于目标顶点 target 上的概率。与实际答案相差不超过 10-5 的结果将被视为正确答案。
+T1377
+ */
+class Solution {
+public:
+    double frogPosition(int n, vector<vector<int>>& edges, int t, int target) {
+        map<int, set<int>> next;
+        map<int, long long> mp;
+        for (auto vec : edges) {
+            next[vec[0]].emplace(vec[1]);
+            next[vec[1]].emplace(vec[0]);
+        }
+        queue<int> mq;
+        mq.emplace(1);
+        mp[1] = 1;
+        t++;
+        while (!mq.empty() && t--) {
+            int len = mq.size();
+            while (len--) {
+                int f = mq.front();
+                mq.pop();
+                if (target == f) {
+                    if (t == 0 || next[target].empty()) {
+                        return (double)1 / mp[target];
+                    }
+                    break;
+                }
+                for (auto nxt : next[f]) {
+                    mq.emplace(nxt);
+                    next[nxt].erase(f);
+                    mp[nxt] = mp[f] * next[f].size();
+                }
+            }
+        }
+        return 0;
+    }
+};
+/*
+给你一个字符串数组 words ，每一个字符串长度都相同，令所有字符串的长度都为 n 。
+
+每个字符串 words[i] 可以被转化为一个长度为 n - 1 的 差值整数数组 difference[i] ，其中对于 0 <= j <= n - 2 有 difference[i][j] = words[i][j+1] - words[i][j] 。
+注意两个字母的差值定义为它们在字母表中 位置 之差，也就是说 'a' 的位置是 0 ，'b' 的位置是 1 ，'z' 的位置是 25 。
+
+    比方说，字符串 "acb" 的差值整数数组是 [2 - 0, 1 - 2] = [2, -1] 。
+
+words 中所有字符串 除了一个字符串以外 ，其他字符串的差值整数数组都相同。你需要找到那个不同的字符串。
+
+请你返回 words中 差值整数数组 不同的字符串。
+T2451
+ */
+class Solution {
+public:
+    string oddString(vector<string>& words) {
+    }
+};
+/*
+给你一个 n x n 的二进制矩阵 grid 中，返回矩阵中最短 畅通路径 的长度。如果不存在这样的路径，返回 -1 。
+
+二进制矩阵中的 畅通路径 是一条从 左上角 单元格（即，(0, 0)）到 右下角 单元格（即，(n - 1, n - 1)）的路径，该路径同时满足下述要求：
+
+    路径途经的所有单元格都的值都是 0 。
+    路径中所有相邻的单元格应当在 8 个方向之一 上连通（即，相邻两单元之间彼此不同且共享一条边或者一个角）。
+
+畅通路径的长度 是该路径途经的单元格总数。
+T1091
+ */
+class Solution {
+public:
+    int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
+    }
+};
+
+/*
+给出二叉树的根节点 root，树上每个节点都有一个不同的值。
+
+如果节点值在 to_delete 中出现，我们就把该节点从树上删去，最后得到一个森林（一些不相交的树构成的集合）。
+
+返回森林中的每棵树。你可以按任意顺序组织答案。
+T1110
+ */
+class Solution {
+public:
+    vector<TreeNode*> delNodes(TreeNode* root, vector<int>& to_delete) {
+        set<int> st(to_delete.begin(), to_delete.end());
+        vector<TreeNode*> res;
+        if (!st.count(root->val)) {
+            res.emplace_back(root);
+        }
+        function<void(TreeNode*&)> dfs = [&](TreeNode*& node) -> void {
+            if (node == nullptr) {
+                return;
+            }
+            dfs(node->left);
+            dfs(node->right);
+            if (st.count(node->val)) {
+                if (node->left) {
+                    res.emplace_back(node->left);
+                }
+                if (node->right) {
+                    res.emplace_back(node->right);
+                }
+                node = nullptr;
+            }
+        };
+        dfs(root);
+        return res;
     }
 };
