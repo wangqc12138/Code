@@ -1710,3 +1710,127 @@ public:
         return res;
     }
 };
+/*
+给你一个正整数数组 arr，考虑所有满足以下条件的二叉树：
+
+    每个节点都有 0 个或是 2 个子节点。
+    数组 arr 中的值与树的中序遍历中每个叶节点的值一一对应。
+    每个非叶节点的值等于其左子树和右子树中叶节点的最大值的乘积。
+
+在所有这样的二叉树中，返回每个非叶节点的值的最小可能总和。这个和的值是一个 32 位整数。
+
+如果一个节点有 0 个子节点，那么该节点为叶节点。
+T1130
+ */
+class Solution {
+public:
+    int mctFromLeafValues(vector<int>& arr) {
+        int n = arr.size();
+        vector<vector<int>> dp(n, vector<int>(n, INT_MAX));
+        auto mx = dp;
+        for (int i = 0; i < n; i++) {
+            mx[i][i] = arr[i];
+            dp[i][i] = 0;
+        }
+        /* 这样有问题子区间没计算就计算了大区间 */
+        // for (int i = 0; i < n; i++) {
+        //     for (int j = i + 1; j < n; j++) {
+        //         mx[i][j] = max(mx[i][j - 1], arr[j]);
+        //         for (int k = i; k < j; k++) {
+        //             dp[i][j] = min(dp[i][j], dp[i][k] + dp[k + 1][j] + mx[i][k] * mx[k + 1][j]);
+        //         }
+        //     }
+        // }
+        for (int len = 1; len < n; len++) {
+            for (int i = 0; i + len < n; i++) {
+                int j = i + len;
+                mx[i][j] = max(mx[i][j - 1], arr[j]);
+                for (int k = i; k < j; k++) {
+                    dp[i][j] = min(dp[i][j], dp[i][k] + dp[k + 1][j] + mx[i][k] * mx[k + 1][j]);
+                }
+            }
+        }
+        return dp[0][n - 1];
+    }
+};
+/*
+给你一个正整数数组 price ，其中 price[i] 表示第 i 类糖果的价格，另给你一个正整数 k 。
+
+商店组合 k 类 不同 糖果打包成礼盒出售。礼盒的 甜蜜度 是礼盒中任意两种糖果 价格 绝对差的最小值。
+
+返回礼盒的 最大 甜蜜度。
+T2517
+ */
+class Solution {
+public:
+    int maximumTastiness(vector<int>& price, int k) {
+        sort(price.begin(), price.end());
+        int n = price.size(), l = 0, r = price.back() - price[0];
+        while (l < r) {
+            int mid = (l + r) / 2;
+            int x = 0;
+            for (int i = 1; i < n; i++) {
+                if (price[i] - price[i - 1] > mid) {
+                    if (++x > k) {
+                        break;
+                    }
+                }
+            }
+            if (x > k) {
+                l = mid + 1;
+            } else {
+                r = mid;
+            }
+        }
+        return l;
+    }
+};
+class Solution {
+public:
+    int maximumTastiness(vector<int>& price, int k) {
+        sort(price.begin(), price.end());
+        int l = 0, r = price.back() - price[0];
+        while (l < r) {
+            int mid = (l + r) / 2;
+            int t = price[0], x = 1;
+            for (auto i : price) {
+                if (i - t >= mid) {
+                    t = i;
+                    x++;
+                }
+            }
+            // 如果选出的糖果数小于k，表示间隔太大了，满足条件的太少了！
+            if (x < k) {
+                r = mid - 1;
+            } else {
+                l = mid;
+            }
+        }
+        return l;
+    }
+};
+// 比赛时写的！
+class Solution {
+public:
+    int maximumTastiness(vector<int>& price, int k) {
+        sort(price.begin(), price.end());
+        int left = 0, right = price.back() - price[0];
+        while (left < right) {
+            int mid = (left + right + 1) / 2;
+            // cout<<left<<" "<<mid<<" "<<right<<endl;
+            int pre = price[0], t = 1;
+            for (int i : price) {
+                if (i - pre > mid) {
+                    pre = i;
+                    t++;
+                }
+            }
+            if (t < k) {
+                right = mid - 1;
+            } else {
+                left = mid;
+            }
+        }
+        return left;
+    }
+};

@@ -17,7 +17,9 @@
 #include <vector>
 using namespace std;
 #define BUF_SIZ 1024
-int Sock(const string& ip, int port) {
+string strIp = "127.0.0.1";
+int iPort = 8888;
+int Sock(const string& ip = strIp, int port = iPort) {
     sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
