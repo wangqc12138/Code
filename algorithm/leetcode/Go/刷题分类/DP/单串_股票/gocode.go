@@ -94,14 +94,14 @@ package main
 注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
 188
 */
-func maxProfit(k int, prices []int) int {
-	max := func(a, b int) int {
-		if a > b {
-			return a
-		} else {
-			return b
-		}
-	}
-	n := len(prices)
-	dp := make([][2][]int, n)
-}
+// func maxProfit(k int, prices []int) int {
+// 	max := func(a, b int) int {
+// 		if a > b {
+// 			return a
+// 		} else {
+// 			return b
+// 		}
+// 	}
+// 	n := len(prices)
+// 	dp := make([][2][]int, n)
+// }

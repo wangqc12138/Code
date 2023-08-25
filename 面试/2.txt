@@ -1,0 +1,37 @@
+1、tcp
+    1、三次握手 
+        客户端发送seq1 syn报文 处于synsend状态
+        服务端接受syn报文 返回seq1+1的ack 发送新seq2 syn报文 处于synrevd状态 把这个连接放入半连接队列
+        客户端接受syn报文 发送seq2+1的ack 客户端此时处于esatblished状态
+        服务端接受ack状态 也处于esatblished状态
+        前两次不可以携带数据 第三次的ack可以带数据
+    2、四次挥手
+        客户端发送seq1 fin报文 处于closewait1状态
+        服务端接收到 fin后 回复一个ack报文 seq1+1 服务端closewait2状态
+        服务端发送seq2 fin报文 处于lastack状态
+        客户端接受到 fin报文 回复ack 处于timewait状态
+        服务端接收ack 处于close状态
+        timewait 2MSL 可靠的终止连接 保证对端收到ack 保证迟来的报文被丢弃 防止这个端口号还有报文段
+    3、复位报文段
+        访问不存在端口 timewait也会回复
+        异常终止连接
+        半打开连接 对端终止连接 如果写入数据则回复复位报文段
+    4、交互数据流
+        telnet nagle算法 -- 粘包 -- 快
+        ftp 滑动窗口控制接受端窗口
+    5、超时重传
+        定时器 如果超过重传 时间加倍
+    6、拥塞控制
+        慢启动
+            指数增长 每次加倍
+        拥塞避免
+            线性增加 减缓增长
+        快速重传
+            ack重复三次 减半
+        快速恢复
+            减半 拥塞避免
+2、tcp和udp的区别
+    可靠性
+    面向字节流 面向报文
+    有序无序
+    
