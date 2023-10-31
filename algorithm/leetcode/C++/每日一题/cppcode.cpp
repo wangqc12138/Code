@@ -9077,3 +9077,68 @@ public:
         return res;
     }
 };
+/*
+给你一个整数数组 citations ，其中 citations[i] 表示研究者的第 i篇论文被引用的次数，citations 已经按照 升序排列 。计算并返回该研究者的 h 指数。
+
+h 指数的定义：h 代表“高引用次数”（high citations），一名科研人员的 h指数是指他（她）的 （n 篇论文中）总共有 h 篇论文分别被引用了至少 h 次。
+
+请你设计并实现对数时间复杂度的算法解决此问题。
+275
+ */
+class Solution {
+public:
+    int hIndex(vector<int> &citations) {
+        int n = citations.size(), left = 0, right = citations.size();
+        while (left < right) {
+            int mid = (left + right) / 2;
+            if (citations[mid] >= n - mid) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return n - left;
+    }
+};
+/*
+有一棵根节点为 0 的 家族树 ，总共包含 n 个节点，节点编号为 0 到 n - 1 。给你一个下标从 0 开始的整数数组 parents ，
+其中 parents[i] 是节点 i 的父节点。由于节点 0 是 根 ，所以 parents[0] == -1 。
+
+总共有 105 个基因值，每个基因值都用 闭区间 [1, 105] 中的一个整数表示。给你一个下标从 0 开始的整数数组 nums ，其中 nums[i] 是节点 i 的基因值，且基因值 互不相同 。
+
+请你返回一个数组 ans ，长度为 n ，其中 ans[i] 是以节点 i 为根的子树内 缺失 的 最小 基因值。
+
+节点 x 为根的 子树 包含节点 x 和它所有的 后代 节点。
+2003
+ */
+class Solution {
+public:
+    vector<int> smallestMissingValueSubtree(vector<int> &parents, vector<int> &nums) {
+        map<int, vector<int>> child;
+        int n = 0;
+        for (auto i : parents) {
+            child[i].emplace_back(n++);
+        }
+        vector<int> ans(n, 1);
+        function<bool(int, set<int>)> dfs = [&](int x, set<int> visit) -> bool {
+            if (!child.count(x)) {
+                visit.emplace(x);
+                if (nums[x] == 1) {
+                    ans[x] = 2;
+                    return true;
+                }
+                return false;
+            }
+            bool ret = false;
+            for (auto next : child[x]) {
+                if (dfs(next, visit)) {
+                    for (auto i : visit) {
+                    }
+                    ret = true;
+                }
+            }
+            visit.emplace(x);
+            return ret;
+        };
+    }
+};
