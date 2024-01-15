@@ -9120,25 +9120,28 @@ public:
             child[i].emplace_back(n++);
         }
         vector<int> ans(n, 1);
-        function<bool(int, set<int>)> dfs = [&](int x, set<int> visit) -> bool {
-            if (!child.count(x)) {
-                visit.emplace(x);
-                if (nums[x] == 1) {
-                    ans[x] = 2;
-                    return true;
-                }
-                return false;
-            }
-            bool ret = false;
+        int index = find(nums.begin(), nums.end(), 1) - nums.begin();
+        if (index == n) {
+            return ans;
+        }
+        unordered_set<int> visit;
+        function<void(int)> dfs = [&](int x) {
+            visit.emplace(nums[x]);
             for (auto next : child[x]) {
-                if (dfs(next, visit)) {
-                    for (auto i : visit) {
-                    }
-                    ret = true;
+                if (!visit.count(nums[next])) {
+                    dfs(next);
                 }
             }
-            visit.emplace(x);
-            return ret;
         };
+        int m = 2;
+        while (index >= 0) {
+            dfs(index);
+            while (visit.count(m)) {
+                m++;
+            }
+            ans[index] = m;
+            index = parents[index];
+        }
+        return ans;
     }
 };
